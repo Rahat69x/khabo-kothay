@@ -17,7 +17,7 @@ router.get('/health', (req, res) => {
     ok: true,
     app: 'Khabo Kothay?',
     version: '1.1.0',
-    commit: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'HEAD',
+    commit: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || '6e196bf',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
