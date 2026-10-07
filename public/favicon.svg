@@ -1,0 +1,11 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#1C140E" />
+  <path d="M 32 4 C 18 4 8 15 8 28 C 8 42, 27 58, 32 60 C 37 58, 56 42, 56 28 C 56 15, 46 4, 32 4 Z" fill="#E05326" />
+  <!-- Fork -->
+  <rect x="30" y="28" width="4" height="16" rx="2" fill="#FFF7ED" />
+  <path d="M 25 24 C 25 29, 39 29, 39 24 Z" fill="#FFF7ED" />
+  <rect x="25" y="14" width="3" height="11" rx="1" fill="#FFF7ED" />
+  <rect x="30.5" y="12" width="3" height="13" rx="1" fill="#FFF7ED" />
+  <rect x="36" y="14" width="3" height="11" rx="1" fill="#FFF7ED" />
+</svg>

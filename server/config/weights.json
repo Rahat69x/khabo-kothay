@@ -1,0 +1,60 @@
+{
+  "Best Overall": {
+    "rating": 0.25,
+    "time": 0.25,
+    "price": 0.15,
+    "cost": 0.10,
+    "distance": 0.10,
+    "traffic": 0.10,
+    "spareBonus": 0.05
+  },
+  "Fastest": {
+    "time": 0.50,
+    "traffic": 0.20,
+    "distance": 0.10,
+    "rating": 0.10,
+    "price": 0.05,
+    "cost": 0.05
+  },
+  "Closest": {
+    "distance": 0.55,
+    "time": 0.15,
+    "rating": 0.10,
+    "price": 0.10,
+    "cost": 0.05,
+    "traffic": 0.05
+  },
+  "Cheapest": {
+    "price": 0.40,
+    "cost": 0.35,
+    "time": 0.10,
+    "rating": 0.10,
+    "distance": 0.05,
+    "traffic": 0.00
+  },
+  "Best Rated": {
+    "rating": 0.60,
+    "time": 0.15,
+    "price": 0.10,
+    "distance": 0.05,
+    "traffic": 0.05,
+    "cost": 0.05
+  },
+  "Best Value": {
+    "rating": 0.30,
+    "price": 0.25,
+    "cost": 0.20,
+    "time": 0.15,
+    "traffic": 0.05,
+    "distance": 0.05
+  },
+  "Personalized": {
+    "taste": 0.35,
+    "time": 0.20,
+    "rating": 0.15,
+    "price": 0.10,
+    "cost": 0.05,
+    "distance": 0.10,
+    "traffic": 0.05
+  }
+}

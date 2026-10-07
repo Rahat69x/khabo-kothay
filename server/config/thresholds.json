@@ -1,0 +1,21 @@
+{
+  "low": {
+    "maxRatio": 1.15,
+    "label": "Low",
+    "color": "green",
+    "multiplier": 1.0
+  },
+  "moderate": {
+    "minRatio": 1.15,
+    "maxRatio": 1.5,
+    "label": "Moderate",
+    "color": "yellow",
+    "multiplier": 1.2
+  },
+  "heavy": {
+    "minRatio": 1.5,
+    "label": "Heavy",
+    "color": "red",
+    "multiplier": 1.5
+  }
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khabo Kothay? – Food Finder (খাবো কোথায়?)</title>
+  <meta name="description" content="Discover where to actually eat right now in Gulshan, Banani, Baridhara, and Notun Bazar with traffic-aware travel times, transport costs, and AI personalization.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-inner container">
+      <div class="brand">
+        <img src="/img/logo.svg" alt="Khabo Kothay? Logo" class="brand-logo" width="38" height="38">
+        <div class="brand-text">
+          <h1>Khabo Kothay? <span class="bn-title">খাবো কোথায়?</span></h1>
+          <span class="brand-tagline">Real-time traffic & personalized picks • Dhaka</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div id="weatherPill" class="weather-pill" title="Current weather in Gulshan">
+          <span class="weather-icon">🌤️</span>
+          <span class="weather-text">28°C Dhaka</span>
+        </div>
+        <button id="openTasteBtn" class="btn btn-secondary header-btn" aria-label="Open my taste profile">
+          <span>🎯</span> My Taste
+        </button>
+        <button id="openFavoritesBtn" class="btn btn-secondary header-btn" aria-label="Open saved restaurants">
+          <span>❤️</span> Saved
+        </button>
+        <button id="openHistoryBtn" class="btn btn-secondary header-btn" aria-label="Open search history">
+          <span>📜</span> History
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Server Wake-up Status Banner (for idle/free tiers) -->
+  <aside id="serverWakeupBanner" class="server-wakeup-banner hidden" role="status" aria-live="polite">
+    <div class="container wakeup-inner">
+      <span class="spinner-small" aria-hidden="true"></span>
+      <span id="serverWakeupMsg">Waking up the server... Please hold on while the free instance boots up.</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="container main-layout">
+    <!-- Search & Control Panel -->
+    <section class="control-panel card-glass" aria-label="Restaurant search options">
+      <!-- Location Selector -->
+      <div class="control-group">
+        <label class="control-label">📍 Where are you right now?</label>
+        <div class="location-inputs">
+          <button id="useLocationBtn" class="btn btn-outline loc-btn" type="button">
+            <span>📡</span> Use Current GPS
+          </button>
+          <div class="select-wrapper">
+            <select id="locationSelect" class="form-select" aria-label="Select starting spot in Gulshan area">
+              <option value="Notun Bazar" selected>Notun Bazar Bus Stand</option>
+              <option value="Gulshan 1">Gulshan 1 Circle</option>
+              <option value="Gulshan 2">Gulshan 2 Circle</option>
+              <option value="Banani">Banani Road 11</option>
+              <option value="Baridhara">Baridhara Diplomatic Zone</option>
+            </select>
+          </div>
+        </div>
+        <div id="locationStatus" class="location-status-text">Starting from: Notun Bazar</div>
+      </div>
+
+      <!-- Mood Chips -->
+      <div class="control-group">
+        <label class="control-label">✨ What are you in the mood for?</label>
+        <div id="moodChipsContainer" class="chips-scroll-row">
+          <!-- Populated by mood-ui.js -->
+        </div>
+      </div>
+
+      <!-- Cuisine Chips -->
+      <div class="control-group">
+        <label class="control-label">🍴 Or choose a specific cuisine</label>
+        <div id="cuisineChipsContainer" class="chips-scroll-row">
+          <button type="button" class="chip cuisine-chip active" data-cuisine="All">All</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Japanese">Japanese</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Bangladeshi">Bangladeshi</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Indian">Indian</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Chinese">Chinese</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Korean">Korean</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Fast Food">Fast Food</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Cafe">Cafe</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Kabab">Kabab</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Biriyani">Biriyani</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Dessert">Dessert</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Coffee">Coffee</button>
+          <button type="button" class="chip cuisine-chip" data-cuisine="Burger">Burger</button>
+        </div>
+      </div>
+
+      <!-- Priority Chips -->
+      <div class="control-group">
+        <label class="control-label">🎯 What matters most to you?</label>
+        <div id="priorityChipsContainer" class="chips-grid">
+          <button type="button" class="chip priority-chip active" data-priority="Best Overall">🌟 Best Overall</button>
+          <button type="button" class="chip priority-chip" data-priority="Fastest">⚡ Fastest to Reach</button>
+          <button type="button" class="chip priority-chip" data-priority="Closest">📍 Closest Distance</button>
+          <button type="button" class="chip priority-chip" data-priority="Cheapest">💰 Cheapest</button>
+          <button type="button" class="chip priority-chip" data-priority="Best Rated">⭐ Best Rated</button>
+          <button type="button" class="chip priority-chip" data-priority="Best Value">💎 Best Value</button>
+          <button type="button" class="chip priority-chip" data-priority="Personalized">🧬 Personalized</button>
+        </div>
+      </div>
+
+      <!-- Budget Selector & Submit CTA -->
+      <div class="filter-footer-row">
+        <div class="budget-selector-group">
+          <label class="control-label">Budget:</label>
+          <div class="budget-chips">
+            <button type="button" class="chip budget-chip" data-budget="1">৳</button>
+            <button type="button" class="chip budget-chip active" data-budget="2">৳৳</button>
+            <button type="button" class="chip budget-chip" data-budget="3">৳৳৳</button>
+            <button type="button" class="chip budget-chip" data-budget="4">৳৳৳৳</button>
+          </div>
+        </div>
+
+        <div class="action-buttons-group">
+          <button id="surpriseBtn" class="btn btn-secondary" type="button" title="High exploration rate for unusual recommendations">
+            🎲 Surprise Me
+          </button>
+          <button id="searchBtn" class="btn btn-primary btn-lg" type="button">
+            🚀 Find My Best Option
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Picks Hero Box -->
+    <section id="topPicksContainer" class="top-picks-section" aria-label="Top recommendations for you right now"></section>
+
+    <!-- Results & Interactive Map Section -->
+    <section class="results-map-grid">
+      <!-- Ranked Restaurant Cards -->
+      <div class="results-column">
+        <div class="results-header-bar">
+          <h2 id="resultsHeading">Recommended Restaurants</h2>
+          <span id="resultsCountTag" class="count-tag">Showing matches</span>
+        </div>
+        <div id="resultsContainer" class="cards-list"></div>
+      </div>
+
+      <!-- Map Column -->
+      <div class="map-column">
+        <div class="sticky-map-wrapper card-glass">
+          <div class="map-header">
+            <h3>Interactive Area Map</h3>
+            <span class="map-sub">Gulshan • Banani • Baridhara</span>
+          </div>
+          <div id="mapContainer" class="map-viewport"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Explain Drawer -->
+  <aside id="explainDrawer" class="explain-drawer" aria-label="Recommendation factor explanation"></aside>
+
+  <!-- Route Comparison Modal -->
+  <div id="compareModal" class="modal-backdrop" aria-modal="true" role="dialog"></div>
+
+  <!-- My Taste Profile Modal -->
+  <div id="tasteModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-md">
+      <div class="modal-header">
+        <h3>🎯 My Taste Profile</h3>
+        <button id="closeTasteModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="taste-desc">Your taste profile personalizes ranking weights. Move sliders to adjust your affinities or let the app learn as you browse and navigate.</p>
+
+        <div class="taste-toggle-row">
+          <label class="switch-label">
+            <input type="checkbox" id="learningToggle" checked />
+            <span class="toggle-slider"></span>
+            <span class="toggle-text">Continuous Learning from choices</span>
+          </label>
+          <button id="resetTasteBtn" class="btn btn-outline btn-sm">Reset to 50%</button>
+        </div>
+
+        <div id="tasteSlidersContainer" class="taste-sliders-list"></div>
+
+        <div class="privacy-box">
+          <h4>🔒 Privacy Guarantee</h4>
+          <p>Your taste profile and search history are stored exclusively in your local browser storage. No identifying profile data is tracked or logged on server databases.</p>
+          <div class="privacy-actions">
+            <button id="exportDataBtn" class="btn btn-secondary btn-sm">📥 Export My Data</button>
+            <button id="deleteDataBtn" class="btn btn-danger btn-sm">🗑️ Delete All My Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Favorites Modal -->
+  <div id="favoritesModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-md">
+      <div class="modal-header">
+        <h3>❤️ Saved Favorites</h3>
+        <button id="closeFavoritesModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div id="favoritesList" class="modal-body favorites-content"></div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-md">
+      <div class="modal-header">
+        <h3>📜 Recent Searches</h3>
+        <button id="closeHistoryModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div id="historyList" class="modal-body history-content"></div>
+    </div>
+  </div>
+
+  <!-- App Script Modules -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

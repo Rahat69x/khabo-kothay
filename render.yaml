@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: khabo-kothay-backend
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: USE_MOCK_DATA
+        sync: false
+      - key: GOOGLE_SERVER_KEY
+        sync: false
+      - key: GOOGLE_BROWSER_KEY
+        sync: false
+      - key: APP_CLIENT_TOKEN
+        sync: false

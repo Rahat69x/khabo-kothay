@@ -1,0 +1,25 @@
+{
+  "defaultScore": 50,
+  "minScore": 0,
+  "maxScore": 100,
+  "learningRate": 0.25,
+  "decayFactor": 0.98,
+  "decayTarget": 50,
+  "explorationRate": 0.20,
+  "signalWeights": {
+    "chose": 20,
+    "directions": 20,
+    "favorited": 15,
+    "viewed": 5,
+    "searched": 5,
+    "dismissed": -15,
+    "rated_high": 25,
+    "rated_low": -20
+  },
+  "collaborative": {
+    "enabled": false,
+    "blendWeight": 0.20,
+    "contentBlendWeight": 0.80,
+    "minUserOverlap": 2
+  }
+}

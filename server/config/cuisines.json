@@ -1,0 +1,150 @@
+{
+  "cuisines": [
+    "Japanese",
+    "Bangladeshi",
+    "Indian",
+    "Chinese",
+    "Korean",
+    "Fast Food",
+    "Cafe",
+    "Kabab",
+    "Biriyani",
+    "Dessert",
+    "Coffee",
+    "Burger"
+  ],
+  "keywords": {
+    "Japanese": ["japanese restaurant", "sushi", "ramen", "teriyaki"],
+    "Bangladeshi": ["bangladeshi restaurant", "bengali food", "bharta", "bhaat", "local dhaka restaurant"],
+    "Indian": ["indian restaurant", "curry", "thali", "dosa", "tandoori"],
+    "Chinese": ["chinese restaurant", "dim sum", "cantonese", "szechuan", "chow mein"],
+    "Korean": ["korean restaurant", "korean bbq", "kimchi", "bibimbap"],
+    "Fast Food": ["fast food restaurant", "fried chicken", "french fries", "fast food"],
+    "Cafe": ["cafe", "coffee shop", "bistro", "bakery cafe"],
+    "Kabab": ["kebab", "kabab", "tikka", "grill", "sheekh kabab"],
+    "Biriyani": ["biryani", "biriyani", "kacchi biryani", "tehari", "pulao"],
+    "Dessert": ["dessert shop", "ice cream", "waffle", "pastry", "bakery"],
+    "Coffee": ["specialty coffee", "espresso", "latte", "coffee house"],
+    "Burger": ["burger", "gourmet burger", "smash burger", "cheeseburger"]
+  },
+  "similarity": {
+    "Japanese": {
+      "Korean": 0.75,
+      "Chinese": 0.55,
+      "Cafe": 0.20
+    },
+    "Korean": {
+      "Japanese": 0.75,
+      "Chinese": 0.60
+    },
+    "Chinese": {
+      "Japanese": 0.55,
+      "Korean": 0.60,
+      "Fast Food": 0.25
+    },
+    "Bangladeshi": {
+      "Indian": 0.80,
+      "Biriyani": 0.85,
+      "Kabab": 0.75
+    },
+    "Indian": {
+      "Bangladeshi": 0.80,
+      "Biriyani": 0.75,
+      "Kabab": 0.70
+    },
+    "Kabab": {
+      "Biriyani": 0.80,
+      "Bangladeshi": 0.75,
+      "Indian": 0.70,
+      "Burger": 0.35
+    },
+    "Biriyani": {
+      "Kabab": 0.80,
+      "Bangladeshi": 0.85,
+      "Indian": 0.75
+    },
+    "Cafe": {
+      "Coffee": 0.95,
+      "Dessert": 0.80,
+      "Fast Food": 0.30
+    },
+    "Coffee": {
+      "Cafe": 0.95,
+      "Dessert": 0.70
+    },
+    "Dessert": {
+      "Cafe": 0.80,
+      "Coffee": 0.70,
+      "Fast Food": 0.20
+    },
+    "Burger": {
+      "Fast Food": 0.90,
+      "Cafe": 0.30
+    },
+    "Fast Food": {
+      "Burger": 0.90,
+      "Cafe": 0.30
+    }
+  },
+  "moods": {
+    "Something spicy": {
+      "cuisines": ["Kabab", "Biriyani", "Indian", "Bangladeshi", "Korean"],
+      "keywords": ["spicy", "tandoori", "chili", "hot"],
+      "description": "Bold, fiery flavours and aromatic spices"
+    },
+    "Something light": {
+      "cuisines": ["Cafe", "Japanese", "Dessert"],
+      "keywords": ["salad", "light meal", "sushi", "healthy", "wrap"],
+      "description": "Fresh, refreshing bites that won't weigh you down"
+    },
+    "Comfort food": {
+      "cuisines": ["Biriyani", "Kabab", "Burger", "Fast Food", "Bangladeshi"],
+      "keywords": ["kacchi", "burger", "comfort food", "cheese", "warm"],
+      "description": "Rich, soulful favourites to brighten your mood"
+    },
+    "Fast food": {
+      "cuisines": ["Fast Food", "Burger"],
+      "keywords": ["quick bites", "fries", "crispy chicken"],
+      "preferShortTravelTime": true,
+      "description": "Quick, crispy, satisfying cravings on the go"
+    },
+    "Healthy food": {
+      "cuisines": ["Cafe", "Japanese"],
+      "keywords": ["healthy", "salad", "smoothie", "vegetarian", "organic", "clean eating"],
+      "description": "Nutritious bowls, fresh greens and clean proteins"
+    },
+    "Something new": {
+      "cuisines": [],
+      "isExploration": true,
+      "description": "Exciting culinary gems outside your routine"
+    },
+    "Sweet": {
+      "cuisines": ["Dessert", "Cafe"],
+      "keywords": ["dessert", "ice cream", "pastry", "waffle", "cake"],
+      "description": "Delightful sweets, pastries and cool treats"
+    },
+    "Coffee": {
+      "cuisines": ["Coffee", "Cafe"],
+      "keywords": ["specialty coffee", "espresso", "latte", "cold brew", "pour over"],
+      "description": "Rich artisanal brews and cozy cafe vibes"
+    },
+    "Fine dining": {
+      "cuisines": ["Japanese", "Indian", "Korean", "Bangladeshi"],
+      "keywords": ["fine dining", "gourmet", "chef's special", "upscale"],
+      "filters": {
+        "minPriceLevel": 3,
+        "maxPriceLevel": 4,
+        "minRating": 4.3
+      },
+      "description": "Elegant ambiance, premium service, and culinary artistry"
+    },
+    "Budget friendly": {
+      "cuisines": ["Bangladeshi", "Biriyani", "Fast Food", "Cafe"],
+      "keywords": ["budget", "affordable", "street food"],
+      "filters": {
+        "maxPriceLevel": 2
+      },
+      "description": "Delicious hearty meals that treat your wallet kindly"
+    }
+  }
+}

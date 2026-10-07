@@ -1,0 +1,42 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 90" width="460" height="90">
+  <defs>
+    <linearGradient id="coralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A50" />
+      <stop offset="100%" stop-color="#E05326" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+
+  <!-- Stylized Fork & Pin Icon -->
+  <g transform="translate(15, 12)">
+    <!-- Map Pin Background -->
+    <path d="M 32 0 C 14.3 0 0 14.3 0 32 C 0 48.5 24 72 32 78 C 40 72 64 48.5 64 32 C 64 14.3 49.7 0 32 0 Z" fill="url(#coralGrad)" />
+    
+    <!-- Fork Silhouette Inside Pin -->
+    <!-- Handle -->
+    <rect x="29" y="32" width="6" height="24" rx="3" fill="#FFF7ED" />
+    <!-- Base -->
+    <path d="M 23 26 C 23 32, 41 32, 41 26 Z" fill="#FFF7ED" />
+    <!-- Prongs -->
+    <rect x="23" y="14" width="4" height="15" rx="2" fill="#FFF7ED" />
+    <rect x="30" y="12" width="4" height="17" rx="2" fill="#FFF7ED" />
+    <rect x="37" y="14" width="4" height="15" rx="2" fill="#FFF7ED" />
+
+    <!-- Pulse dot -->
+    <circle cx="32" cy="32" r="3" fill="#F59E0B" />
+  </g>
+
+  <!-- Wordmark Text: "Khabo Kothay?" -->
+  <text x="94" y="58" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="38" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5">Khabo</text>
+  <text x="224" y="58" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="38" font-weight="800" fill="url(#coralGrad)" letter-spacing="-0.5">Kothay</text>
+  
+  <!-- Stylized Question Mark (styled as fork-pin curve) -->
+  <g transform="translate(366, 22)">
+    <path d="M 8 10 C 8 2, 28 2, 28 14 C 28 24, 18 25, 18 34" fill="none" stroke="url(#goldGrad)" stroke-width="6" stroke-linecap="round" />
+    <circle cx="18" cy="46" r="3.5" fill="url(#goldGrad)" />
+  </g>
+</svg>

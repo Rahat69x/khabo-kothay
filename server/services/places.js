@@ -1,0 +1,218 @@
+import { globalCache } from './cache.js';
+import { getMockCandidates, MOCK_RESTAURANTS } from './mock.js';
+import cuisinesConfig from '../config/cuisines.json' with { type: 'json' };
+
+const PLACES_SEARCH_NEARBY_URL = 'https://places.googleapis.com/v1/places:searchNearby';
+const PLACES_SEARCH_TEXT_URL = 'https://places.googleapis.com/v1/places:searchText';
+const PLACES_DETAILS_BASE_URL = 'https://places.googleapis.com/v1/places';
+
+/**
+ * Normalizes Google price level string or number to integer 1-4 or null
+ */
+export function normalizePriceLevel(rawPrice) {
+  if (rawPrice === null || rawPrice === undefined) return null;
+  if (typeof rawPrice === 'number') {
+    return (rawPrice >= 1 && rawPrice <= 4) ? rawPrice : null;
+  }
+  const str = String(rawPrice).toUpperCase();
+  if (str.includes('INEXPENSIVE') || str === '1') return 1;
+  if (str.includes('MODERATE') || str === '2') return 2;
+  if (str.includes('EXPENSIVE') && !str.includes('VERY') || str === '3') return 3;
+  if (str.includes('VERY_EXPENSIVE') || str === '4') return 4;
+  return null;
+}
+
+/**
+ * Map cuisine name to keywords or Google primary types
+ */
+export function getCuisineQuery(cuisine) {
+  if (!cuisine || cuisine === 'All') return { keyword: 'restaurant', type: 'restaurant' };
+  const kwList = cuisinesConfig.keywords[cuisine] || [cuisine.toLowerCase()];
+  return {
+    keyword: kwList[0],
+    keywords: kwList,
+    type: cuisine.toLowerCase().replace(/\s+/g, '_')
+  };
+}
+
+/**
+ * Search candidates near lat, lng
+ */
+export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeters = 3000, budget = null, useMock = false }) {
+  const isMock = useMock || process.env.USE_MOCK_DATA === 'true' || !process.env.GOOGLE_SERVER_KEY;
+  const roundedLat = Number(lat).toFixed(3);
+  const roundedLng = Number(lng).toFixed(3);
+  const cacheKey = `places_${roundedLat}_${roundedLng}_${cuisine}_${radiusMeters}`;
+
+  const cached = globalCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  if (isMock) {
+    let mockResults = getMockCandidates(cuisine, budget);
+    globalCache.set(cacheKey, mockResults, 600); // 10 minutes TTL
+    return mockResults;
+  }
+
+  try {
+    const apiKey = process.env.GOOGLE_SERVER_KEY;
+    const queryInfo = getCuisineQuery(cuisine);
+
+    const requestBody = {
+      textQuery: `${queryInfo.keyword} restaurant in Gulshan Banani Dhaka`,
+      locationBias: {
+        circle: {
+          center: { latitude: Number(lat), longitude: Number(lng) },
+          radius: Number(radiusMeters)
+        }
+      },
+      maxResultCount: 20
+    };
+
+    const response = await fetch(PLACES_SEARCH_TEXT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.userRatingCount,places.priceLevel,places.currentOpeningHours.openNow,places.regularOpeningHours,places.primaryType,places.photos'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      console.warn(`Places API responded with status ${response.status}. Falling back to mock data.`);
+      const mockFallback = getMockCandidates(cuisine, budget);
+      return mockFallback;
+    }
+
+    const data = await response.json();
+    const rawPlaces = data.places || [];
+
+    const candidates = rawPlaces
+      .map(place => {
+        // Drop explicitly closed places
+        if (place.currentOpeningHours && place.currentOpeningHours.openNow === false) {
+          return null;
+        }
+
+        const price = normalizePriceLevel(place.priceLevel);
+        const displayName = place.displayName?.text || 'Restaurant';
+
+        return {
+          id: place.id,
+          displayName,
+          formattedAddress: place.formattedAddress || 'Gulshan / Banani, Dhaka',
+          location: place.location ? {
+            latitude: place.location.latitude,
+            longitude: place.location.longitude
+          } : { latitude: Number(lat), longitude: Number(lng) },
+          rating: typeof place.rating === 'number' ? place.rating : 4.0,
+          userRatingCount: typeof place.userRatingCount === 'number' ? place.userRatingCount : 50,
+          priceLevel: price,
+          currentOpeningHours: place.currentOpeningHours || { openNow: true },
+          regularOpeningHours: place.regularOpeningHours || null,
+          primaryType: place.primaryType || 'restaurant',
+          cuisine: cuisine !== 'All' ? cuisine : (place.primaryType || 'Restaurant'),
+          photos: place.photos ? place.photos.slice(0, 3).map(p => ({
+            name: p.name,
+            authorAttributions: p.authorAttributions
+          })) : []
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 20);
+
+    globalCache.set(cacheKey, candidates, 600); // 10 min TTL
+    return candidates;
+  } catch (err) {
+    console.error('Error fetching Places API:', err);
+    return getMockCandidates(cuisine, budget);
+  }
+}
+
+/**
+ * Fetch detailed place info for mobile & web detail view
+ * Only requests phone & website here to keep costs low
+ */
+export async function getPlaceDetails(placeId, useMock = false) {
+  const isMock = useMock || process.env.USE_MOCK_DATA === 'true' || !process.env.GOOGLE_SERVER_KEY;
+  const cacheKey = `place_detail_${placeId}`;
+
+  const cached = globalCache.get(cacheKey);
+  if (cached) return cached;
+
+  if (isMock || placeId.startsWith('mock_') || placeId.startsWith('trio_')) {
+    const mockFound = MOCK_RESTAURANTS.find(r => r.id === placeId) || MOCK_RESTAURANTS[0];
+    const detail = {
+      id: mockFound.id,
+      displayName: mockFound.displayName,
+      formattedAddress: mockFound.formattedAddress,
+      location: mockFound.location,
+      rating: mockFound.rating,
+      userRatingCount: mockFound.userRatingCount,
+      priceLevel: mockFound.priceLevel,
+      openNow: mockFound.currentOpeningHours?.openNow ?? true,
+      regularOpeningHours: mockFound.regularOpeningHours,
+      nationalPhoneNumber: mockFound.nationalPhoneNumber || '+880 1711-000000',
+      internationalPhoneNumber: mockFound.nationalPhoneNumber || '+880 1711-000000',
+      websiteUri: mockFound.websiteUri || 'https://example.com/restaurant',
+      primaryType: mockFound.primaryType,
+      cuisine: mockFound.cuisine,
+      photos: mockFound.photos || []
+    };
+    globalCache.set(cacheKey, detail, 1800);
+    return detail;
+  }
+
+  try {
+    const apiKey = process.env.GOOGLE_SERVER_KEY;
+    const url = `${PLACES_DETAILS_BASE_URL}/${placeId}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'X-Goog-FieldMask': 'id,displayName,formattedAddress,location,nationalPhoneNumber,internationalPhoneNumber,websiteUri,regularOpeningHours,currentOpeningHours.openNow,rating,priceLevel,photos'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Google Place Details failed with code ${response.status}`);
+    }
+
+    const data = await response.json();
+    const detail = {
+      id: data.id,
+      displayName: data.displayName?.text || 'Restaurant',
+      formattedAddress: data.formattedAddress || '',
+      location: data.location,
+      rating: data.rating || 4.0,
+      priceLevel: normalizePriceLevel(data.priceLevel),
+      openNow: data.currentOpeningHours?.openNow ?? true,
+      regularOpeningHours: data.regularOpeningHours || null,
+      nationalPhoneNumber: data.nationalPhoneNumber || null,
+      internationalPhoneNumber: data.internationalPhoneNumber || null,
+      websiteUri: data.websiteUri || null,
+      photos: data.photos || []
+    };
+
+    globalCache.set(cacheKey, detail, 1800); // 30 min cache
+    return detail;
+  } catch (err) {
+    console.error(`Error getting place details for ${placeId}:`, err);
+    // Fallback to minimal info
+    return {
+      id: placeId,
+      displayName: 'Gulshan Restaurant',
+      formattedAddress: 'Gulshan, Dhaka',
+      rating: 4.5,
+      priceLevel: 2,
+      openNow: true,
+      nationalPhoneNumber: null,
+      internationalPhoneNumber: null,
+      websiteUri: null,
+      photos: []
+    };
+  }
+}
