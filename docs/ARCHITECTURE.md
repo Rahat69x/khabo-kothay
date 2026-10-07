@@ -17,19 +17,26 @@ graph TD
     end
 
     subgraph BackendGateway["Node.js / Express Server (Port 3000)"]
+        Pino["Structured Logger (pino) + Request IDs"]
         Middleware["Helmet • CORS • Rate Limiter • App Token Auth"]
-        Routes["API Router (/api)"]
-        Cache["In-Memory TTL Cache Helper"]
+        Quota["Quota Manager (Device Limits & Kill-Switch)"]
+        RoutesV1["Versioned API (/api/v1) & Legacy (/api)"]
+        Probes["Liveness (/health) & Readiness (/ready)"]
+    end
+
+    subgraph CacheLayer["Dual-Layer Cache Backend"]
+        MemCache["In-Memory Cache (Coarse 300m Grid + SWR)"]
+        RedisCache["Optional Upstash Redis REST Sync"]
     end
 
     subgraph ServiceLayer["Services Layer"]
-        Places["places.js (Places API New)"]
-        RoutesSvc["routes.js (Routes API Matrix)"]
+        Places["places.js (Lazy Details & Text Search)"]
+        RoutesSvc["routes.js (2-min SWR Matrix Cache)"]
         Cost["cost.js (Dhaka Fares Model)"]
-        Recommend["recommend.js (Bayesian & Multi-factor Scoring)"]
+        Recommend["recommend.js (Multi-factor Scoring)"]
         Taste["taste.js (EMA & Decay Engine)"]
         Mood["mood.js (Mood Mapping & Hour Signal)"]
-        Discovery["discovery.js (Cuisine Similarity & Rut Breaker)"]
+        Discovery["discovery.js (Cuisine Similarity)"]
         Collab["collaborative.js (Cosine Similarity Matrix)"]
         Weather["weather.js (Open-Meteo Integration)"]
     end
@@ -40,11 +47,14 @@ graph TD
         OpenMeteo["Open-Meteo Weather API"]
     end
 
-    Web -->|HTTP / JSON| Middleware
-    Mobile -->|X-App-Token + JSON| Middleware
-    Middleware --> Routes
-    Routes --> Cache
-    Routes --> Recommend
+    Web -->|HTTP / JSON| Pino
+    Mobile -->|X-App-Token + JSON| Pino
+    Pino --> Middleware
+    Middleware --> Quota
+    Quota --> RoutesV1
+    RoutesV1 --> CacheLayer
+    RoutesV1 --> Recommend
+    RoutesV1 --> Probes
     Recommend --> Places
     Recommend --> RoutesSvc
     Recommend --> Cost

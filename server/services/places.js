@@ -1,6 +1,8 @@
-import { globalCache } from './cache.js';
+import { globalCache, getCoarseGrid } from './cache.js';
 import { getMockCandidates, MOCK_RESTAURANTS } from './mock.js';
 import cuisinesConfig from '../config/cuisines.json' with { type: 'json' };
+import quotaManager from './quota.js';
+import logger from './logger.js';
 
 const PLACES_SEARCH_NEARBY_URL = 'https://places.googleapis.com/v1/places:searchNearby';
 const PLACES_SEARCH_TEXT_URL = 'https://places.googleapis.com/v1/places:searchText';
@@ -36,24 +38,26 @@ export function getCuisineQuery(cuisine) {
 }
 
 /**
- * Search candidates near lat, lng
+ * Search candidates near lat, lng using ~300m coarse grid & Stale-While-Revalidate caching
  */
 export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeters = 3000, budget = null, useMock = false }) {
   const isMock = useMock || process.env.USE_MOCK_DATA === 'true' || !process.env.GOOGLE_SERVER_KEY;
-  const roundedLat = Number(lat).toFixed(3);
-  const roundedLng = Number(lng).toFixed(3);
-  const cacheKey = `places_${roundedLat}_${roundedLng}_${cuisine}_${radiusMeters}`;
+  const { gridLat, gridLng } = getCoarseGrid(lat, lng);
+  const cacheKey = `places_grid_${gridLat}_${gridLng}_${cuisine}_${radiusMeters}_${budget || 'all'}`;
 
-  const cached = globalCache.get(cacheKey);
-  if (cached) {
-    return cached;
+  // Kill switch / Monthly budget check
+  const budgetStatus = quotaManager.checkGlobalMonthlyBudget();
+  if (budgetStatus.isExceeded) {
+    logger.warn('Global monthly budget killswitch active; returning cached/mock places.');
+    const cachedItem = await globalCache.get(cacheKey);
+    if (cachedItem) return cachedItem;
+    return getMockCandidates(cuisine, budget);
   }
 
-  if (isMock) {
-    let mockResults = getMockCandidates(cuisine, budget);
-    globalCache.set(cacheKey, mockResults, 600); // 10 minutes TTL
-    return mockResults;
-  }
+  const fetcher = async () => {
+    if (isMock) {
+      return getMockCandidates(cuisine, budget);
+    }
 
   try {
     const apiKey = process.env.GOOGLE_SERVER_KEY;
@@ -121,14 +125,15 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
         };
       })
       .filter(Boolean)
-      .slice(0, 20);
+      return candidates;
+    } catch (err) {
+      logger.error({ err: err.message }, 'Error fetching Places API, falling back to mock candidates');
+      return getMockCandidates(cuisine, budget);
+    }
+  };
 
-    globalCache.set(cacheKey, candidates, 600); // 10 min TTL
-    return candidates;
-  } catch (err) {
-    console.error('Error fetching Places API:', err);
-    return getMockCandidates(cuisine, budget);
-  }
+  const cachedResult = await globalCache.getWithSWR(cacheKey, fetcher, 600);
+  return cachedResult.data || cachedResult;
 }
 
 /**

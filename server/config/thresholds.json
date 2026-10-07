@@ -17,5 +17,15 @@
     "label": "Heavy",
     "color": "red",
     "multiplier": 1.5
+  },
+  "costControl": {
+    "candidateCacheTtlSeconds": 600,
+    "trafficCacheTtlSeconds": 120,
+    "swrGraceWindowSeconds": 300,
+    "coarseGridMeters": 300,
+    "coarseGridDegreesLat": 0.0027,
+    "coarseGridDegreesLng": 0.0029,
+    "dailySearchLimitPerDevice": 50,
+    "monthlyGlobalRequestBudget": 10000
   }
 }

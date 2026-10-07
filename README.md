@@ -167,6 +167,26 @@ Outputs:
 - Traffic trade-off validation (fast light traffic beating close heavy traffic)
 - Taste profile learning, decay, clamping, and dismissal signals
 - Discovery similarity mapping and exploration capping
-- Mood-based filtering and budget-friendly constraints
-- Collaborative cosine similarity & fallback handling
 - Mobile formatters and English/Bangla i18n
+- P1 contract tests, coarse grid caching, SWR, and quota limit assertions
+
+---
+
+## 💰 Google Cloud Quotas, Budget Alerts & Platform Pricing
+
+> [!IMPORTANT]
+> When operating with live Google Cloud API keys, always configure strict billing safeguards in the Google Cloud Console to prevent accidental overdrafts.
+
+1. **Check Current Google Maps Platform Pricing**:
+   - Review the official [Google Maps Platform Pricing Guide](https://mapsplatform.google.com/pricing/).
+   - Places API (New) Text Search charges per SKU, and Routes API charges per element.
+   - Khabo Kothay? minimizes billing by:
+     - Caching candidate queries by coarse ~300m spatial grid for 10 minutes.
+     - Caching traffic route matrices for 2 minutes with Stale-While-Revalidate (SWR).
+     - Loading restaurant details (phone numbers, full opening hours) lazily only when a user taps a card.
+2. **Set Quotas and Budget Alerts**:
+   - In [Google Cloud Console Billing](https://console.cloud.google.com/billing), create a **Budget Alert** with email notifications at 50%, 80%, 90%, and 100% of your targeted monthly spend.
+   - In **APIs & Services** → **Quotas & System Limits**, place daily caps on *Places API (New)* and *Routes API* requests.
+3. **Internal Cost Control Kill-Switch**:
+   - Khabo Kothay? tracks endpoint consumption at `/api/v1/admin/usage`.
+   - When the monthly budget is reached (default 10,000 requests) or the kill-switch is triggered (`POST /api/v1/admin/killswitch`), the API automatically falls back to cached/mock recommendations with a friendly message rather than failing. See [docs/OPERATIONS.md](file:///docs/OPERATIONS.md) for full operational runbooks.

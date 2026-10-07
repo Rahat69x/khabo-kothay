@@ -1,0 +1,408 @@
+openapi: 3.0.3
+info:
+  title: Khabo Kothay? API
+  description: Traffic-aware dining recommendation and personal food assistant API for Dhaka.
+  version: 1.1.0
+  contact:
+    name: Khabo Kothay Engineering Team
+servers:
+  - url: /api/v1
+    description: Production v1 API endpoint
+  - url: /api
+    description: Legacy / backwards-compatible alias endpoint
+
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      description: Returns service liveness, name, version and git commit hash.
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /ready:
+    get:
+      summary: Readiness probe
+      description: Returns service readiness checking memory, cache, and budget thresholds.
+      responses:
+        '200':
+          description: Service is ready to serve traffic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyResponse'
+        '503':
+          description: Service degraded or budget exceeded
+
+  /config:
+    get:
+      summary: Client browser-safe configuration
+      description: Provides public map keys, mock data mode status, and preset Dhaka coordinates. Never reveals server secret keys.
+      responses:
+        '200':
+          description: Client config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigResponse'
+
+  /context/weather:
+    get:
+      summary: Weather context in Dhaka
+      parameters:
+        - name: lat
+          in: query
+          schema:
+            type: number
+            default: 23.7925
+        - name: lng
+          in: query
+          schema:
+            type: number
+            default: 90.4150
+      responses:
+        '200':
+          description: Weather condition details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherResponse'
+
+  /restaurants/search:
+    post:
+      summary: Coarse candidate search
+      description: Queries candidate places within a 300m coarse spatial grid, cached for 10 minutes.
+      parameters:
+        - $ref: '#/components/parameters/X-App-Token'
+        - $ref: '#/components/parameters/X-Device-Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateSearchRequest'
+      responses:
+        '200':
+          description: List of candidate restaurants
+        '429':
+          description: Device daily limit exceeded
+
+  /recommend:
+    post:
+      summary: Multi-factor traffic-aware restaurant recommendation
+      description: Evaluates candidate restaurants with real-time Dhaka road traffic, transit cost matrix, Bayesian rating adjustment, user taste affinity, and mood signals.
+      parameters:
+        - $ref: '#/components/parameters/X-App-Token'
+        - $ref: '#/components/parameters/X-Device-Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendRequest'
+      responses:
+        '200':
+          description: Ranked recommendations with plain-language reasons and top picks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendResponse'
+        '400':
+          description: Missing coordinates
+        '429':
+          description: Device daily limit reached
+
+  /routes/compare:
+    post:
+      summary: Multi-modal transit comparison
+      description: Compares walking, rickshaw, CNG auto-rickshaw, and car travel times with estimated fares in BDT.
+      parameters:
+        - $ref: '#/components/parameters/X-App-Token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteCompareRequest'
+      responses:
+        '200':
+          description: Modal breakdown with travel duration, distance, and fares
+
+  /places/{placeId}/details:
+    get:
+      summary: Lazy place details
+      description: Fetches phone numbers, full opening hours, and web links only when a restaurant card is opened.
+      parameters:
+        - name: placeId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/X-App-Token'
+      responses:
+        '200':
+          description: Detailed restaurant data
+
+  /places/photo:
+    get:
+      summary: Photo proxy stream
+      description: Securely serves restaurant photos without exposing Google API keys.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: maxWidth
+          in: query
+          schema:
+            type: integer
+            default: 600
+      responses:
+        '200':
+          description: Image binary or SVG fallback
+
+  /taste/default:
+    get:
+      summary: Default culinary taste profile
+      responses:
+        '200':
+          description: Seed profile weights for fresh installs
+
+  /taste/event:
+    post:
+      summary: Stateless taste profile update
+      description: Applies Exponential Moving Average (EMA) and time decay after user interaction.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TasteEventRequest'
+      responses:
+        '200':
+          description: Updated profile object
+
+  /admin/usage:
+    get:
+      summary: Internal usage and cost control counter
+      description: Provides endpoint hit counts, cache hit ratio, active devices, and monthly budget consumption.
+      responses:
+        '200':
+          description: Operational usage report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageReport'
+
+  /admin/killswitch:
+    post:
+      summary: Toggle cost control kill-switch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                active:
+                  type: boolean
+      responses:
+        '200':
+          description: Kill-switch state updated
+
+components:
+  parameters:
+    X-App-Token:
+      name: X-App-Token
+      in: header
+      required: false
+      schema:
+        type: string
+    X-Device-Id:
+      name: X-Device-Id
+      in: header
+      required: false
+      schema:
+        type: string
+
+  schemas:
+    HealthResponse:
+      type: object
+      required: [ok, status, app, version]
+      properties:
+        ok:
+          type: boolean
+        status:
+          type: string
+        app:
+          type: string
+        version:
+          type: string
+        commit:
+          type: string
+        timestamp:
+          type: string
+        uptime:
+          type: number
+
+    ReadyResponse:
+      type: object
+      required: [ok, status, checks]
+      properties:
+        ok:
+          type: boolean
+        status:
+          type: string
+        app:
+          type: string
+        version:
+          type: string
+        checks:
+          type: object
+        uptime:
+          type: number
+
+    ConfigResponse:
+      type: object
+      properties:
+        googleBrowserKey:
+          type: string
+        useMockData:
+          type: boolean
+        presetLocations:
+          type: object
+
+    WeatherResponse:
+      type: object
+      properties:
+        tempC:
+          type: number
+        condition:
+          type: string
+        isRaining:
+          type: boolean
+
+    CandidateSearchRequest:
+      type: object
+      required: [lat, lng]
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        cuisine:
+          type: string
+        radiusMeters:
+          type: number
+        budget:
+          type: integer
+
+    RecommendRequest:
+      type: object
+      required: [lat, lng]
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        cuisine:
+          type: string
+          default: All
+        priority:
+          type: string
+          enum: [Best Overall, Fastest, Closest, Cheapest, Best Rated, Best Value, Personalized]
+        budget:
+          type: integer
+          minimum: 1
+          maximum: 4
+        mood:
+          type: string
+        tasteProfile:
+          type: object
+        weatherContext:
+          type: object
+        surpriseMe:
+          type: boolean
+
+    RecommendResponse:
+      type: object
+      required: [results, topPicks]
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+        topPicks:
+          type: object
+          properties:
+            bestMatch:
+              type: object
+            fastestOrNearest:
+              type: object
+            trySomethingNew:
+              type: object
+            summary:
+              type: string
+        meta:
+          type: object
+          properties:
+            totalFound:
+              type: integer
+            isBudgetFallback:
+              type: boolean
+            budgetMessage:
+              type: string
+
+    RouteCompareRequest:
+      type: object
+      required: [origin, destination]
+      properties:
+        origin:
+          type: object
+          properties:
+            lat:
+              type: number
+            lng:
+              type: number
+        destination:
+          type: object
+          properties:
+            lat:
+              type: number
+            lng:
+              type: number
+
+    TasteEventRequest:
+      type: object
+      required: [currentProfile, event]
+      properties:
+        currentProfile:
+          type: object
+        event:
+          type: object
+          properties:
+            type:
+              type: string
+            cuisine:
+              type: string
+            rating:
+              type: number
+
+    UsageReport:
+      type: object
+      properties:
+        totalRequests:
+          type: integer
+        currentMonth:
+          type: object
+        today:
+          type: object
+        endpoints:
+          type: object
+        cache:
+          type: object

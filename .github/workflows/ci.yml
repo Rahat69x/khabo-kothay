@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-and-engine:
+    name: Backend Tests & Quality Gates (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run automated test suites
+        run: npm test
+
+      - name: Run credential leak & security audit
+        run: node scripts/security-check.js
+
+      - name: Verify i18n translation key parity
+        run: node scripts/verify-i18n-keys.js
+
+  mobile-app:
+    name: Mobile App Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install root & mobile dependencies
+        run: |
+          npm ci
+          cd mobile && npm ci
+
+      - name: Run mobile unit tests
+        run: npm test

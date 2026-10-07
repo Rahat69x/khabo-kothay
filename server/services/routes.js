@@ -1,4 +1,4 @@
-import { globalCache } from './cache.js';
+import { globalCache, getCoarseGrid } from './cache.js';
 import thresholdsConfig from '../config/thresholds.json' with { type: 'json' };
 import { estimateCost } from './cost.js';
 
@@ -24,22 +24,19 @@ export function determineTrafficLevel(durationSeconds, staticDurationSeconds) {
 
 /**
  * Compute route matrix from origin (lat, lng) to multiple candidate destinations
+ * Uses ~300m coarse origin grid and 2-minute SWR caching
  */
 export async function computeTravelTimes(origin, destinations, useMock = false) {
   const isMock = useMock || process.env.USE_MOCK_DATA === 'true' || !process.env.GOOGLE_SERVER_KEY;
   if (!destinations || destinations.length === 0) return [];
 
-  // Key cache by origin rounded + count of destinations + first/last id
-  const originKey = `${Number(origin.lat).toFixed(3)}_${Number(origin.lng).toFixed(3)}`;
+  // Key cache by coarse origin grid + destination IDs
+  const { gridKey: originKey } = getCoarseGrid(origin.lat, origin.lng);
   const destKey = destinations.map(d => d.id).join('_');
   const cacheKey = `matrix_${originKey}_${destKey}`;
 
-  const cached = globalCache.get(cacheKey);
-  if (cached) {
-    return cached;
-  }
-
-  if (isMock) {
+  const fetcher = async () => {
+    if (isMock) {
     const results = destinations.map((dest) => {
       // If mock restaurant already specifies mock metrics, use them
       if (dest.mockDistanceMeters && dest.mockDurationSeconds) {
@@ -162,12 +159,15 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
       };
     });
 
-    globalCache.set(cacheKey, results, 120); // 2 minutes TTL
     return results;
   } catch (err) {
     console.error('Error in computeTravelTimes:', err);
     return computeTravelTimes(origin, destinations, true);
   }
+};
+
+  const cachedResult = await globalCache.getWithSWR(cacheKey, fetcher, 120);
+  return cachedResult.data || cachedResult;
 }
 
 /**

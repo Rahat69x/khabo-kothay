@@ -13,6 +13,13 @@ module.exports = {
       backgroundColor: "#1C140E"
     },
     assetBundlePatterns: ["**/*"],
+    runtimeVersion: {
+      policy: "appVersion"
+    },
+    updates: {
+      url: "https://u.expo.dev/00000000-0000-0000-0000-000000000000",
+      fallbackToCacheTimeout: 0
+    },
     locales: {
       bn: "./src/i18n/app-name-bn.json"
     },

@@ -1,9 +1,9 @@
 # Automated Test & Quality Report
 
 ## Summary
-- **Total Test Files**: 13
-- **Total Tests**: 54
-- **Passed**: 54
+- **Total Test Files**: 14
+- **Total Tests**: 63
+- **Passed**: 63
 - **Failed**: 0
 - **Skipped**: 0 (in local test environment; real Google live keys skipped if absent and seamlessly fall back to mock engine)
 - **Status**: 🟢 **ALL GREEN (100% Pass Rate)**
@@ -14,6 +14,7 @@
 
 | Test Suite | Tests Passed | Coverage Highlights | Focus Area |
 |---|---|---|---|
+| `server/tests/contract.test.js` | 9 / 9 | **100% P1 Suite** | API v1 versioning, /ready & /health probes, Request IDs, per-device daily search limits (429), monthly budget kill-switch, lazy place details, admin usage endpoint |
 | `server/tests/recommend.test.js` | 11 / 11 | **90.3% Lines** | Bayesian rating, Trio A/B/C ranking, traffic speed vs distance trade-offs, closing soon logic, rain impact, missing data resilience |
 | `server/tests/warmup.test.js` | 3 / 3 | **100% Logic** | Server cold-start ping, exponential backoff retry up to 60s, transient HTTP 503/network sleep recovery |
 | `server/tests/cost.test.js` / internal | Included | **94.9% Lines** | Dhaka transport fare estimation (Walk, Rickshaw, CNG, Car), traffic multipliers, feasibility limits |

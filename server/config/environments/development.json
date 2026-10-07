@@ -1,0 +1,13 @@
+{
+  "env": "development",
+  "logLevel": "debug",
+  "useMockData": true,
+  "rateLimit": {
+    "windowMs": 900000,
+    "max": 500
+  },
+  "costControl": {
+    "dailySearchLimitPerDevice": 200,
+    "monthlyGlobalRequestBudget": 50000
+  }
+}

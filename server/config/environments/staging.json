@@ -1,0 +1,13 @@
+{
+  "env": "staging",
+  "logLevel": "info",
+  "useMockData": false,
+  "rateLimit": {
+    "windowMs": 900000,
+    "max": 200
+  },
+  "costControl": {
+    "dailySearchLimitPerDevice": 100,
+    "monthlyGlobalRequestBudget": 20000
+  }
+}

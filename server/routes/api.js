@@ -6,20 +6,79 @@ import { getDefaultTasteProfile, recordEvent, decayProfile } from '../services/t
 import { getWeatherContext } from '../services/weather.js';
 import { applyMoodCriteria, getMoodConfig } from '../services/mood.js';
 import { PRESET_LOCATIONS } from '../services/mock.js';
+import quotaManager from '../services/quota.js';
+import globalCache from '../services/cache.js';
+import logger from '../services/logger.js';
 
 const router = express.Router();
 
+// Middleware to record endpoint hits and response time metrics
+router.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const durationMs = Date.now() - start;
+    quotaManager.recordEndpointHit(req.baseUrl + req.path, res.statusCode, durationMs);
+  });
+  next();
+});
+
 /**
- * GET /api/health
+ * GET /api/health (or /api/v1/health) - Liveness Probe
  */
 router.get('/health', (req, res) => {
   res.json({
     ok: true,
+    status: 'ok',
     app: 'Khabo Kothay?',
     version: '1.1.0',
     commit: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || '6e196bf',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
+  });
+});
+
+/**
+ * GET /api/ready (or /api/v1/ready) - Readiness Probe
+ */
+router.get('/ready', (req, res) => {
+  const memory = process.memoryUsage();
+  const isHealthy = memory.heapUsed < 1.5 * 1024 * 1024 * 1024;
+  const budget = quotaManager.checkGlobalMonthlyBudget();
+  const ready = isHealthy && !budget.killSwitchActive;
+
+  res.status(ready ? 200 : 503).json({
+    status: ready ? 'ready' : 'degraded',
+    ok: ready,
+    app: 'Khabo Kothay?',
+    version: '1.1.0',
+    checks: {
+      cache: 'ok',
+      engine: 'ok',
+      budget: budget.isExceeded ? 'budget_exceeded' : 'ok'
+    },
+    uptime: process.uptime()
+  });
+});
+
+/**
+ * GET /api/admin/usage - Internal Endpoint Usage Counter
+ */
+router.get('/admin/usage', (req, res) => {
+  res.json(quotaManager.getUsageReport());
+});
+
+/**
+ * POST /api/admin/killswitch - Kill-switch toggle
+ */
+router.post('/admin/killswitch', (req, res) => {
+  const { active } = req.body || {};
+  const currentState = quotaManager.setKillSwitch(active);
+  res.json({
+    success: true,
+    killSwitchActive: currentState,
+    message: currentState
+      ? 'Kill-switch activated. Global requests gated to cached/mock fallback.'
+      : 'Kill-switch deactivated.'
   });
 });
 
@@ -56,6 +115,16 @@ router.get('/context/weather', async (req, res, next) => {
  */
 router.post('/restaurants/search', async (req, res, next) => {
   try {
+    const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+    const limitCheck = quotaManager.checkAndRecordDeviceSearch(deviceId);
+    if (!limitCheck.allowed) {
+      return res.status(429).json({
+        error: limitCheck.message,
+        limit: limitCheck.limit,
+        resetAt: limitCheck.resetAt
+      });
+    }
+
     const { lat, lng, cuisine = 'All', radiusMeters = 3000, budget } = req.body;
     if (lat === undefined || lng === undefined) {
       return res.status(400).json({ error: 'lat and lng are required coordinates' });
@@ -82,6 +151,18 @@ router.post('/restaurants/search', async (req, res, next) => {
  */
 router.post('/recommend', async (req, res, next) => {
   try {
+    const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+    const limitCheck = quotaManager.checkAndRecordDeviceSearch(deviceId);
+    if (!limitCheck.allowed) {
+      return res.status(429).json({
+        error: limitCheck.message,
+        limit: limitCheck.limit,
+        resetAt: limitCheck.resetAt
+      });
+    }
+
+    const budgetStatus = quotaManager.checkGlobalMonthlyBudget();
+
     const {
       lat,
       lng,
@@ -209,7 +290,9 @@ router.post('/recommend', async (req, res, next) => {
         totalFound: rankedResults.length,
         weather: activeWeather,
         priorityUsed: priority,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        isBudgetFallback: budgetStatus.isExceeded,
+        budgetMessage: budgetStatus.friendlyMessage
       }
     });
   } catch (err) {
