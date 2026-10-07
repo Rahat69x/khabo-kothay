@@ -128,4 +128,32 @@ describe('P1 Operations, Contract & Cost Control Integration', () => {
       expect(res.body.regularOpeningHours).toBeDefined();
     });
   });
+
+  describe('P2 Smart Decisions & Bandit OpenAPI Contracts', () => {
+    it('GET /api/v1/bandit/weights returns compliant schema', async () => {
+      const res = await request(app).get('/api/v1/bandit/weights').set('X-Device-Id', 'device_contract_test');
+      expect(res.status).toBe(200);
+      expect(res.body.enabled).toBe(true);
+      expect(res.body.weights).toBeDefined();
+      expect(typeof res.body.weights.time).toBe('number');
+    });
+
+    it('POST /api/v1/recommend returns allergen disclaimer and departure predictions', async () => {
+      const res = await request(app)
+        .post('/api/v1/recommend')
+        .send({
+          lat: 23.7925,
+          lng: 90.4150,
+          priority: 'Best Overall',
+          timeBudgetMinutes: 45
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.meta.allergenDisclaimer).toContain('Never rely on this for allergen safety.');
+      expect(res.body.topPicks).toBeDefined();
+      if (res.body.topPicks?.bestMatch?.departurePredictions) {
+        expect(res.body.topPicks.bestMatch.departurePredictions.isPrediction).toBe(true);
+      }
+    });
+  });
 });

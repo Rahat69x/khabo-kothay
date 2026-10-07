@@ -1,0 +1,83 @@
+{
+  "weekendDays": [5, 6],
+  "timeOfDay": {
+    "breakfast": {
+      "startHour": 6,
+      "endHour": 11,
+      "label": "Breakfast",
+      "recommendedCuisines": ["Bangladeshi", "Bakery", "Cafe"],
+      "recommendedMoods": ["Something light", "Coffee"]
+    },
+    "lunch": {
+      "startHour": 12,
+      "endHour": 15,
+      "label": "Lunch",
+      "recommendedCuisines": ["Bangladeshi", "Biriyani", "Indian", "Chinese", "Japanese"],
+      "recommendedMoods": ["Comfort food", "Budget friendly"]
+    },
+    "adda": {
+      "startHour": 16,
+      "endHour": 18,
+      "label": "Afternoon Adda / Tea",
+      "recommendedCuisines": ["Cafe", "Coffee", "Dessert", "Fast Food"],
+      "recommendedMoods": ["Coffee", "Something light", "Sweet"]
+    },
+    "dinner": {
+      "startHour": 19,
+      "endHour": 22,
+      "label": "Dinner",
+      "recommendedCuisines": ["Kabab", "Biriyani", "Indian", "Japanese", "Chinese", "Burger"],
+      "recommendedMoods": ["Comfort food", "Something spicy", "Fine dining"]
+    },
+    "lateNight": {
+      "startHour": 23,
+      "endHour": 4,
+      "label": "Late Night Craving",
+      "recommendedCuisines": ["Kabab", "Fast Food", "Burger"],
+      "recommendedMoods": ["Fast food", "Something spicy"]
+    }
+  },
+  "diningDurationsMinutes": {
+    "Coffee": 15,
+    "Dessert": 15,
+    "Bakery": 15,
+    "Fast Food": 20,
+    "Burger": 20,
+    "Cafe": 25,
+    "Kabab": 30,
+    "Biriyani": 30,
+    "Bangladeshi": 35,
+    "Indian": 40,
+    "Chinese": 40,
+    "Japanese": 45,
+    "Korean": 45,
+    "Fine dining": 60,
+    "Default": 30
+  },
+  "companionProfiles": {
+    "alone": {
+      "label": "Eating Alone",
+      "preferredCuisines": ["Fast Food", "Cafe", "Coffee", "Burger"],
+      "timeSensitivity": 1.2,
+      "weightAdjustments": { "time": 1.3, "distance": 1.2 }
+    },
+    "friends": {
+      "label": "With Friends (Adda)",
+      "preferredCuisines": ["Kabab", "Burger", "Biriyani", "Cafe", "Fast Food"],
+      "timeSensitivity": 0.9,
+      "weightAdjustments": { "cost": 1.3, "rating": 1.1 }
+    },
+    "family": {
+      "label": "With Family",
+      "preferredCuisines": ["Bangladeshi", "Biriyani", "Chinese", "Indian"],
+      "timeSensitivity": 0.8,
+      "weightAdjustments": { "rating": 1.4, "cost": 0.9 }
+    },
+    "date": {
+      "label": "Date Night",
+      "preferredCuisines": ["Cafe", "Japanese", "Korean", "Fine dining"],
+      "timeSensitivity": 0.7,
+      "weightAdjustments": { "rating": 2.0, "time": 0.5, "price": 0.5, "cost": 0.5 }
+    }
+  }
+}

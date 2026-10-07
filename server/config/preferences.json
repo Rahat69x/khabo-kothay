@@ -1,0 +1,29 @@
+{
+  "supportedPreferences": [
+    "halal",
+    "vegetarian",
+    "no_beef"
+  ],
+  "supportedSpiceLevels": [
+    "Mild",
+    "Medium",
+    "Spicy",
+    "Extra Spicy"
+  ],
+  "verificationStatus": "unverified",
+  "disclaimer": "Dietary and spice preferences are unverified and estimated. Never rely on this for allergen safety.",
+  "cuisineDefaults": {
+    "Bangladeshi": { "halal": true, "vegetarian": false, "no_beef": false, "spiceLevel": "Spicy" },
+    "Biriyani": { "halal": true, "vegetarian": false, "no_beef": false, "spiceLevel": "Spicy" },
+    "Kabab": { "halal": true, "vegetarian": false, "no_beef": false, "spiceLevel": "Spicy" },
+    "Indian": { "halal": true, "vegetarian": true, "no_beef": true, "spiceLevel": "Spicy" },
+    "Japanese": { "halal": false, "vegetarian": true, "no_beef": false, "spiceLevel": "Mild" },
+    "Korean": { "halal": false, "vegetarian": false, "no_beef": false, "spiceLevel": "Spicy" },
+    "Chinese": { "halal": true, "vegetarian": true, "no_beef": false, "spiceLevel": "Medium" },
+    "Cafe": { "halal": true, "vegetarian": true, "no_beef": true, "spiceLevel": "Mild" },
+    "Coffee": { "halal": true, "vegetarian": true, "no_beef": true, "spiceLevel": "Mild" },
+    "Dessert": { "halal": true, "vegetarian": true, "no_beef": true, "spiceLevel": "Mild" },
+    "Fast Food": { "halal": true, "vegetarian": false, "no_beef": false, "spiceLevel": "Medium" },
+    "Burger": { "halal": true, "vegetarian": false, "no_beef": false, "spiceLevel": "Medium" }
+  }
+}

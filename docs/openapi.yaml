@@ -215,6 +215,67 @@ paths:
         '200':
           description: Kill-switch state updated
 
+  /bandit/weights:
+    get:
+      summary: Get user/device bandit learned weights
+      description: Returns normalized personal weights, min/max bounds, update count, and plain-language explanation note.
+      parameters:
+        - $ref: '#/components/parameters/X-Device-Id'
+      responses:
+        '200':
+          description: Bandit profile
+
+  /bandit/update:
+    post:
+      summary: Update bandit personal weights
+      description: Updates factor weights based on chosen restaurant within candidate pool.
+      parameters:
+        - $ref: '#/components/parameters/X-Device-Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [chosenRestaurant]
+              properties:
+                chosenRestaurant:
+                  type: object
+                candidatePool:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: Updated bandit weights
+
+  /bandit/reset:
+    post:
+      summary: Reset personal weights to default
+      parameters:
+        - $ref: '#/components/parameters/X-Device-Id'
+      responses:
+        '200':
+          description: Bandit weights reset to default baseline
+
+  /bandit/toggle:
+    post:
+      summary: Enable or disable bandit personalization
+      parameters:
+        - $ref: '#/components/parameters/X-Device-Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+      responses:
+        '200':
+          description: Updated toggle state
+
 components:
   parameters:
     X-App-Token:
@@ -328,6 +389,23 @@ components:
           type: object
         surpriseMe:
           type: boolean
+        timeBudgetMinutes:
+          type: integer
+          description: Total available minutes for round-trip travel plus dining
+        companion:
+          type: string
+          enum: [alone, friends, family, date]
+        preferences:
+          type: object
+          properties:
+            halal:
+              type: boolean
+            vegetarian:
+              type: boolean
+            no_beef:
+              type: boolean
+            spiceLevel:
+              type: string
 
     RecommendResponse:
       type: object
@@ -348,6 +426,10 @@ components:
               type: object
             summary:
               type: string
+            counterfactual:
+              type: string
+            banditNote:
+              type: string
         meta:
           type: object
           properties:
@@ -357,6 +439,10 @@ components:
               type: boolean
             budgetMessage:
               type: string
+            allergenDisclaimer:
+              type: string
+            banditActive:
+              type: boolean
 
     RouteCompareRequest:
       type: object

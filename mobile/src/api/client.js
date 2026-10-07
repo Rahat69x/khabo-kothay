@@ -55,7 +55,10 @@ class MobileApiClient {
     mood = null,
     tasteProfile = null,
     weatherContext = null,
-    surpriseMe = false
+    surpriseMe = false,
+    timeBudgetMinutes = null,
+    companion = null,
+    preferences = null
   }) {
     return this.request('/api/recommend', {
       method: 'POST',
@@ -68,8 +71,26 @@ class MobileApiClient {
         mood,
         tasteProfile,
         weatherContext,
-        surpriseMe
+        surpriseMe,
+        timeBudgetMinutes,
+        companion,
+        preferences
       })
+    });
+  }
+
+  async getBanditWeights() {
+    return this.request('/api/bandit/weights');
+  }
+
+  async resetBanditWeights() {
+    return this.request('/api/bandit/reset', { method: 'POST' });
+  }
+
+  async toggleBandit(enabled) {
+    return this.request('/api/bandit/toggle', {
+      method: 'POST',
+      body: JSON.stringify({ enabled })
     });
   }
 
@@ -84,10 +105,10 @@ class MobileApiClient {
     return this.request(`/api/places/${placeId}/details`);
   }
 
-  async postTasteEvent(currentProfile, event) {
+  async postTasteEvent(currentProfile, event, candidatePool = null) {
     return this.request('/api/taste/event', {
       method: 'POST',
-      body: JSON.stringify({ currentProfile, event })
+      body: JSON.stringify({ currentProfile, event, candidatePool })
     });
   }
 

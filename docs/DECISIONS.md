@@ -34,3 +34,36 @@
 ### 8. EAS Update Channel Segmentation
 - **Decision**: Map EAS build profiles to dedicated channels: `development`, `preview`, and `production`.
 - **Rationale**: Enables over-the-air hotfixes for JavaScript bundle updates without requiring users to download and reinstall new standalone `.apk` files.
+
+## Phase P2 Decisions: Smarter Decisions (Recommendation Intelligence)
+
+### 9. Departure Time Predictions & Diurnal Traffic Curve Fallback
+- **Decision**: Request future predicted traffic with Routes API `departureTime` at +0, +15, +30, and +60 minutes for the top 3 picks. If Google API is unreachable, quota-throttled, or in mock mode, gracefully fall back to a modeled Dhaka diurnal traffic congestion curve based on rush hours (08:30-10:30 and 16:30-20:30).
+- **Labeling Rule**: Every prediction item and suggestion MUST be explicitly labeled `predicted` (`isPrediction: true`) to comply with truth-in-data principles.
+
+### 10. Time-Budget Mode ("I have 45 minutes")
+- **Decision**: Model total time needed as `2 * oneWayTravelTimeMinutes` (round-trip travel) plus a configurable `diningDurationMinutes` mapped by cuisine in `server/config/context.json` (e.g., Coffee: 15m, Fast food: 20m, Bangladeshi/Biriyani: 30-35m, Fine dining: 60m).
+- **Enforcement**: Drops candidates whose total round-trip + dining time exceeds user's budget. Furthermore, drops candidates that close before estimated arrival + dining duration.
+
+### 11. Bounded Multi-Armed Bandit with Simplex Projection
+- **Decision**: Use an epsilon-greedy bandit algorithm to personalize factor weights (`time`, `cost`, `rating`, `distance`, `price`, `traffic`, `taste`) based on implicit choice signals (opens, directions, ratings).
+- **Guardrails**:
+  - Strict lower bound: `0.05` (5%).
+  - Strict upper bound: `0.50` (50%).
+  - Weights are projected onto the probability simplex so that $\sum w_i = 1.0$.
+  - Slow learning rate: $\eta = 0.05$.
+  - Provide an on/off toggle and a reset button that restores default baseline weights.
+  - Explain personalization in plain language (e.g. "You often pick faster places, so speed counts a bit more for you now.").
+
+### 12. Strict Unverified Dietary Preferences & Allergen Disclaimer
+- **Decision**: Filter candidates by Halal, Vegetarian, No Beef, and Spice Level using cuisine baseline characteristics in `server/config/preferences.json`.
+- **Safety Directive**: Google Places data for dietary attributes is unreliable. All returned preference matches are labeled `unverified`.
+- **Allergen Notice**: The app MUST NEVER claim allergen safety anywhere. Responses and UI include: *"Dietary and spice preferences are unverified and estimated. Never rely on this for allergen safety."*
+
+### 13. Counterfactual Trade-off Explanations
+- **Decision**: Compute what candidate would have won under an alternative priority (Cheapest or Fastest) and compare against the active top pick.
+- **Format**: Show concise counterfactual trade-offs: *"If you chose Cheapest: B saves ৳40 but adds 12 min."*
+
+### 14. Anonymized Evaluation Harness & Replay Framework
+- **Decision**: Implement an opt-in evaluation logger that stores impressions, opens, and directions in `server/data/eval-sessions.jsonl` without PII. Provide `scripts/eval.js` to compute top-1 and top-3 hit rates and Mean Reciprocal Rank (MRR) across weight configurations, with an A/B testing flag.
+

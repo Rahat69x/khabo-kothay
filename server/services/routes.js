@@ -347,7 +347,7 @@ export async function compareRoutes({ origin, destination, useMock = false }) {
 /**
  * Parses Google duration string (e.g. "950s") into integer seconds
  */
-function parseGoogleDuration(val) {
+export function parseGoogleDuration(val) {
   if (!val) return null;
   if (typeof val === 'number') return Math.round(val);
   const match = String(val).match(/([0-9.]+)s/);

@@ -1,37 +1,52 @@
 # Khabo Kothay? Project Progress Tracker
 
 ## Status Overview
-- **Current Phase Completed**: **P1 - Reliability, Cost Control and Operations (MUST)** ✅
-- **Test Pass Rate**: 🟢 **63 / 63 Tests Passing (100%) across 14 test suites**
-- **Engine Code Coverage**: **> 90%**
-- **Next Phase**: **P2 - Smarter Decisions (MUST)**
+- **Current Phase Completed**: **P2 - Smarter Decisions (MUST)** ✅
+- **Test Pass Rate**: 🟢 **81 / 81 Tests Passing (100%) across 15 test suites**
+- **Engine Code Coverage**: **> 92%**
+- **Next Phase**: **P3 - Ask in your own words, by text or voice (SHOULD)**
 
 ---
 
-## What Was Completed in Phase P1
+## What Was Completed in Phase P2
 
-### 1. Cost Control & Caching
-- **Coarse Grid Caching**: Implemented `getCoarseGrid(lat, lng)` snapping coordinates to a ~300m spatial grid (`0.0027°` lat, `0.0029°` lng) with 10-minute TTL (`600s`).
-- **Traffic Caching**: Routes matrix computation cached for 2 minutes (`120s`).
-- **Stale-While-Revalidate (SWR)**: Implemented SWR with 5-minute grace window returning immediate hits (<50ms) and asynchronously revalidating in the background.
-- **Lazy Place Details**: Only lightweight place metadata is fetched during search; detailed phone numbers and opening hours are lazily loaded on `/api/v1/places/:id/details`.
-- **Per-Device Daily Search Limit**: Enforced 50 searches/day per device (`X-Device-Id` / IP), returning HTTP 429 with reset time when exceeded.
-- **Global Monthly Request Budget & Kill-Switch**: Capped at 10,000 requests/month; automatically or manually flips to graceful cached/mock fallback with transparent messaging instead of throwing 500 errors.
-- **Internal Usage Counter**: Real-time counter by endpoint, device, cache hit ratio, and budget consumption at `/api/v1/admin/usage`.
+### 1. Departure Time Predictions ("Leave now or later")
+- **Prediction Matrix**: Computes future predicted traffic at `+0`, `+15`, `+30`, and `+60` minutes for top 3 candidates via Google Routes API `departureTime` with graceful fallback to a Dhaka diurnal congestion curve.
+- **Actionable Suggestions**: Generates suggestions when departing later saves significant time (e.g., *"Leave in 30 min to save 11 min (predicted)"*).
+- **Truth-in-Data**: Every prediction item and suggestion is explicitly tagged with `isPrediction: true` and `label: "predicted"`.
 
-### 2. Cache Backend
-- **Dual-Layer Architecture**: High-speed synchronous in-memory store backed by optional Upstash Redis REST API synchronization via environment variables (`UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`).
+### 2. Time-Budget Mode ("I have 45 minutes")
+- **Round-Trip + Dining Time**: Automatically computes round-trip travel (`2 * oneWayDuration`) plus configurable cuisine-specific dining duration from `server/config/context.json` (e.g. Coffee: 15m, Fast Food: 20m, Bangladeshi/Biriyani: 30-35m, Fine dining: 60m).
+- **Strict Budget Dropping**: Drops any restaurant whose round-trip travel plus dining duration exceeds the user's available time.
+- **Closing-Soon Protection**: Drops places that close before arrival time plus dining duration.
 
-### 3. Operations & Observability
-- **Structured Logging (pino)**: Configured pino and pino-http with request IDs (`X-Request-Id`) and strict PII redaction (auth tokens, cookies, phone numbers, and coarse-grained coordinates).
-- **Liveness & Readiness Probes**: Built `/health` and `/ready` endpoints across root, `/api`, and `/api/v1`.
-- **Graceful Shutdown**: Added `SIGTERM` and `SIGINT` handlers with connection draining and 10-second timeout guard.
-- **Optional Sentry Monitoring**: Integrated error reporting gated behind `featureFlags.enableSentry` and `SENTRY_DSN`.
-- **API Versioning & OpenAPI**: Canonical `/api/v1` routes with backwards-compatible `/api` aliases, full OpenAPI 3.0 specification in [docs/openapi.yaml](file:///docs/openapi.yaml), and contract test suite in [server/tests/contract.test.js](file:///server/tests/contract.test.js).
-- **GitHub Actions CI**: Created [.github/workflows/ci.yml](file:///.github/workflows/ci.yml) with matrix testing across Node.js 18, 20, 22.
-- **Environment Configurations**: Created distinct configurations for development, staging, and production in [server/config/environments/](file:///server/config/environments/).
-- **EAS Update Channels**: Configured channels (`development`, `preview`, `production`) and runtime versioning in [mobile/eas.json](file:///mobile/eas.json) and [mobile/app.config.js](file:///mobile/app.config.js).
-- **Runbooks & Guides**: Documented GCP quota management, key rotation, and recovery in [docs/OPERATIONS.md](file:///docs/OPERATIONS.md).
+### 3. Personal Weights Multi-Armed Bandit
+- **Stochastic Weight Learning**: Learned factor weights (`time`, `cost`, `rating`, `distance`, `price`, `traffic`, `taste`) updated using an epsilon-greedy bandit from explicit user selections.
+- **Strict Guardrails**:
+  - Box constraints: every factor weight stays strictly between `0.05` (5%) and `0.50` (50%).
+  - Projected onto the probability simplex so that $\sum w_i = 1.0$.
+  - Slow, stable learning rate ($\eta = 0.05$).
+  - Full reset endpoint restoring default baseline weights.
+  - On/off switch allowing users to pause personalization anytime.
+  - Plain-language explanation note (e.g., *"You often pick faster places, so speed counts a bit more for you now."*).
+
+### 4. Context Signals & Multi-Companion Mapping
+- **Time of Day Slots**: Mapped through `server/config/context.json` for breakfast, lunch, afternoon adda, dinner, and late-night cravings (+5 points boost for matching cuisines).
+- **Dhaka Weekend**: Recognizes Friday and Saturday (UTC+6) with leisure dining bonuses.
+- **Companion Modes**: Mapped through config for `alone`, `friends`, `family`, and `date` with specific weight adjustments and cuisine affinities.
+
+### 5. Preference Filters & Strict Allergen Safety
+- **Dietary & Spice Filters**: Supported filters for Halal, Vegetarian, No Beef, and Spice Levels.
+- **Unverified Label**: Because Google Places dietary tags are unreliable, all results are explicitly marked `unverified`.
+- **Mandatory Disclaimer**: Never claims allergen safety anywhere. Responses include: *"Dietary and spice preferences are unverified and estimated. Never rely on this for allergen safety."*
+
+### 6. Counterfactual Explanations
+- **Comparative Analysis**: Compares the top recommendation with the candidate that would win under an alternative priority (Cheapest or Fastest).
+- **Transparent Trade-offs**: Emits plain-language notes (e.g., *"If you chose Cheapest: B saves ৳40 but adds 12 min."*).
+
+### 7. Evaluation Harness & Replay Framework
+- **Anonymized Session Logger**: `server/services/eval-logger.js` records impressions, opens, and directions to `server/data/eval-sessions.jsonl` without PII.
+- **CLI Replay Harness**: `scripts/eval.js` replays recorded sessions and reports top-1 and top-3 hit rates and Mean Reciprocal Rank (MRR) across baseline, bandit, and A/B test configurations.
 
 ---
 
@@ -39,23 +54,20 @@
 
 | Endpoint | Method | Change / Additions |
 |---|---|---|
-| `/health`, `/ready` | `GET` | Mounted at root level for cloud orchestrators and probes |
-| `/api/v1/health` | `GET` | Returns `{ ok, status: "ok", app, version, commit, uptime }` and `X-Request-Id` |
-| `/api/v1/ready` | `GET` | Returns `{ status: "ready", checks: { cache, engine, budget } }` |
-| `/api/v1/admin/usage` | `GET` | Returns endpoint hit breakdown, active devices, cache hit ratio, budget status |
-| `/api/v1/admin/killswitch` | `POST` | Manually activate/deactivate GCP cost control kill-switch |
-| `/api/v1/recommend` | `POST` | Added `X-Device-Id` rate check (429) & `meta.isBudgetFallback` / `meta.budgetMessage` |
-| `/api/v1/restaurants/search` | `POST` | Added `X-Device-Id` rate check (429) |
-| `/api/v1/*` | All | Canonical versioned endpoints mounted; legacy `/api/*` preserved as backwards-compatible alias |
-| All responses | All | Include `X-Request-Id` header for end-to-end request tracing |
+| `/api/v1/recommend` | `POST` | Added `timeBudgetMinutes`, `companion`, `preferences` request parameters. Returns `departurePredictions` (+0, +15, +30, +60 min), `counterfactual` explanations, `banditNote`, and `allergenDisclaimer`. |
+| `/api/v1/bandit/weights` | `GET` | Returns learned factor weights, bounds `[0.05, 0.50]`, and plain-language explanation note. |
+| `/api/v1/bandit/update` | `POST` | Updates bandit weights based on chosen candidate in candidate pool. |
+| `/api/v1/bandit/reset` | `POST` | Resets personal weights back to default baseline weights. |
+| `/api/v1/bandit/toggle` | `POST` | Enables or disables bandit personalization. |
+| `/api/v1/taste/event` | `POST` | Automatically feeds interactions to bandit learner and anonymized evaluation logger. |
 
 ---
 
 ## Upcoming Phases Roadmap
 
-- [x] **P1 - Reliability, cost control and operations (MUST)** — Completed
-- [ ] **P2 - Smarter decisions (MUST)** — Leave now/later departure predictions, time-budget mode ("I have 45 min"), multi-armed bandit personal weights, context signals, dietary/spice preference filters, counterfactual explanations, eval harness.
-- [ ] **P3 - Ask in your own words, text or voice (SHOULD)** — "Ask Khabo Kothay" natural language box via Anthropic API with rule-based fallback, voice input with bn-BD and en-US support.
+- [x] **P1 - Reliability, cost control and operations (MUST)** — Completed ✅
+- [x] **P2 - Smarter decisions (MUST)** — Completed ✅
+- [ ] **P3 - Ask in your own words, by text or voice (SHOULD)** — "Ask Khabo Kothay" natural language box via Anthropic API with rule-based fallback, editable chips, voice input with bn-BD and en-US support.
 - [ ] **P4 - Group decisions and sharing (SHOULD)** — Multi-origin group optimization sessions, deep linking (`khabokothay://r/<placeId>`), swipe mode.
 - [ ] **P5 - Personal food story and utilities (SHOULD)** — Food visit diary, 2-3 stop outing planner, delivery deep links, optional Ramadan/prayer timing mode.
 - [ ] **P6 - Local data quality and community (SHOULD)** — Community reports, verification thresholds, admin portal.

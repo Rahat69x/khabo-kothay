@@ -1,8 +1,12 @@
 import weightsConfig from '../config/weights.json' with { type: 'json' };
 import tasteConfig from '../config/taste.json' with { type: 'json' };
+import contextConfig from '../config/context.json' with { type: 'json' };
+import preferencesConfig from '../config/preferences.json' with { type: 'json' };
+import featureFlags from '../config/featureFlags.js';
 import { selectExplorationCandidates } from './discovery.js';
 import { getCollaborativePredictions } from './collaborative.js';
 import { getTransportSummary } from './cost.js';
+import { projectWeightsToSimplexBounds, generateBanditExplanation } from './bandit.js';
 
 /**
  * Calculates Bayesian average rating
@@ -125,6 +129,63 @@ export function generateRecommendationReason(restaurant, allRanked, userPriority
 }
 
 /**
+ * Generates counterfactual explanation for top recommendation
+ * e.g., "If you chose Cheapest: B saves ৳40 but adds 12 min."
+ */
+export function generateCounterfactualExplanation(topPick, allRanked, activePriority = 'Best Overall') {
+  if (!featureFlags.enableCounterfactualExplanations || !topPick || allRanked.length <= 1) {
+    return null;
+  }
+
+  const altPriority = activePriority === 'Cheapest' ? 'Fastest' : 'Cheapest';
+  let altPick = null;
+
+  if (altPriority === 'Cheapest') {
+    altPick = [...allRanked].sort((a, b) => {
+      const costA = (a.priceLevel || 2) * 50 + (a.transport?.cheapestEstimatedCostBdt || 50);
+      const costB = (b.priceLevel || 2) * 50 + (b.transport?.cheapestEstimatedCostBdt || 50);
+      return costA - costB;
+    })[0];
+  } else {
+    altPick = [...allRanked].sort((a, b) => (a.durationSeconds || 900) - (b.durationSeconds || 900))[0];
+  }
+
+  if (!altPick || altPick.id === topPick.id) {
+    return null;
+  }
+
+  const altName = altPick.displayName.split(' ')[0];
+
+  if (altPriority === 'Cheapest') {
+    const costTop = (topPick.priceLevel || 2) * 50 + (topPick.transport?.cheapestEstimatedCostBdt || 50);
+    const costAlt = (altPick.priceLevel || 2) * 50 + (altPick.transport?.cheapestEstimatedCostBdt || 50);
+    const saveBdt = Math.round(costTop - costAlt);
+    const addMin = Math.round(((altPick.durationSeconds || 900) - (topPick.durationSeconds || 900)) / 60);
+
+    if (saveBdt > 0 && addMin > 0) {
+      return `If you chose Cheapest: ${altName} saves ৳${saveBdt} but adds ${addMin} min.`;
+    } else if (saveBdt > 0) {
+      return `If you chose Cheapest: ${altName} saves ৳${saveBdt}.`;
+    } else {
+      return `If you chose Cheapest: ${altName} is the most economical alternative.`;
+    }
+  } else if (altPriority === 'Fastest') {
+    const saveMin = Math.round(((topPick.durationSeconds || 900) - (altPick.durationSeconds || 900)) / 60);
+    const costDiff = Math.round((altPick.transport?.cheapestEstimatedCostBdt || 50) - (topPick.transport?.cheapestEstimatedCostBdt || 50));
+
+    if (saveMin > 0 && costDiff > 0) {
+      return `If you chose Fastest: ${altName} saves ${saveMin} min but adds ৳${costDiff}.`;
+    } else if (saveMin > 0) {
+      return `If you chose Fastest: ${altName} saves ${saveMin} min.`;
+    } else {
+      return `If you chose Fastest: ${altName} has the shortest route.`;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Score and rank candidate restaurants
  */
 export function rankRestaurants({
@@ -136,25 +197,88 @@ export function rankRestaurants({
   tasteProfile = null,
   weatherContext = null,
   collaborativeInteractions = null,
-  surpriseMe = false
+  surpriseMe = false,
+  timeBudgetMinutes = null,
+  companion = null,
+  preferences = null,
+  banditProfile = null
 }) {
   if (!candidates || candidates.length === 0) return [];
 
-  // Compute candidate-set mean rating for Bayesian calculation
-  const totalRating = candidates.reduce((acc, c) => acc + (c.rating || 4.0), 0);
-  const meanRating = totalRating / candidates.length;
+  // 1. Time-budget filter ("I have 45 minutes"):
+  // Accounts for round-trip travel plus dining duration, and drops places that close too soon.
+  let pool = candidates;
+  if (timeBudgetMinutes && featureFlags.enableTimeBudgetMode) {
+    const budgetMinutesNum = Number(timeBudgetMinutes);
+    pool = pool.filter(c => {
+      const oneWaySeconds = c.durationSeconds || 900;
+      const roundTripMinutes = Math.round((2 * oneWaySeconds) / 60);
+      const diningMinutes = contextConfig.diningDurationsMinutes[c.cuisine] || contextConfig.diningDurationsMinutes.Default || 30;
+      const totalTimeNeeded = roundTripMinutes + diningMinutes;
 
-  // Add transport costs and closing soon calculations to each candidate
-  const enriched = candidates.map(c => {
+      // Drop if total travel + dining exceeds time budget
+      if (totalTimeNeeded > budgetMinutesNum) {
+        return false;
+      }
+
+      // Check if closes too soon
+      const closing = evaluateClosingSoon(c.regularOpeningHours, oneWaySeconds);
+      if (closing.isClosedOnArrival) {
+        return false;
+      }
+      if (closing.minutesUntilClose !== null && closing.minutesUntilClose < diningMinutes) {
+        return false;
+      }
+
+      c.timeBudgetDetails = {
+        timeBudgetMinutes: budgetMinutesNum,
+        roundTripMinutes,
+        diningMinutes,
+        totalTimeNeededMinutes: totalTimeNeeded,
+        marginMinutes: budgetMinutesNum - totalTimeNeeded
+      };
+      return true;
+    });
+  }
+
+  // 2. Preference Filters: halal, vegetarian, no beef, and spice level (unverified)
+  if (preferences && featureFlags.enablePreferenceFilters) {
+    pool = pool.filter(c => {
+      const def = preferencesConfig.cuisineDefaults[c.cuisine];
+      if (!def) return true;
+      if (preferences.halal && def.halal === false) return false;
+      if (preferences.vegetarian && def.vegetarian === false) return false;
+      if (preferences.no_beef && def.no_beef === false) return false;
+      return true;
+    });
+  }
+
+  if (pool.length === 0) return [];
+
+  // Compute candidate-set mean rating for Bayesian calculation
+  const totalRating = pool.reduce((acc, c) => acc + (c.rating || 4.0), 0);
+  const meanRating = totalRating / pool.length;
+
+  // Add transport costs, closing soon, and preference verification status to each candidate
+  const enriched = pool.map(c => {
     const transport = getTransportSummary(c.distanceMeters || 1500, c.durationSeconds || 900, c.trafficLevel || 'Moderate');
     const closingStatus = evaluateClosingSoon(c.regularOpeningHours, c.durationSeconds || 900);
     const bayesianRating = calculateBayesianRating(c.rating, c.userRatingCount, meanRating);
+
+    // Preference metadata (marked unverified with allergen disclaimer)
+    const dietaryVerification = {
+      isVerified: false,
+      status: preferencesConfig.verificationStatus || 'unverified',
+      label: 'unverified',
+      disclaimer: preferencesConfig.disclaimer
+    };
 
     return {
       ...c,
       transport,
       closingStatus,
-      bayesianRating
+      bayesianRating,
+      dietaryVerification
     };
   });
 
@@ -179,15 +303,40 @@ export function rankRestaurants({
   const minCost = Math.min(...transportCosts);
   const maxCost = Math.max(...transportCosts);
 
-  // Weights configuration
+  // Active weights selection
   let activeWeights = weightsConfig[priority] || weightsConfig['Best Overall'];
+  let weights = { ...activeWeights };
+
+  // Personal weights bandit integration (with strict guardrails)
+  let banditNote = null;
+  if (banditProfile && banditProfile.enabled && featureFlags.enableBanditPersonalWeights) {
+    if (priority === 'Personalized') {
+      weights = projectWeightsToSimplexBounds(banditProfile.weights, 0.05, 0.50);
+    } else {
+      // Gentle blend: 85% preset weights, 15% bandit learned weights
+      const banditProjected = projectWeightsToSimplexBounds(banditProfile.weights, 0.05, 0.50);
+      for (const k of Object.keys(weights)) {
+        if (banditProjected[k] !== undefined) {
+          weights[k] = (weights[k] * 0.85) + (banditProjected[k] * 0.15);
+        }
+      }
+    }
+    banditNote = generateBanditExplanation(banditProfile.weights);
+  }
+
+  // Apply companion profile adjustments from context.json
+  const companionProfile = companion ? contextConfig.companionProfiles[companion] : null;
+  if (companionProfile && companionProfile.weightAdjustments) {
+    for (const [k, mult] of Object.entries(companionProfile.weightAdjustments)) {
+      if (weights[k] !== undefined) {
+        weights[k] = weights[k] * mult;
+      }
+    }
+  }
 
   // Apply taste weight distribution if tasteProfile is provided
   const hasTasteProfile = tasteProfile && Object.keys(tasteProfile).length > 0;
-  let weights = { ...activeWeights };
-
-  if (hasTasteProfile && priority !== 'Personalized') {
-    // Stage 12: give each preset a small taste share of 0.10, taken proportionally
+  if (hasTasteProfile && priority !== 'Personalized' && (!banditProfile || !banditProfile.enabled)) {
     const tasteShare = 0.10;
     const factor = 1.0 - tasteShare;
     const adjusted = {};
@@ -198,6 +347,27 @@ export function rankRestaurants({
     }
     adjusted.taste = tasteShare;
     weights = adjusted;
+  }
+
+  // Context Signals: Time-of-day & weekend detection (UTC+6 for Dhaka)
+  const now = new Date();
+  const dhakaHour = (now.getUTCHours() + 6) % 24;
+  const dhakaDay = (now.getUTCDay() + (now.getUTCHours() + 6 >= 24 ? 1 : 0)) % 7;
+  const isWeekend = contextConfig.weekendDays.includes(dhakaDay);
+
+  let activeTimeSlot = null;
+  for (const [slotKey, slotData] of Object.entries(contextConfig.timeOfDay)) {
+    if (slotData.startHour <= slotData.endHour) {
+      if (dhakaHour >= slotData.startHour && dhakaHour <= slotData.endHour) {
+        activeTimeSlot = slotData;
+        break;
+      }
+    } else {
+      if (dhakaHour >= slotData.startHour || dhakaHour <= slotData.endHour) {
+        activeTimeSlot = slotData;
+        break;
+      }
+    }
   }
 
   // Collaborative filtering predictions if enabled & available
@@ -233,20 +403,40 @@ export function rankRestaurants({
     // Weather impact on walking
     let weatherPenalty = 0;
     if (weatherContext && weatherContext.isRaining && c.transport.cheapestFeasibleMode === 'walk') {
-      weatherPenalty = 5; // Slight penalty for walking in rain
+      weatherPenalty = 5;
     }
 
-    // Budget fit: subtract 10 points per price level above user's budget
+    // Budget fit
     let budgetPenalty = 0;
     const userBudgetNum = parseInt(budget, 10) || 2;
     if (c.priceLevel && c.priceLevel > userBudgetNum) {
       budgetPenalty = (c.priceLevel - userBudgetNum) * 10;
     }
 
-    // Cuisine match bonus: +5 bonus points
+    // Cuisine match bonus
     let cuisineBonus = 0;
     if (cuisine && cuisine !== 'All' && c.cuisine && c.cuisine.toLowerCase() === cuisine.toLowerCase()) {
       cuisineBonus = 5;
+    }
+
+    // Context signal bonus: Time-of-day match (+5 points)
+    let contextBonus = 0;
+    if (activeTimeSlot && activeTimeSlot.recommendedCuisines && c.cuisine) {
+      if (activeTimeSlot.recommendedCuisines.some(rc => rc.toLowerCase() === c.cuisine.toLowerCase())) {
+        contextBonus += 5;
+      }
+    }
+
+    // Context signal bonus: Companion match (+15 points)
+    if (companionProfile && companionProfile.preferredCuisines && c.cuisine) {
+      if (companionProfile.preferredCuisines.some(pc => pc.toLowerCase() === c.cuisine.toLowerCase())) {
+        contextBonus += 15;
+      }
+    }
+
+    // Context signal bonus: Dhaka weekend leisure dining (+3 points)
+    if (isWeekend && ['Kabab', 'Biriyani', 'Cafe', 'Indian', 'Japanese'].includes(c.cuisine)) {
+      contextBonus += 3;
     }
 
     // Closing soon penalty: -30 points if within 30 min of arrival
@@ -265,9 +455,9 @@ export function rankRestaurants({
        (weights.cost || 0) * costFactor +
        (weights.taste || 0) * tasteFactor) * 100;
 
-    let finalScore = baseScore + cuisineBonus - budgetPenalty - weatherPenalty - closingPenalty;
+    let finalScore = baseScore + cuisineBonus + contextBonus - budgetPenalty - weatherPenalty - closingPenalty;
 
-    // Optional collaborative filtering blend (80% content, 20% collaborative)
+    // Optional collaborative filtering blend
     if (collaborativeData && collaborativeData.hasEnoughData && collaborativeData.predictions[c.id] !== undefined) {
       const collabScore = collaborativeData.predictions[c.id];
       finalScore = (finalScore * tasteConfig.collaborative.contentBlendWeight) +
@@ -299,8 +489,7 @@ export function rankRestaurants({
   // Sort descending by score
   scored.sort((a, b) => b.score - a.score);
 
-  // Assign Badges:
-  // Best Overall (rank 1), Fastest to Reach (min duration), Best for Price (min price & cost)
+  // Assign Badges
   let fastestId = null;
   let minDurationSec = Infinity;
   let bestPriceId = null;
@@ -317,6 +506,11 @@ export function rankRestaurants({
       bestPriceId = item.id;
     }
   }
+
+  const topPickCandidate = scored[0];
+  const counterfactualExplanation = topPickCandidate
+    ? generateCounterfactualExplanation(topPickCandidate, scored, priority)
+    : null;
 
   return scored.map((item, index) => {
     const badges = [];
@@ -343,7 +537,18 @@ export function rankRestaurants({
     return {
       ...item,
       badges: [...new Set(badges)],
-      reason
+      reason,
+      banditNote: index === 0 ? banditNote : null,
+      counterfactual: index === 0 ? counterfactualExplanation : null
     };
   });
 }
+
+export default {
+  calculateBayesianRating,
+  normalize,
+  evaluateClosingSoon,
+  generateRecommendationReason,
+  generateCounterfactualExplanation,
+  rankRestaurants
+};

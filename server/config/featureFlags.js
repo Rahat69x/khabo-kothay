@@ -14,12 +14,13 @@ export const featureFlags = {
   enableSentry: Boolean(process.env.SENTRY_DSN && process.env.ENABLE_SENTRY === 'true'),
   enableApiV1: true,
 
-  // P2: Smarter Decisions (stubs for next phases)
-  enableDeparturePredictions: false,
-  enableTimeBudgetMode: false,
-  enableBanditPersonalWeights: false,
-  enablePreferenceFilters: false,
-  enableCounterfactualExplanations: false,
+  // P2: Smarter Decisions
+  enableDeparturePredictions: true,
+  enableTimeBudgetMode: true,
+  enableBanditPersonalWeights: true,
+  enablePreferenceFilters: true,
+  enableCounterfactualExplanations: true,
+  enableABTestingWeights: false,
 
   // Advanced features
   enableCollaborativeFiltering: false

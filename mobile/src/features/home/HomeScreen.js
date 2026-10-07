@@ -28,6 +28,21 @@ const PRIORITIES = [
   'Best Overall', 'Fastest', 'Closest', 'Cheapest', 'Best Rated', 'Best Value', 'Personalized'
 ];
 
+const TIME_BUDGETS = [
+  { label: 'Any', value: null },
+  { label: '30 min', value: 30 },
+  { label: '45 min', value: 45 },
+  { label: '60 min', value: 60 }
+];
+
+const COMPANIONS = [
+  { label: 'Anyone', value: null },
+  { label: 'Alone', value: 'alone' },
+  { label: 'Friends', value: 'friends' },
+  { label: 'Family', value: 'family' },
+  { label: 'Date', value: 'date' }
+];
+
 export default function HomeScreen({ navigation, theme }) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,6 +51,9 @@ export default function HomeScreen({ navigation, theme }) {
   const [selectedCuisine, setSelectedCuisine] = useState('All');
   const [selectedPriority, setSelectedPriority] = useState('Best Overall');
   const [selectedBudget, setSelectedBudget] = useState(2);
+  const [selectedTimeBudget, setSelectedTimeBudget] = useState(null);
+  const [selectedCompanion, setSelectedCompanion] = useState(null);
+  const [selectedPreferences, setSelectedPreferences] = useState({ halal: false, vegetarian: false, no_beef: false });
   const [topPicks, setTopPicks] = useState(null);
   const [results, setResults] = useState([]);
   const [weather, setWeather] = useState(null);
@@ -73,7 +91,17 @@ export default function HomeScreen({ navigation, theme }) {
     loadRecommendations(loc, prefs.cuisine || 'All', prefs.priority || 'Best Overall', prefs.budget || 2);
   };
 
-  const loadRecommendations = async (loc = location, cuisine = selectedCuisine, priority = selectedPriority, budget = selectedBudget, mood = selectedMood, surpriseMe = false) => {
+  const loadRecommendations = async (
+    loc = location,
+    cuisine = selectedCuisine,
+    priority = selectedPriority,
+    budget = selectedBudget,
+    mood = selectedMood,
+    surpriseMe = false,
+    timeBudget = selectedTimeBudget,
+    companion = selectedCompanion,
+    prefs = selectedPreferences
+  ) => {
     setLoading(true);
     setIsCachedData(false);
 
@@ -84,6 +112,10 @@ export default function HomeScreen({ navigation, theme }) {
     while (attempt <= maxRetries) {
       try {
         const tasteProfile = await mobileStorage.getTasteProfile();
+        const activePrefs = Object.fromEntries(
+          Object.entries(prefs || {}).filter(([_, v]) => Boolean(v))
+        );
+
         const data = await apiClient.getRecommendations({
           lat: loc.lat,
           lng: loc.lng,
@@ -93,7 +125,10 @@ export default function HomeScreen({ navigation, theme }) {
           mood,
           tasteProfile,
           weatherContext: weather,
-          surpriseMe
+          surpriseMe,
+          timeBudgetMinutes: timeBudget,
+          companion,
+          preferences: Object.keys(activePrefs).length > 0 ? activePrefs : null
         });
 
         setServerWakingMsg(null);
@@ -245,15 +280,42 @@ export default function HomeScreen({ navigation, theme }) {
           </View>
           <Text style={[styles.whySummary, { color: theme.colors.secondary }]}>{topPicks.summary}</Text>
 
+          {/* Counterfactual Trade-off Explanation */}
+          {topPicks.counterfactual && (
+            <View style={[styles.counterfactualBox, { backgroundColor: 'rgba(234, 179, 8, 0.12)', borderColor: 'rgba(234, 179, 8, 0.3)' }]}>
+              <Text style={[styles.counterfactualText, { color: '#FACC15' }]}>
+                💡 {topPicks.counterfactual}
+              </Text>
+            </View>
+          )}
+
+          {/* Bandit Personal Preference Note */}
+          {topPicks.banditNote && (
+            <View style={[styles.banditBox, { backgroundColor: 'rgba(99, 102, 241, 0.12)', borderColor: 'rgba(99, 102, 241, 0.3)' }]}>
+              <Text style={[styles.banditText, { color: '#818CF8' }]}>
+                🎯 {topPicks.banditNote}
+              </Text>
+            </View>
+          )}
+
           {topPicks.bestMatch && (
             <TouchableOpacity
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.bestMatch })}
             >
-              <View style={[styles.badgePill, { backgroundColor: theme.colors.primaryGlow }]}>
-                <Text style={{ color: theme.colors.primary, fontWeight: '800', fontSize: 12 }}>
-                  🌟 {t('picks.bestMatch')}
-                </Text>
+              <View style={styles.pickBadgeRow}>
+                <View style={[styles.badgePill, { backgroundColor: theme.colors.primaryGlow }]}>
+                  <Text style={{ color: theme.colors.primary, fontWeight: '800', fontSize: 12 }}>
+                    🌟 {t('picks.bestMatch')}
+                  </Text>
+                </View>
+                {topPicks.bestMatch.departurePredictions?.bestSuggestion && (
+                  <View style={[styles.predictionPill, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+                    <Text style={{ color: '#10B981', fontWeight: '800', fontSize: 11 }}>
+                      ⏱️ {topPicks.bestMatch.departurePredictions.bestSuggestion.message}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text style={[styles.pickName, { color: theme.colors.text }]}>{topPicks.bestMatch.displayName}</Text>
               <Text style={[styles.pickReason, { color: theme.colors.textMuted }]}>{topPicks.bestMatch.reason}</Text>
@@ -291,6 +353,88 @@ export default function HomeScreen({ navigation, theme }) {
           )}
         </View>
       )}
+
+      {/* Time-Budget Selector ("I have 45 minutes") */}
+      <View style={styles.chipSection}>
+        <Text style={[styles.filterTitle, { color: theme.colors.textMuted }]}>⏱️ Time Budget (Round-trip + Dine)</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollRow}>
+          {TIME_BUDGETS.map(tb => {
+            const active = selectedTimeBudget === tb.value;
+            return (
+              <TouchableOpacity
+                key={tb.label}
+                style={[
+                  styles.chip,
+                  active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
+                ]}
+                onPress={() => {
+                  setSelectedTimeBudget(tb.value);
+                  loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, tb.value);
+                }}
+              >
+                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{tb.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* Companion / "Who with?" Selector */}
+      <View style={styles.chipSection}>
+        <Text style={[styles.filterTitle, { color: theme.colors.textMuted }]}>👥 Who With?</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollRow}>
+          {COMPANIONS.map(comp => {
+            const active = selectedCompanion === comp.value;
+            return (
+              <TouchableOpacity
+                key={comp.label}
+                style={[
+                  styles.chip,
+                  active && { backgroundColor: theme.colors.secondary, borderColor: theme.colors.secondary }
+                ]}
+                onPress={() => {
+                  setSelectedCompanion(comp.value);
+                  loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, selectedTimeBudget, comp.value);
+                }}
+              >
+                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{comp.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* Dietary Preferences Chips (Marked unverified) */}
+      <View style={styles.chipSection}>
+        <Text style={[styles.filterTitle, { color: theme.colors.textMuted }]}>🥗 Preferences (Unverified)</Text>
+        <View style={styles.scrollRow}>
+          {[
+            { key: 'halal', label: 'Halal' },
+            { key: 'vegetarian', label: 'Vegetarian' },
+            { key: 'no_beef', label: 'No Beef' }
+          ].map(pref => {
+            const active = Boolean(selectedPreferences[pref.key]);
+            return (
+              <TouchableOpacity
+                key={pref.key}
+                style={[
+                  styles.chip,
+                  active && { backgroundColor: '#10B981', borderColor: '#10B981' }
+                ]}
+                onPress={() => {
+                  const updated = { ...selectedPreferences, [pref.key]: !active };
+                  setSelectedPreferences(updated);
+                  loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, selectedTimeBudget, selectedCompanion, updated);
+                }}
+              >
+                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>
+                  {pref.label} {active ? '✓' : ''}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
 
       {/* Mood Selector Chips */}
       <View style={styles.chipSection}>
@@ -393,6 +537,13 @@ export default function HomeScreen({ navigation, theme }) {
         </View>
       </View>
 
+      {/* Strict Allergen & Unverified Disclaimer Banner */}
+      <View style={[styles.disclaimerBanner, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.25)' }]}>
+        <Text style={styles.disclaimerText}>
+          ⚠️ Dietary and spice preferences are unverified and estimated. Never rely on this for allergen safety.
+        </Text>
+      </View>
+
       {/* Find My Best Option Button */}
       <TouchableOpacity
         style={[styles.mainCtaBtn, { backgroundColor: theme.colors.primary }]}
@@ -473,5 +624,28 @@ const styles = StyleSheet.create({
   },
   budgetText: { color: '#94A3B8', fontWeight: '800', fontSize: 14 },
   mainCtaBtn: { paddingVertical: 16, borderRadius: 16, alignItems: 'center' },
-  mainCtaText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' }
+  mainCtaText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' },
+  counterfactualBox: {
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginVertical: 6
+  },
+  counterfactualText: { fontSize: 12, fontWeight: '700', lineHeight: 16 },
+  banditBox: {
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 8
+  },
+  banditText: { fontSize: 12, fontWeight: '700', lineHeight: 16 },
+  pickBadgeRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 4 },
+  predictionPill: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
+  disclaimerBanner: {
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 16
+  },
+  disclaimerText: { color: '#EF4444', fontSize: 11, fontWeight: '700', textAlign: 'center', lineHeight: 15 }
 });

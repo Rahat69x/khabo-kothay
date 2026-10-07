@@ -9,6 +9,11 @@ import { PRESET_LOCATIONS } from '../services/mock.js';
 import quotaManager from '../services/quota.js';
 import globalCache from '../services/cache.js';
 import logger from '../services/logger.js';
+import { getDeparturePredictions } from '../services/predictions.js';
+import { getBanditProfile, updateBanditWeights, resetBanditProfile, setBanditEnabled } from '../services/bandit.js';
+import { logEvalEvent } from '../services/eval-logger.js';
+import preferencesConfig from '../config/preferences.json' with { type: 'json' };
+import featureFlags from '../config/featureFlags.js';
 
 const router = express.Router();
 
@@ -173,7 +178,10 @@ router.post('/recommend', async (req, res, next) => {
       tasteProfile = null,
       weatherContext = null,
       collaborativeInteractions = null,
-      surpriseMe = false
+      surpriseMe = false,
+      timeBudgetMinutes = null,
+      companion = null,
+      preferences = null
     } = req.body;
 
     if (lat === undefined || lng === undefined) {
@@ -182,6 +190,7 @@ router.post('/recommend', async (req, res, next) => {
 
     const userLat = Number(lat);
     const userLng = Number(lng);
+    const banditProfile = getBanditProfile(deviceId);
 
     // 1. Fetch Candidates (Multi-cuisine if mood dictates)
     let candidates = [];
@@ -258,13 +267,14 @@ router.post('/recommend', async (req, res, next) => {
       tasteProfile,
       weatherContext: activeWeather,
       collaborativeInteractions,
-      surpriseMe: Boolean(surpriseMe)
+      surpriseMe: Boolean(surpriseMe),
+      timeBudgetMinutes,
+      companion,
+      preferences,
+      banditProfile
     });
 
     // 6. Assemble "For you right now" Top 3 picks
-    // Pick 1: Best match (rank 1)
-    // Pick 2: Fastest or nearest good option
-    // Pick 3: Try something new (exploration pick)
     let bestMatch = rankedResults[0] || null;
 
     let fastestOrNearest = [...rankedResults]
@@ -273,10 +283,35 @@ router.post('/recommend', async (req, res, next) => {
 
     let trySomethingNew = rankedResults.find(r => r.isTrySomethingNew && r.id !== (bestMatch ? bestMatch.id : null)) || null;
 
+    // 7. Departure Predictions for Top 3 Picks (+0, +15, +30, +60 min)
+    if (featureFlags.enableDeparturePredictions) {
+      const picksToPredict = [bestMatch, fastestOrNearest, trySomethingNew].filter(Boolean);
+      if (picksToPredict.length > 0) {
+        const predictedPicks = await getDeparturePredictions(
+          { lat: userLat, lng: userLng },
+          picksToPredict
+        );
+        const predMap = new Map(predictedPicks.map(p => [p.id, p]));
+        if (bestMatch && predMap.has(bestMatch.id)) bestMatch = predMap.get(bestMatch.id);
+        if (fastestOrNearest && predMap.has(fastestOrNearest.id)) fastestOrNearest = predMap.get(fastestOrNearest.id);
+        if (trySomethingNew && predMap.has(trySomethingNew.id)) trySomethingNew = predMap.get(trySomethingNew.id);
+      }
+    }
+
     // Summary line for "Why these?"
     const topPickSummary = bestMatch
       ? `Ranked for ${priority} around ${userLat.toFixed(3)}, ${userLng.toFixed(3)} taking into account real-time Dhaka traffic (${bestMatch.trafficLevel} congestion) and transport budget.`
       : 'No recommendations available.';
+
+    // Log anonymized evaluation impression
+    logEvalEvent({
+      sessionId: req.headers['x-session-id'] || `sess_${deviceId}`,
+      eventType: 'impression',
+      priority,
+      chosenCandidateId: null,
+      topRankedIds: rankedResults.slice(0, 5).map(r => r.id),
+      metadata: { budget, cuisine, companion, timeBudgetMinutes }
+    });
 
     res.json({
       results: rankedResults,
@@ -284,7 +319,9 @@ router.post('/recommend', async (req, res, next) => {
         bestMatch,
         fastestOrNearest,
         trySomethingNew,
-        summary: topPickSummary
+        summary: topPickSummary,
+        counterfactual: bestMatch ? bestMatch.counterfactual : null,
+        banditNote: bestMatch ? bestMatch.banditNote : null
       },
       meta: {
         totalFound: rankedResults.length,
@@ -292,7 +329,9 @@ router.post('/recommend', async (req, res, next) => {
         priorityUsed: priority,
         timestamp: new Date().toISOString(),
         isBudgetFallback: budgetStatus.isExceeded,
-        budgetMessage: budgetStatus.friendlyMessage
+        budgetMessage: budgetStatus.friendlyMessage,
+        allergenDisclaimer: preferencesConfig.disclaimer,
+        banditActive: Boolean(banditProfile && banditProfile.enabled)
       }
     });
   } catch (err) {
@@ -403,9 +442,79 @@ router.get('/taste/default', (req, res) => {
  * Stateless calculation of updated profile after an interaction signal
  */
 router.post('/taste/event', (req, res) => {
-  const { currentProfile, event } = req.body;
+  const { currentProfile, event, candidatePool } = req.body;
   const updated = recordEvent(currentProfile, event);
+
+  // Link to bandit personal weights if event contains chosen restaurant
+  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+  if (event && (event.restaurant || event.chosenCandidate)) {
+    const chosen = event.restaurant || event.chosenCandidate;
+    updateBanditWeights(deviceId, chosen, candidatePool || []);
+
+    logEvalEvent({
+      sessionId: req.headers['x-session-id'] || `sess_${deviceId}`,
+      eventType: event.type || 'open',
+      priority: event.priority || 'Best Overall',
+      chosenCandidateId: chosen.id,
+      topRankedIds: candidatePool ? candidatePool.map(c => c.id) : [chosen.id]
+    });
+  }
+
   res.json({ updatedProfile: updated });
+});
+
+/**
+ * GET /api/bandit/weights (or /api/v1/bandit/weights)
+ * Get current learned personal weights, guardrail bounds, and plain language explanation
+ */
+router.get('/bandit/weights', (req, res) => {
+  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+  const profile = getBanditProfile(deviceId);
+  res.json(profile);
+});
+
+/**
+ * POST /api/bandit/update (or /api/v1/bandit/update)
+ * Directly update bandit weights with a chosen candidate
+ */
+router.post('/bandit/update', (req, res) => {
+  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+  const { chosenRestaurant, candidatePool } = req.body;
+  if (!chosenRestaurant) {
+    return res.status(400).json({ error: 'chosenRestaurant is required' });
+  }
+
+  const updatedProfile = updateBanditWeights(deviceId, chosenRestaurant, candidatePool || []);
+  res.json(updatedProfile);
+});
+
+/**
+ * POST /api/bandit/reset (or /api/v1/bandit/reset)
+ * Reset bandit weights to default baseline
+ */
+router.post('/bandit/reset', (req, res) => {
+  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+  const resetProfile = resetBanditProfile(deviceId);
+  res.json({
+    success: true,
+    message: 'Bandit personal weights reset to baseline.',
+    profile: resetProfile
+  });
+});
+
+/**
+ * POST /api/bandit/toggle (or /api/v1/bandit/toggle)
+ * Toggle personal weights on or off
+ */
+router.post('/bandit/toggle', (req, res) => {
+  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
+  const { enabled } = req.body;
+  const profile = setBanditEnabled(deviceId, enabled);
+  res.json({
+    success: true,
+    enabled: profile.enabled,
+    profile
+  });
 });
 
 export default router;

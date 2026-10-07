@@ -8,7 +8,12 @@ export const featureFlags = {
   enableLocalNotifications: true,
   enableVisitRatingPrompt: true,
   enableSentryCrashReporting: false, // Off by default as required
-  enableCollaborativeFiltering: false // Flag for collaborative recommendations
+  enableCollaborativeFiltering: false, // Flag for collaborative recommendations
+  enableDeparturePredictions: true,
+  enableTimeBudgetMode: true,
+  enableBanditPersonalWeights: true,
+  enablePreferenceFilters: true,
+  enableCounterfactualExplanations: true
 };
 
 export default featureFlags;

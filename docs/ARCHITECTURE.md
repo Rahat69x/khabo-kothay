@@ -129,3 +129,37 @@ sequenceDiagram
 2. Add route to `mobile/App.js` in either `BottomTabs` or `Stack.Navigator`.
 3. Add English and Bangla translation strings in `mobile/src/i18n/en.js` and `mobile/src/i18n/bn.js`.
 4. Wrap new endpoints in `mobile/src/api/client.js`.
+
+---
+
+## Phase P2 Recommendation Intelligence Architecture
+
+```mermaid
+flowchart TD
+    UserReq[User Search Request] --> FilterPool[Spatial & Time-Budget Filter]
+    FilterPool --> CandidateCheck[Check Round-Trip + Cuisine Dining Duration]
+    CandidateCheck --> PrefCheck[Unverified Dietary & Spice Filter]
+    PrefCheck --> TrafficPredict[Routes API Departure Time Matrix]
+    TrafficPredict --> Scoring[Bayesian + Weights + Context Signals]
+    Scoring --> BanditWeights[Simplex Bounded Bandit [0.05, 0.50]]
+    BanditWeights --> TopPicks[Ranked Results & Top 3 Picks]
+    TopPicks --> Explain[Counterfactual & Prediction Suggestions]
+    Explain --> Client[Mobile App / Web UI]
+```
+
+### 1. Departure Time Prediction Pipeline
+- Top 3 candidate places are evaluated across offsets `+0`, `+15`, `+30`, and `+60` minutes.
+- When Google Routes API is enabled, queries `v2:computeRoutes` with `departureTime`.
+- When in mock mode or during Google API rate limits, falls back to a modeled Dhaka diurnal traffic curve (rush hours at 08:30-10:30 and 16:30-20:30).
+- If departing later saves $\ge 3$ minutes, generates an actionable advice label: *"Leave in 30 min to save 11 min (predicted)"*.
+
+### 2. Time-Budget Mode
+- Formulates total journey time: $T_{\text{total}} = 2 \times T_{\text{one-way}} + T_{\text{dine}}(cuisine)$.
+- Drops places exceeding the user's available time.
+- Drops places that close before $T_{\text{arrival}} + T_{\text{dine}}$.
+
+### 3. Personal Weights Bandit
+- Factor weights normalized to sum to 1.0 with strict bounds: $w_i \in [0.05, 0.50]$.
+- Updates via stochastic feedback loop with learning rate $\eta = 0.05$.
+- Produces plain-language explanation notes and provides an instant reset endpoint.
+

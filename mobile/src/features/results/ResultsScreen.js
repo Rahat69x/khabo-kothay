@@ -73,6 +73,22 @@ export default function ResultsScreen({ route, navigation, theme }) {
             </View>
           </View>
 
+          {item.departurePredictions?.bestSuggestion && (
+            <View style={[styles.predictionPill, { backgroundColor: 'rgba(16, 185, 129, 0.15)', alignSelf: 'flex-start', marginVertical: 4 }]}>
+              <Text style={{ color: '#10B981', fontWeight: '800', fontSize: 11 }}>
+                ⏱️ {item.departurePredictions.bestSuggestion.message}
+              </Text>
+            </View>
+          )}
+
+          {item.counterfactual && (
+            <View style={[styles.counterfactualBox, { backgroundColor: 'rgba(234, 179, 8, 0.12)', borderColor: 'rgba(234, 179, 8, 0.3)' }]}>
+              <Text style={[styles.counterfactualText, { color: '#FACC15' }]}>
+                💡 {item.counterfactual}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.reasonBox}>
             <Text style={styles.reasonText} numberOfLines={2}>
               💡 {item.reason}
@@ -158,5 +174,13 @@ const styles = StyleSheet.create({
   actionBtnPrimary: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 10 },
   actionBtnPrimaryText: { color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
   empty: { padding: 40, alignItems: 'center' },
-  emptyText: { color: '#94A3B8', textAlign: 'center' }
+  emptyText: { color: '#94A3B8', textAlign: 'center' },
+  predictionPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  counterfactualBox: {
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 8
+  },
+  counterfactualText: { fontSize: 11, fontWeight: '700', lineHeight: 15 }
 });

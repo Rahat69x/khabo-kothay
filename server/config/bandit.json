@@ -1,0 +1,27 @@
+{
+  "defaultWeights": {
+    "rating": 0.25,
+    "time": 0.25,
+    "price": 0.15,
+    "cost": 0.10,
+    "distance": 0.10,
+    "traffic": 0.10,
+    "taste": 0.05
+  },
+  "bounds": {
+    "min": 0.05,
+    "max": 0.50
+  },
+  "learningRate": 0.05,
+  "explorationEpsilon": 0.10,
+  "plainLanguageNotes": {
+    "time": "You often pick faster places, so speed counts a bit more for you now.",
+    "cost": "You often pick budget-friendly options, so travel and food cost count more for you now.",
+    "price": "You tend to choose affordable dining, so price level is prioritized.",
+    "rating": "You gravitate toward highly-rated spots, so reviews and rating consistency count more.",
+    "taste": "You consistently select your favorite cuisines, so personal taste match counts more.",
+    "distance": "You prefer places close by, so physical proximity counts more for you now.",
+    "traffic": "You avoid congested routes, so traffic smoothness counts more for you now.",
+    "balanced": "Your choices are well-balanced across speed, rating, and cost."
+  }
+}

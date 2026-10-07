@@ -9,11 +9,13 @@ import {
   Alert
 } from 'react-native';
 import { mobileStorage } from '../../services/storage.js';
+import { apiClient } from '../../api/client.js';
 import { t } from '../../i18n/index.js';
 
 export default function TasteScreen({ theme }) {
   const [profile, setProfile] = useState({});
   const [learningEnabled, setLearningEnabled] = useState(true);
+  const [banditProfile, setBanditProfile] = useState(null);
 
   useEffect(() => {
     loadProfile();
@@ -24,6 +26,11 @@ export default function TasteScreen({ theme }) {
     const l = await mobileStorage.isLearningEnabled();
     setProfile(p);
     setLearningEnabled(l);
+
+    try {
+      const b = await apiClient.getBanditWeights();
+      if (b) setBanditProfile(b);
+    } catch (e) {}
   };
 
   const handleToggleLearning = async (val) => {
@@ -78,6 +85,50 @@ export default function TasteScreen({ theme }) {
             trackColor={{ false: '#334155', true: theme.colors.primary }}
           />
         </View>
+
+        {/* Bandit Personal Factor Weights Card */}
+        {banditProfile && (
+          <View style={[styles.banditCard, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+            <View style={styles.banditHeader}>
+              <Text style={[styles.banditTitle, { color: theme.colors.text }]}>
+                🎯 Personal Decision Weights
+              </Text>
+              <Switch
+                value={banditProfile.enabled}
+                onValueChange={async (val) => {
+                  const updated = await apiClient.toggleBandit(val);
+                  setBanditProfile(updated.profile);
+                }}
+                trackColor={{ false: '#334155', true: '#818CF8' }}
+              />
+            </View>
+
+            <Text style={[styles.banditNote, { color: '#818CF8' }]}>
+              {banditProfile.explanationNote || "Learning your personal balance between speed, rating, cost, and distance."}
+            </Text>
+
+            <View style={styles.weightsGrid}>
+              {banditProfile.weights && Object.entries(banditProfile.weights).map(([k, w]) => (
+                <View key={k} style={styles.weightBadge}>
+                  <Text style={[styles.weightKey, { color: theme.colors.textMuted }]}>{k}</Text>
+                  <Text style={[styles.weightVal, { color: theme.colors.text }]}>{Math.round(w * 100)}%</Text>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              style={styles.banditResetBtn}
+              onPress={async () => {
+                const res = await apiClient.resetBanditWeights();
+                setBanditProfile(res.profile);
+              }}
+            >
+              <Text style={{ color: theme.colors.textMuted, fontSize: 12, fontWeight: '700' }}>
+                🔄 Reset Personal Weights
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
           <Text style={{ color: theme.colors.danger, fontWeight: '700' }}>
@@ -142,5 +193,30 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8
   },
-  stepBtnText: { color: '#E2E8F0', fontWeight: '700', fontSize: 12 }
+  stepBtnText: { color: '#E2E8F0', fontWeight: '700', fontSize: 12 },
+  banditCard: {
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 16
+  },
+  banditHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8
+  },
+  banditTitle: { fontSize: 15, fontWeight: '800' },
+  banditNote: { fontSize: 13, lineHeight: 18, marginBottom: 12, fontWeight: '600' },
+  weightsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
+  weightBadge: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignItems: 'center'
+  },
+  weightKey: { fontSize: 11, textTransform: 'uppercase', fontWeight: '700' },
+  weightVal: { fontSize: 13, fontWeight: '800', marginTop: 2 },
+  banditResetBtn: { alignSelf: 'flex-start', paddingVertical: 4 }
 });
