@@ -1,0 +1,19 @@
+date,mode,from_area,to_area,distance_km,minutes,traffic,fare_paid_bdt
+2026-10-01,rickshaw,Gulshan 1,Gulshan 2,1.8,12,moderate,50
+2026-10-01,rickshaw,Banani,Gulshan 2,1.5,10,low,40
+2026-10-02,rickshaw,Gulshan 2,Baridhara,1.2,8,low,35
+2026-10-02,rickshaw,Gulshan 1,Banani 11,2.4,18,heavy,70
+2026-10-03,rickshaw,Notun Bazar,Baridhara,1.0,7,low,30
+2026-10-03,rickshaw,Gulshan 2,Niketan,2.2,16,moderate,60
+2026-10-01,cng,Gulshan 2,Dhanmondi,8.5,45,heavy,250
+2026-10-02,cng,Banani,Uttara Sector 3,9.0,35,moderate,220
+2026-10-02,cng,Gulshan 1,Motijheel,7.8,40,heavy,230
+2026-10-03,cng,Baridhara,Mirpur 10,8.2,38,moderate,210
+2026-10-04,cng,Gulshan 2,Mohakhali,3.0,15,low,120
+2026-10-04,cng,Banani,Tejgaon,4.5,22,moderate,150
+2026-10-01,car,Gulshan 2,Airport,7.5,25,low,280
+2026-10-02,car,Banani,Dhanmondi 27,9.2,50,heavy,380
+2026-10-02,car,Baridhara,Bashundhara R/A,4.0,18,moderate,210
+2026-10-03,car,Gulshan 1,Uttara,10.5,40,moderate,360
+2026-10-04,car,Gulshan 2,Banani DOHS,3.5,15,low,190
+2026-10-04,car,Gulshan 1,Badda,2.8,16,heavy,180

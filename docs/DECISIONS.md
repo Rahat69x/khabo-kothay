@@ -67,3 +67,25 @@
 ### 14. Anonymized Evaluation Harness & Replay Framework
 - **Decision**: Implement an opt-in evaluation logger that stores impressions, opens, and directions in `server/data/eval-sessions.jsonl` without PII. Provide `scripts/eval.js` to compute top-1 and top-3 hit rates and Mean Reciprocal Rank (MRR) across weight configurations, with an A/B testing flag.
 
+### 15. Progressive Web App (PWA) vs Native Android App Trade-offs
+- **Decision**: Deliver an installable PWA for initial testing on Android phones via Chrome before shipping the standalone APK.
+- **Capabilities Delivered by PWA**:
+  - Instant installation from Google Chrome without Play Store dependencies.
+  - Offline app shell caching via Service Worker (`public/sw.js`).
+  - Standalone fullscreen display (`display: standalone`) with matching theme colors.
+  - Fast updates upon page reload via `skipWaiting`.
+- **What a PWA Cannot Do (Postponed for Native App)**:
+  - Native push notification channels and alarms when the browser process is inactive.
+  - Android home screen dynamic app shortcuts and app icon notification badges.
+  - Background geofencing and continuous background GPS tracking.
+  - Android 13+ Material You system-themed monochrome launcher icons (requires native Android XML adaptive icon configuration).
+  - Hardware-level haptic engine integration and Play Integrity device attestation.
+
+### 16. Dhaka Location Database Geographic Scope and Modeling Decisions
+- **Decision**: Define geographic coverage using two nested levels:
+  - **Level 1 (Core Dhaka)**: Dhaka North City Corporation (DNCC, 54 wards) and Dhaka South City Corporation (DSCC, 75 wards).
+  - **Level 2 (Greater Dhaka / Metropolitan Planning Area)**: RAJUK Detailed Area Plan (DAP) coverage area (~1,528 km²). Includes Savar Upazila urban/industrial clusters (Savar town, Ashulia, Birulia, Aminbazar, Hemayetpur), Keraniganj Upazila urban fringe (Hasnabad, Zinjira, Tegharia, Jhilmil, Aganagar), Tongi and Gazipur urban corridor (GCC wards 43–57, Board Bazar, Gazipur Chowrasta), and Narayanganj urban corridor (NCC, Fatullah, Siddhirganj, Chashara, Kanchpur).
+- **Exclusion Boundary**: Outlying rural upazilas of Gazipur (Kaliakair, Kapasia, Sreepur, Kaliganj), Narayanganj (Araihazar, Sonargaon, Rupganj outer rural tracts), Munshiganj, and Manikganj are excluded from metropolitan dining search to prevent irrelevant remote matches.
+- **Hierarchy Distinction**: Administrative hierarchy (Division → District → City Corporation → Ward / Thana) is strictly decoupled from local geographic perception and common address usage (Broad Area → Sub-area → Sector / Block / Road / Landmark). Wards do not strictly equal neighborhoods, and police stations do not define dining zones.
+- **Subdivision Policy**: Verified subdivisions (e.g. Uttara Sectors 1-18, Mirpur 1-14, Gulshan 1-2, Badda zones, Old Dhaka mohallas) are indexed with distinct geographic centers and bounding features while preserving parent area relationships.
+- **Safety and Anti-Fabrication**: Any unverified administrative or coordinate details are flagged as UNCERTAIN or approximate local boundaries based on physical geography (rivers, rail tracks, canals, arterial roads). Center coordinates do not represent polygon boundaries.

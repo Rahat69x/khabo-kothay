@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import { searchRestaurants, getPlaceDetails } from '../services/places.js';
 import { computeTravelTimes, compareRoutes } from '../services/routes.js';
 import { rankRestaurants } from '../services/recommend.js';
@@ -515,6 +517,55 @@ router.post('/bandit/toggle', (req, res) => {
     enabled: profile.enabled,
     profile
   });
+});
+
+/**
+ * GET /api/admin/usage
+ * Administrative metrics on usage, endpoints, and daily Google API quota
+ */
+router.get('/admin/usage', (req, res) => {
+  const isLocal = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
+  const adminToken = req.headers['x-admin-token'] || req.query.admin_token;
+  const configuredToken = process.env.ADMIN_TOKEN;
+
+  if (!isLocal && (!configuredToken || adminToken !== configuredToken)) {
+    return res.status(403).json({ error: 'Access denied to /api/admin/usage' });
+  }
+
+  const report = quotaManager.getUsageReport();
+  res.json(report);
+});
+
+/**
+ * POST /api/feedback
+ * Anonymous tester feedback on recommendations
+ */
+router.post('/feedback', (req, res) => {
+  try {
+    const { areaName, cuisine, priority, topPickId, answer, reason } = req.body;
+
+    if (!answer || !['Yes', 'No', 'Not sure'].includes(answer)) {
+      return res.status(400).json({ error: 'Valid answer (Yes, No, Not sure) is required' });
+    }
+
+    const record = {
+      timestamp: new Date().toISOString(),
+      areaName: areaName || 'Gulshan / Banani',
+      cuisine: cuisine || 'All',
+      priority: priority || 'Best Overall',
+      topPickId: topPickId || null,
+      answer,
+      reason: typeof reason === 'string' ? reason.slice(0, 300) : ''
+    };
+
+    const feedbackFile = path.resolve('server', 'data', 'feedback.jsonl');
+    fs.mkdirSync(path.dirname(feedbackFile), { recursive: true });
+    fs.appendFileSync(feedbackFile, JSON.stringify(record) + '\n', 'utf8');
+
+    res.json({ success: true, message: 'Thank you for your feedback!' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to record feedback' });
+  }
 });
 
 export default router;

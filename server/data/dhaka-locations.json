@@ -1,0 +1,5334 @@
+[
+  {
+    "name": "উত্তরা",
+    "standardizedName": "Uttara",
+    "alternativeNames": [
+      "Uttara Model Town",
+      "উত্তরা মডেল টাউন",
+      "Uttara Residential Area"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 1, 51, 52, 53, 54",
+    "thana": "Uttara Model Thana / Uttara West / Turag",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8728,
+    "longitude": 90.3984,
+    "bounds": {
+      "north": 23.895,
+      "south": 23.848,
+      "east": 90.418,
+      "west": 90.375
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway",
+      "Jasimuddin Avenue",
+      "Rabindra Sarani",
+      "Sonargaon Janapath",
+      "Gareeb-e-Newaz Avenue"
+    ],
+    "nearbyAreas": [
+      "Abdullahpur",
+      "Airport",
+      "Khilkhet",
+      "Turag",
+      "Tongi"
+    ],
+    "landmarks": [
+      "Rajlakshmi Complex",
+      "House Building",
+      "Azampur Bus Stand",
+      "Uttara Club",
+      "Sector 3 Jame Masjid"
+    ],
+    "boundaryDescription": "North: Turag River / Abdullahpur; South: Hazrat Shahjalal International Airport; East: Railway Line / Dakshinkhan; West: Turag River / Mirpur Beribadh",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK Master Plan, DNCC Zone 1, OpenStreetMap",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "উত্তরা সেক্টর ১",
+    "standardizedName": "Uttara Sector 1",
+    "alternativeNames": [
+      "Sector 1, Uttara",
+      "Uttara Sec 1"
+    ],
+    "type": "Sector",
+    "parentLocation": "Uttara",
+    "ward": "Ward 1",
+    "thana": "Uttara Model Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.856,
+    "longitude": 90.398,
+    "bounds": {
+      "north": 23.861,
+      "south": 23.852,
+      "east": 90.404,
+      "west": 90.392
+    },
+    "mainRoads": [
+      "Jasimuddin Avenue",
+      "Dhaka-Mymensingh Highway"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 3",
+      "Airport",
+      "Jasimuddin"
+    ],
+    "landmarks": [
+      "Jasimuddin Bus Stop",
+      "Biman Office",
+      "Aarong Uttara"
+    ],
+    "boundaryDescription": "North: Sector 3 / Road 1; South: Airport approach; East: Dhaka-Mymensingh Highway; West: Sector 1 Lake",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Uttara Model Town Layout, DNCC Ward 1",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "উত্তরা সেক্টর ৩",
+    "standardizedName": "Uttara Sector 3",
+    "alternativeNames": [
+      "Sector 3, Uttara",
+      "Uttara Sec 3",
+      "Rajlakshmi Area"
+    ],
+    "type": "Sector",
+    "parentLocation": "Uttara",
+    "ward": "Ward 1",
+    "thana": "Uttara Model Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8645,
+    "longitude": 90.397,
+    "bounds": {
+      "north": 23.871,
+      "south": 23.858,
+      "east": 90.403,
+      "west": 90.39
+    },
+    "mainRoads": [
+      "Rabindra Sarani",
+      "Jasimuddin Avenue",
+      "Dhaka-Mymensingh Highway"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 1",
+      "Uttara Sector 4",
+      "Uttara Sector 7"
+    ],
+    "landmarks": [
+      "Rajlakshmi Complex",
+      "Friends Club Field",
+      "Sector 3 Central Park",
+      "North Tower"
+    ],
+    "boundaryDescription": "North: Sector 5 / 7 boundary; South: Jasimuddin Avenue / Sector 1; East: Dhaka-Mymensingh Highway; West: Sector 3 Lake",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Layout Map, DNCC Ward 1, Google Maps",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "উত্তরা সেক্টর ৪",
+    "standardizedName": "Uttara Sector 4",
+    "alternativeNames": [
+      "Sector 4, Uttara",
+      "Uttara Sec 4"
+    ],
+    "type": "Sector",
+    "parentLocation": "Uttara",
+    "ward": "Ward 1",
+    "thana": "Uttara Model Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.867,
+    "longitude": 90.4035,
+    "bounds": {
+      "north": 23.873,
+      "south": 23.86,
+      "east": 90.409,
+      "west": 90.398
+    },
+    "mainRoads": [
+      "Shahjalal Avenue",
+      "Dhaka-Mymensingh Highway"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 3",
+      "Uttara Sector 6",
+      "Azampur"
+    ],
+    "landmarks": [
+      "Azampur Kachabazar",
+      "Sector 4 Kalyan Samity",
+      "Sector 4 Park"
+    ],
+    "boundaryDescription": "North: Sector 6; South: Dakshinkhan Road; East: Railway Line / Azampur; West: Dhaka-Mymensingh Highway",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Uttara Layout, DNCC Ward 1",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "উত্তরা সেক্টর ৭",
+    "standardizedName": "Uttara Sector 7",
+    "alternativeNames": [
+      "Sector 7, Uttara",
+      "House Building Area",
+      "হাউজ বিল্ডিং"
+    ],
+    "type": "Sector",
+    "parentLocation": "Uttara",
+    "ward": "Ward 1",
+    "thana": "Uttara West Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8735,
+    "longitude": 90.398,
+    "bounds": {
+      "north": 23.879,
+      "south": 23.867,
+      "east": 90.404,
+      "west": 90.391
+    },
+    "mainRoads": [
+      "Sonargaon Janapath",
+      "Dhaka-Mymensingh Highway",
+      "Rabindra Sarani"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 3",
+      "Uttara Sector 9",
+      "Uttara Sector 8"
+    ],
+    "landmarks": [
+      "House Building Bus Stand",
+      "Mascot Plaza",
+      "Amir Complex",
+      "Sector 7 Jame Masjid"
+    ],
+    "boundaryDescription": "North: Sector 9 / Sonargaon Janapath; South: Sector 3 / Rabindra Sarani; East: Dhaka-Mymensingh Highway; West: Sector 7 Lake",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Layout Map, DNCC Ward 1",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "উত্তরা সেক্টর ১১",
+    "standardizedName": "Uttara Sector 11",
+    "alternativeNames": [
+      "Sector 11, Uttara",
+      "Gareeb-e-Newaz Avenue Corridor"
+    ],
+    "type": "Sector",
+    "parentLocation": "Uttara",
+    "ward": "Ward 51",
+    "thana": "Uttara West Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8765,
+    "longitude": 90.388,
+    "bounds": {
+      "north": 23.883,
+      "south": 23.87,
+      "east": 90.393,
+      "west": 90.381
+    },
+    "mainRoads": [
+      "Gareeb-e-Newaz Avenue",
+      "Sonargaon Janapath"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 13",
+      "Uttara Sector 12",
+      "Uttara Sector 7"
+    ],
+    "landmarks": [
+      "Zamzam Tower",
+      "Sector 11 Bridge",
+      "KFC Gareeb-e-Newaz"
+    ],
+    "boundaryDescription": "North: Sector 12; South: Sector 13; East: Sector 7 Lake; West: Turag / Sector 16 border",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Layout Map, DNCC Ward 51",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "উত্তরা সেক্টর ১৩",
+    "standardizedName": "Uttara Sector 13",
+    "alternativeNames": [
+      "Sector 13, Uttara"
+    ],
+    "type": "Sector",
+    "parentLocation": "Uttara",
+    "ward": "Ward 51",
+    "thana": "Uttara West Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.872,
+    "longitude": 90.3875,
+    "bounds": {
+      "north": 23.877,
+      "south": 23.865,
+      "east": 90.392,
+      "west": 90.381
+    },
+    "mainRoads": [
+      "Gareeb-e-Newaz Avenue",
+      "Shah Makhdum Avenue"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 11",
+      "Uttara Sector 14",
+      "Uttara Sector 3"
+    ],
+    "landmarks": [
+      "Sector 13 Playground",
+      "Lubana Hospital",
+      "Milestone College"
+    ],
+    "boundaryDescription": "North: Sector 11; South: Sector 14 / Lake; East: Sector 3 Lake; West: Turag Embankment",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Layout Map, DNCC Ward 51",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "দিয়াবাড়ী",
+    "standardizedName": "Diabari",
+    "alternativeNames": [
+      "Diyabari",
+      "Uttara Sector 15-18",
+      "Uttara North Metro Area"
+    ],
+    "type": "Locality",
+    "parentLocation": "Uttara",
+    "ward": "Ward 51",
+    "thana": "Turag Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.882,
+    "longitude": 90.37,
+    "bounds": {
+      "north": 23.896,
+      "south": 23.87,
+      "east": 90.382,
+      "west": 90.355
+    },
+    "mainRoads": [
+      "Metro Rail Viaduct Road",
+      "Mirpur-Ashulia Beribadh Road"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 15",
+      "Turag",
+      "Birulia",
+      "Mirpur 14 Extension"
+    ],
+    "landmarks": [
+      "MRT Line 6 Uttara North Depot",
+      "Diabari Bot Tola",
+      "Kashbon Lake"
+    ],
+    "boundaryDescription": "North: Turag River; South: Mirpur link road; East: Sector 11/12; West: Turag River",
+    "recognitionLevel": "Common local name",
+    "source": "MRT Line 6 Authority, Survey of Bangladesh, Google Maps",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "আব্দুল্লাহপুর",
+    "standardizedName": "Abdullahpur",
+    "alternativeNames": [
+      "Abdullahpur Bus Stand",
+      "Abdullahpur Bridge"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Uttara",
+    "ward": "Ward 1",
+    "thana": "Uttara Model Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8817,
+    "longitude": 90.4034,
+    "bounds": {
+      "north": 23.887,
+      "south": 23.876,
+      "east": 90.41,
+      "west": 90.395
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway",
+      "Ashulia Highway"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 9",
+      "Tongi",
+      "Kamardpara",
+      "Fayedabad"
+    ],
+    "landmarks": [
+      "Abdullahpur Bridge over Turag",
+      "Polwel Carnation",
+      "North-South Highway Junction"
+    ],
+    "boundaryDescription": "North: Tongi Bridge / Turag River; South: Sector 9 / Sector 6; East: Faydabad; West: Kamarpara",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 1, DMP Traffic Division",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "টঙ্গী",
+    "standardizedName": "Tongi",
+    "alternativeNames": [
+      "Tongi Pourashava",
+      "Tongi Metropolitan Zone",
+      "টংগী"
+    ],
+    "type": "City / Metropolitan Sub-zone",
+    "parentLocation": "Greater Dhaka (North)",
+    "ward": "GCC Wards 43-57",
+    "thana": "Tongi East / Tongi West",
+    "upazila": "Gazipur Sadar Upazila",
+    "city": "Gazipur (Greater Dhaka Metro)",
+    "cityCorporation": "GCC (Gazipur City Corporation)",
+    "district": "Gazipur",
+    "division": "Dhaka",
+    "latitude": 23.8967,
+    "longitude": 90.4011,
+    "bounds": {
+      "north": 23.935,
+      "south": 23.885,
+      "east": 90.435,
+      "west": 90.375
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway",
+      "Tongi-Kaliganj Road",
+      "Station Road"
+    ],
+    "nearbyAreas": [
+      "Abdullahpur",
+      "Uttara",
+      "Board Bazar",
+      "Cherag Ali"
+    ],
+    "landmarks": [
+      "Tongi Railway Junction",
+      "Bishwa Ijtema Maidan",
+      "Tongi Industrial Area",
+      "Cherag Ali Market"
+    ],
+    "boundaryDescription": "North: Board Bazar / Gazipur City; South: Turag River (Dhaka District border); East: Balu River; West: Turag River",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK DAP Northern Zone, Gazipur City Corporation Master Plan",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "টঙ্গী স্টেশন রোড",
+    "standardizedName": "Tongi Station Road",
+    "alternativeNames": [
+      "Station Road, Tongi",
+      "Tongi Railgate"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Tongi",
+    "ward": "GCC Ward 45",
+    "thana": "Tongi East Thana",
+    "upazila": "Gazipur Sadar",
+    "city": "Gazipur (Greater Dhaka)",
+    "cityCorporation": "GCC",
+    "district": "Gazipur",
+    "division": "Dhaka",
+    "latitude": 23.901,
+    "longitude": 90.403,
+    "bounds": {
+      "north": 23.907,
+      "south": 23.895,
+      "east": 90.412,
+      "west": 90.398
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway",
+      "Station Road"
+    ],
+    "nearbyAreas": [
+      "Cherag Ali",
+      "Tongi Bazar",
+      "Bata Signal"
+    ],
+    "landmarks": [
+      "Tongi Railway Station",
+      "Tongi Fire Service",
+      "Sena Kalyan Commercial Complex"
+    ],
+    "boundaryDescription": "Commercial intersection around Tongi rail junction",
+    "recognitionLevel": "Common local name",
+    "source": "GCC, DMP/GMP Traffic Division",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "চেরাগ আলী",
+    "standardizedName": "Cherag Ali",
+    "alternativeNames": [
+      "Cherag Ali Market",
+      "Cherag Ali Bus Stand"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Tongi",
+    "ward": "GCC Ward 47",
+    "thana": "Tongi West Thana",
+    "upazila": "Gazipur Sadar",
+    "city": "Gazipur (Greater Dhaka)",
+    "cityCorporation": "GCC",
+    "district": "Gazipur",
+    "division": "Dhaka",
+    "latitude": 23.914,
+    "longitude": 90.399,
+    "bounds": {
+      "north": 23.922,
+      "south": 23.908,
+      "east": 90.406,
+      "west": 90.392
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway"
+    ],
+    "nearbyAreas": [
+      "College Gate",
+      "Station Road",
+      "Tongi Industrial Estate"
+    ],
+    "landmarks": [
+      "Cherag Ali Market",
+      "Tassa Market",
+      "Telephone Shilpa Sangstha (TSS)"
+    ],
+    "boundaryDescription": "North: College Gate; South: Station Road; East: Industrial Area; West: Turag canal",
+    "recognitionLevel": "Common local name",
+    "source": "GMP, Local Transportation Route",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "বোর্ড বাজার",
+    "standardizedName": "Board Bazar",
+    "alternativeNames": [
+      "Gazipur Board Bazar",
+      "IUT Area"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Gazipur (Connected Metro)",
+    "ward": "GCC Ward 35",
+    "thana": "Gacha Thana",
+    "upazila": "Gazipur Sadar",
+    "city": "Gazipur (Greater Dhaka)",
+    "cityCorporation": "GCC",
+    "district": "Gazipur",
+    "division": "Dhaka",
+    "latitude": 23.948,
+    "longitude": 90.384,
+    "bounds": {
+      "north": 23.96,
+      "south": 23.935,
+      "east": 90.395,
+      "west": 90.37
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway"
+    ],
+    "nearbyAreas": [
+      "Tongi",
+      "Chowrasta",
+      "Kashimpur link"
+    ],
+    "landmarks": [
+      "Islamic University of Technology (IUT)",
+      "Open University Campus",
+      "Board Bazar Intersection"
+    ],
+    "boundaryDescription": "North: Chandana Chowrasta; South: College Gate / Tongi; East: Gacha; West: Konabari link",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK DAP Northern Extent, IUT Campus Registry",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "গাজীপুর চৌরাস্তা",
+    "standardizedName": "Gazipur Chowrasta",
+    "alternativeNames": [
+      "Chandana Chowrasta",
+      "চান্দনা চৌরাস্তা"
+    ],
+    "type": "Commercial Area / Landmark",
+    "parentLocation": "Gazipur (Connected Metro)",
+    "ward": "GCC Ward 16",
+    "thana": "Bason Thana",
+    "upazila": "Gazipur Sadar",
+    "city": "Gazipur (Greater Dhaka)",
+    "cityCorporation": "GCC",
+    "district": "Gazipur",
+    "division": "Dhaka",
+    "latitude": 23.992,
+    "longitude": 90.381,
+    "bounds": {
+      "north": 24.005,
+      "south": 23.98,
+      "east": 90.395,
+      "west": 90.365
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway",
+      "Dhaka-Tangail Highway",
+      "Dhaka Bypass"
+    ],
+    "nearbyAreas": [
+      "Joydebpur",
+      "Board Bazar",
+      "Salna",
+      "Kona Bari"
+    ],
+    "landmarks": [
+      "Jagroto Chowrangi Monument (জাগ্রত চৌরঙ্গী)",
+      "BRAC Training Centre",
+      "Bhawal Badre Alam College"
+    ],
+    "boundaryDescription": "Strategic tri-junction connecting Dhaka, Mymensingh, and Tangail corridors",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK DAP Northern Gateway, Roads and Highways Department",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "খিলক্ষেত",
+    "standardizedName": "Khilkhet",
+    "alternativeNames": [
+      "Khilkhet Bazar",
+      "Nikunja Area"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 17",
+    "thana": "Khilkhet Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8296,
+    "longitude": 90.4197,
+    "bounds": {
+      "north": 23.845,
+      "south": 23.818,
+      "east": 90.435,
+      "west": 90.405
+    },
+    "mainRoads": [
+      "Airport Road (Dhaka-Mymensingh Highway)",
+      "300 Feet Road (Purbachal Expressway)"
+    ],
+    "nearbyAreas": [
+      "Nikunja",
+      "Kuril",
+      "Airport",
+      "Bashundhara R/A"
+    ],
+    "landmarks": [
+      "Khilkhet Foot Overbridge",
+      "Lake City Concord (Nam Village)",
+      "Radisson Blu Water Garden Hotel"
+    ],
+    "boundaryDescription": "North: Airport Terminal; South: Kuril Flyover; East: Balu River / Purbachal Link; West: Dhaka Cantonment",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Ward 17, DMP Khilkhet Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "নিকুঞ্জ",
+    "standardizedName": "Nikunja",
+    "alternativeNames": [
+      "Nikunja-1",
+      "Nikunja-2",
+      "Nikunja Residential Area"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Khilkhet",
+    "ward": "Ward 17",
+    "thana": "Khilkhet Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.832,
+    "longitude": 90.415,
+    "bounds": {
+      "north": 23.838,
+      "south": 23.824,
+      "east": 90.422,
+      "west": 90.408
+    },
+    "mainRoads": [
+      "Airport Road",
+      "Nikunja Main Road"
+    ],
+    "nearbyAreas": [
+      "Khilkhet",
+      "Kuril",
+      "Dhaka Cantonment"
+    ],
+    "landmarks": [
+      "Dhaka Stock Exchange (DSE Tower)",
+      "Hotel Le Meridien Dhaka",
+      "Regent Airways Tower"
+    ],
+    "boundaryDescription": "Divided into Nikunja 1 (West of highway) and Nikunja 2 (East of highway)",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK Residential Scheme, DNCC Ward 17",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "কুড়িল",
+    "standardizedName": "Kuril",
+    "alternativeNames": [
+      "Kuril Flyover Area",
+      "Kuril Chowrasta",
+      "কুড়িল"
+    ],
+    "type": "Locality / Junction",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 17",
+    "thana": "Bhatara / Khilkhet Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.818,
+    "longitude": 90.419,
+    "bounds": {
+      "north": 23.825,
+      "south": 23.81,
+      "east": 90.428,
+      "west": 90.412
+    },
+    "mainRoads": [
+      "Pragati Sarani",
+      "Airport Road",
+      "Purbachal Expressway (300 Feet)"
+    ],
+    "nearbyAreas": [
+      "Bashundhara R/A",
+      "Khilkhet",
+      "Baridhara",
+      "Nadda"
+    ],
+    "landmarks": [
+      "Kuril Flyover",
+      "Kuril Railway Station",
+      "Jamuna Future Park (North Entry)"
+    ],
+    "boundaryDescription": "Major junction connecting Airport Road, Pragati Sarani, and Purbachal 300 Feet Expressway",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK, DNCC, DMP Traffic",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "উত্তরখান",
+    "standardizedName": "Uttarkhan",
+    "alternativeNames": [
+      "Uttarkhan Union",
+      "উত্তর খান"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 44, 45, 46",
+    "thana": "Uttarkhan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.864,
+    "longitude": 90.428,
+    "bounds": {
+      "north": 23.885,
+      "south": 23.845,
+      "east": 90.455,
+      "west": 90.412
+    },
+    "mainRoads": [
+      "Majar Road Uttarkhan",
+      "Uttarkhan Main Road"
+    ],
+    "nearbyAreas": [
+      "Dakshinkhan",
+      "Uttara Sector 4",
+      "Faydabad",
+      "Balu River"
+    ],
+    "landmarks": [
+      "Uttarkhan Majar",
+      "Uttarkhan Thana",
+      "Chanderpara"
+    ],
+    "boundaryDescription": "North: Tongi Canal; South: Dakshinkhan; East: Balu River; West: Railway Line / Uttara",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Zone 7, DMP Uttarkhan Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "দক্ষিণখান",
+    "standardizedName": "Dakshinkhan",
+    "alternativeNames": [
+      "Dakshinkhan Union",
+      "দক্ষিণ খান"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 47, 48, 49, 50",
+    "thana": "Dakshinkhan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.849,
+    "longitude": 90.424,
+    "bounds": {
+      "north": 23.865,
+      "south": 23.832,
+      "east": 90.45,
+      "west": 90.408
+    },
+    "mainRoads": [
+      "Azampur-Dakshinkhan Road",
+      "Anwara Hospital Road"
+    ],
+    "nearbyAreas": [
+      "Uttarkhan",
+      "Azampur",
+      "Khilkhet",
+      "Gawair"
+    ],
+    "landmarks": [
+      "Gawair Mor",
+      "Dakshinkhan Police Station",
+      "Hazi Camp Link"
+    ],
+    "boundaryDescription": "North: Uttarkhan; South: Khilkhet; East: Trimohoni / Balu River; West: Airport / Railway Line",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Zone 7, DMP Dakshinkhan Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বাউনিয়া",
+    "standardizedName": "Baunia",
+    "alternativeNames": [
+      "Baunia Badh",
+      "বাউনিয়া বাঁধ"
+    ],
+    "type": "Locality",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 52",
+    "thana": "Turag Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.858,
+    "longitude": 90.38,
+    "bounds": {
+      "north": 23.868,
+      "south": 23.848,
+      "east": 90.392,
+      "west": 90.368
+    },
+    "mainRoads": [
+      "Baunia Beribadh Road"
+    ],
+    "nearbyAreas": [
+      "Uttara Sector 18",
+      "Turag",
+      "Mirpur DOHS Border"
+    ],
+    "landmarks": [
+      "Baunia Bazar",
+      "Turag River Bank"
+    ],
+    "boundaryDescription": "Between Uttara western edge and Turag embankment",
+    "recognitionLevel": "Common local name",
+    "source": "DNCC Ward 52, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "গুলশান",
+    "standardizedName": "Gulshan",
+    "alternativeNames": [
+      "Gulshan Model Town",
+      "গুলশান মডেল টাউন"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 18, 19",
+    "thana": "Gulshan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7925,
+    "longitude": 90.415,
+    "bounds": {
+      "north": 23.81,
+      "south": 23.775,
+      "east": 90.428,
+      "west": 90.405
+    },
+    "mainRoads": [
+      "Gulshan Avenue",
+      "Kamal Ataturk Avenue",
+      "Bir Uttam Mir Shawkat Sarak",
+      "Road 11 Link"
+    ],
+    "nearbyAreas": [
+      "Banani",
+      "Baridhara",
+      "Niketan",
+      "Badda",
+      "Mohakhali"
+    ],
+    "landmarks": [
+      "Gulshan 1 Circle",
+      "Gulshan 2 Circle",
+      "Gulshan Lake",
+      "Navana Tower",
+      "Westin Dhaka"
+    ],
+    "boundaryDescription": "North: Baridhara Diplomatic Zone; South: Hatirjheel Lake; East: Gulshan-Badda Lake; West: Banani Lake",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK Gulshan Model Town Scheme, DNCC Wards 18/19",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "গুলশান ১",
+    "standardizedName": "Gulshan 1",
+    "alternativeNames": [
+      "Gulshan-1 Circle",
+      "Gulshan 1 DCC Market"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Gulshan",
+    "ward": "Ward 19",
+    "thana": "Gulshan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7788,
+    "longitude": 90.4172,
+    "bounds": {
+      "north": 23.786,
+      "south": 23.772,
+      "east": 90.424,
+      "west": 90.41
+    },
+    "mainRoads": [
+      "Gulshan Avenue",
+      "Bir Uttam Mir Shawkat Sarak (Gulshan Link Road)"
+    ],
+    "nearbyAreas": [
+      "Niketan",
+      "Gulshan 2",
+      "Badda",
+      "Mohakhali Wireless"
+    ],
+    "landmarks": [
+      "Gulshan 1 DCC Market",
+      "Shoppers World",
+      "Police Plaza Concord",
+      "Gulshan 1 Roundabout"
+    ],
+    "boundaryDescription": "Centered on Gulshan 1 Circle; South: Niketan/Hatirjheel; North: Road 50/103; East: Badda Lake; West: Gulshan Lake",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 19, Google Maps",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "গুলশান ২",
+    "standardizedName": "Gulshan 2",
+    "alternativeNames": [
+      "Gulshan-2 Circle",
+      "Diplomatic Quarter"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Gulshan",
+    "ward": "Ward 18",
+    "thana": "Gulshan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7942,
+    "longitude": 90.414,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.786,
+      "east": 90.423,
+      "west": 90.405
+    },
+    "mainRoads": [
+      "Gulshan Avenue",
+      "Kamal Ataturk Avenue",
+      "Road 79",
+      "Madani Avenue"
+    ],
+    "nearbyAreas": [
+      "Baridhara",
+      "Banani",
+      "Gulshan 1",
+      "Shahjadpur"
+    ],
+    "landmarks": [
+      "Gulshan 2 DCC Market",
+      "Westin Dhaka",
+      "American Club",
+      "Gulshan Society Jame Masjid"
+    ],
+    "boundaryDescription": "Centered on Gulshan 2 Circle; North: Baridhara; South: Gulshan 1; East: Shahjadpur; West: Banani Bridge",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 18, Google Maps",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "নিকেতন",
+    "standardizedName": "Niketan",
+    "alternativeNames": [
+      "Niketan Housing Society",
+      "Niketan R/A"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Gulshan",
+    "ward": "Ward 19",
+    "thana": "Gulshan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7745,
+    "longitude": 90.41,
+    "bounds": {
+      "north": 23.78,
+      "south": 23.768,
+      "east": 90.418,
+      "west": 90.402
+    },
+    "mainRoads": [
+      "Niketan Main Road",
+      "Hatirjheel Circular Road"
+    ],
+    "nearbyAreas": [
+      "Gulshan 1",
+      "Mohakhali",
+      "Tejgaon",
+      "Badda Link Road"
+    ],
+    "landmarks": [
+      "Police Plaza Concord",
+      "Niketan Central Mosque",
+      "Niketan Gate 1/2/3/4"
+    ],
+    "boundaryDescription": "North: Gulshan 1 / Link Road; South: Hatirjheel Lake; East: Badda Lake; West: Mohakhali canal",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK Planned Housing, DNCC Ward 19",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বনানী",
+    "standardizedName": "Banani",
+    "alternativeNames": [
+      "Banani Model Town",
+      "বনানী মডেল টাউন"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 19",
+    "thana": "Banani Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7937,
+    "longitude": 90.4046,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.782,
+      "east": 90.412,
+      "west": 90.395
+    },
+    "mainRoads": [
+      "Kamal Ataturk Avenue",
+      "Road 11",
+      "Airport Road (Bir Uttam AK Khandakar)",
+      "Road 27"
+    ],
+    "nearbyAreas": [
+      "Gulshan",
+      "Mohakhali",
+      "Banani DOHS",
+      "Dhaka Cantonment"
+    ],
+    "landmarks": [
+      "Banani Road 11 Food Corridor",
+      "Sheraton Dhaka",
+      "Banani Graveyard",
+      "Banani Club"
+    ],
+    "boundaryDescription": "North: Army Stadium / Cantonment; South: Mohakhali Flyover; East: Banani Lake; West: Airport Road / Railway",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK Banani Layout, DNCC Ward 19",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বনানী ১১",
+    "standardizedName": "Banani Road 11",
+    "alternativeNames": [
+      "Road 11, Banani",
+      "Banani 11",
+      "Food Street Banani"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Banani",
+    "ward": "Ward 19",
+    "thana": "Banani Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7928,
+    "longitude": 90.4065,
+    "bounds": {
+      "north": 23.796,
+      "south": 23.789,
+      "east": 90.412,
+      "west": 90.399
+    },
+    "mainRoads": [
+      "Road 11",
+      "Kamal Ataturk Avenue",
+      "Road 10"
+    ],
+    "nearbyAreas": [
+      "Banani Block D",
+      "Banani Block E",
+      "Gulshan 2 Link"
+    ],
+    "landmarks": [
+      "Banani-Gulshan Bridge",
+      "Starbucks/Gloria Jeans Roastery",
+      "Block E Park"
+    ],
+    "boundaryDescription": "Major food, lifestyle, and retail promenade stretching from Airport Road to Banani-Gulshan bridge",
+    "recognitionLevel": "Common local name",
+    "source": "DNCC Commercial Zone, Google Maps",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "বনানী ডিওএইচএস",
+    "standardizedName": "Banani DOHS",
+    "alternativeNames": [
+      "DOHS Banani",
+      "Defence Officers Housing Society Banani"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Banani",
+    "ward": "Ward 19",
+    "thana": "Cantonment / Banani Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.798,
+    "longitude": 90.398,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.791,
+      "east": 90.403,
+      "west": 90.393
+    },
+    "mainRoads": [
+      "DOHS Central Road",
+      "Old Airport Road"
+    ],
+    "nearbyAreas": [
+      "Banani",
+      "Dhaka Cantonment",
+      "Mohakhali DOHS"
+    ],
+    "landmarks": [
+      "Banani DOHS Community Center",
+      "Banani DOHS Central Mosque",
+      "Lake Park"
+    ],
+    "boundaryDescription": "Gated cantonment residential area west of Banani and east of Cantonment rail tracks",
+    "recognitionLevel": "Official administrative name",
+    "source": "DOHS Authority, Cantonment Board",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "বারিধারা",
+    "standardizedName": "Baridhara",
+    "alternativeNames": [
+      "Baridhara Diplomatic Zone",
+      "Baridhara R/A",
+      "বারিধারা ডিপ্লোমেটিক জোন"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 18",
+    "thana": "Gulshan / Bhatara Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.8,
+    "longitude": 90.42,
+    "bounds": {
+      "north": 23.812,
+      "south": 23.792,
+      "east": 90.431,
+      "west": 90.412
+    },
+    "mainRoads": [
+      "Madani Avenue",
+      "Park Road",
+      "United Nations Road",
+      "Pragati Sarani"
+    ],
+    "nearbyAreas": [
+      "Gulshan 2",
+      "Bashundhara R/A",
+      "Natun Bazar",
+      "Shahjadpur"
+    ],
+    "landmarks": [
+      "US Embassy",
+      "British High Commission",
+      "Baridhara Park",
+      "Madani Avenue Corner"
+    ],
+    "boundaryDescription": "North: Kuril / Bashundhara; South: Gulshan 2 / Madani Avenue; East: Natun Bazar / Pragati Sarani; West: Gulshan Lake",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK Baridhara Scheme, DNCC Ward 18",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বারিধারা ডিওএইচএস",
+    "standardizedName": "Baridhara DOHS",
+    "alternativeNames": [
+      "DOHS Baridhara"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Baridhara",
+    "ward": "Ward 18",
+    "thana": "Cantonment Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.811,
+    "longitude": 90.413,
+    "bounds": {
+      "north": 23.818,
+      "south": 23.804,
+      "east": 90.419,
+      "west": 90.407
+    },
+    "mainRoads": [
+      "Baridhara DOHS Main Road"
+    ],
+    "nearbyAreas": [
+      "Baridhara",
+      "Kuril",
+      "Dhaka Cantonment"
+    ],
+    "landmarks": [
+      "Baridhara DOHS Convention Center",
+      "DOHS Ananya Shopping Complex"
+    ],
+    "boundaryDescription": "Gated cantonment officers residential sector immediately north of Baridhara diplomatic zone",
+    "recognitionLevel": "Official administrative name",
+    "source": "Cantonment Board, DOHS Authority",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "বসুন্ধরা",
+    "standardizedName": "Bashundhara",
+    "alternativeNames": [
+      "Bashundhara R/A",
+      "বসুন্ধরা আবাসিক এলাকা",
+      "Bashundhara Residential Area"
+    ],
+    "type": "Broad Area / Residential Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 40",
+    "thana": "Bhatara Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.815,
+    "longitude": 90.43,
+    "bounds": {
+      "north": 23.84,
+      "south": 23.805,
+      "east": 90.46,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Bashundhara Main Avenue",
+      "300 Feet Road (Purbachal Expressway)",
+      "Madani Avenue Extension"
+    ],
+    "nearbyAreas": [
+      "Baridhara",
+      "Kuril",
+      "Vatara",
+      "Purbachal"
+    ],
+    "landmarks": [
+      "Jamuna Future Park",
+      "North South University (NSU)",
+      "Independent University, Bangladesh (IUB)",
+      "Evercare Hospital"
+    ],
+    "boundaryDescription": "North: 300 Feet Expressway; South: Madani Avenue / Vatara; East: Balu River; West: Pragati Sarani",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 40, Bashundhara Group Master Plan",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বাড্ডা",
+    "standardizedName": "Badda",
+    "alternativeNames": [
+      "Badda Thana Area"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 21, 37, 38, 41",
+    "thana": "Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7805,
+    "longitude": 90.4267,
+    "bounds": {
+      "north": 23.8,
+      "south": 23.765,
+      "east": 90.445,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Pragati Sarani",
+      "Badda Link Road",
+      "Madani Avenue"
+    ],
+    "nearbyAreas": [
+      "Gulshan 1",
+      "Rampura",
+      "Aftabnagar",
+      "Shahjadpur",
+      "Merul Badda"
+    ],
+    "landmarks": [
+      "Badda Link Road Junction",
+      "Brac University New Campus",
+      "Merul Badda Fish Market"
+    ],
+    "boundaryDescription": "North: Shahjadpur/Natun Bazar; South: Rampura Bridge; East: Aftabnagar/Balu River; West: Gulshan Lake",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Zone 3, DMP Badda Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "উত্তর বাড্ডা",
+    "standardizedName": "North Badda",
+    "alternativeNames": [
+      "Uttar Badda",
+      "উওর বাড্ডা"
+    ],
+    "type": "Sub-area",
+    "parentLocation": "Badda",
+    "ward": "Ward 37",
+    "thana": "Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.785,
+    "longitude": 90.425,
+    "bounds": {
+      "north": 23.792,
+      "south": 23.78,
+      "east": 90.435,
+      "west": 90.42
+    },
+    "mainRoads": [
+      "Pragati Sarani",
+      "Gopi Kishan Road"
+    ],
+    "nearbyAreas": [
+      "Middle Badda",
+      "Shahjadpur",
+      "Gulshan 1"
+    ],
+    "landmarks": [
+      "North Badda Bazar",
+      "Al-Sami Hospital"
+    ],
+    "boundaryDescription": "North: Shahjadpur; South: Middle Badda; East: Satarkul; West: Gulshan Lake",
+    "recognitionLevel": "Common local name",
+    "source": "DNCC Ward 37, Local Address Records",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "মেরুল বাড্ডা",
+    "standardizedName": "Merul Badda",
+    "alternativeNames": [
+      "Merul Badda Mor",
+      "BRAC University Area"
+    ],
+    "type": "Sub-area",
+    "parentLocation": "Badda",
+    "ward": "Ward 21",
+    "thana": "Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.769,
+    "longitude": 90.425,
+    "bounds": {
+      "north": 23.775,
+      "south": 23.762,
+      "east": 90.432,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Pragati Sarani",
+      "DIT Road Link"
+    ],
+    "nearbyAreas": [
+      "Rampura",
+      "Aftabnagar",
+      "South Badda"
+    ],
+    "landmarks": [
+      "BRAC University Permanent Campus",
+      "Merul Badda Buddhist Monastery (Bouddha Mandir)"
+    ],
+    "boundaryDescription": "North: South Badda; South: Rampura Bridge; East: Aftabnagar gate; West: Hatirjheel edge",
+    "recognitionLevel": "Common local name",
+    "source": "DNCC Ward 21, BRAC University Location",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "নতুন বাজার",
+    "standardizedName": "Natun Bazar",
+    "alternativeNames": [
+      "Notun Bazar",
+      "Madani Avenue Mor",
+      "নতুনবাজার"
+    ],
+    "type": "Locality / Transit Hub",
+    "parentLocation": "Badda / Bhatara",
+    "ward": "Ward 38",
+    "thana": "Bhatara / Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7975,
+    "longitude": 90.4245,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.792,
+      "east": 90.435,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Pragati Sarani",
+      "Madani Avenue (100 Feet)"
+    ],
+    "nearbyAreas": [
+      "Baridhara",
+      "Shahjadpur",
+      "Nadda",
+      "Vatara"
+    ],
+    "landmarks": [
+      "Natun Bazar Bus Terminal",
+      "Madani Avenue 100ft Entrance",
+      "United International University (UIU link)"
+    ],
+    "boundaryDescription": "Intersection of Pragati Sarani and Madani Avenue, gateway to Baridhara and eastern expansion",
+    "recognitionLevel": "Common local name",
+    "source": "DMP Traffic, DNCC Ward 38, Google Maps",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "শাহজাদপুর",
+    "standardizedName": "Shahjadpur",
+    "alternativeNames": [
+      "Shahzadpur",
+      "Shahjadpur J-Block"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 18",
+    "thana": "Gulshan / Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7915,
+    "longitude": 90.423,
+    "bounds": {
+      "north": 23.798,
+      "south": 23.785,
+      "east": 90.429,
+      "west": 90.417
+    },
+    "mainRoads": [
+      "Pragati Sarani"
+    ],
+    "nearbyAreas": [
+      "Gulshan 2",
+      "Natun Bazar",
+      "North Badda",
+      "Baridhara"
+    ],
+    "landmarks": [
+      "Shahjadpur Bus Stand",
+      "Confidence Tower",
+      "Suvastu Nazar Valley"
+    ],
+    "boundaryDescription": "North: Natun Bazar; South: North Badda; East: Khilbarirtek; West: Gulshan 2 Lake",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 18, DMP Badda/Gulshan",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ভাটারা",
+    "standardizedName": "Vatara",
+    "alternativeNames": [
+      "Bhatara",
+      "Vatara Thana"
+    ],
+    "type": "Neighborhood / Thana",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 39, 40",
+    "thana": "Bhatara Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.804,
+    "longitude": 90.432,
+    "bounds": {
+      "north": 23.82,
+      "south": 23.795,
+      "east": 90.45,
+      "west": 90.423
+    },
+    "mainRoads": [
+      "Madani Avenue",
+      "Pragati Sarani"
+    ],
+    "nearbyAreas": [
+      "Bashundhara R/A",
+      "Natun Bazar",
+      "Satarkul"
+    ],
+    "landmarks": [
+      "Vatara Police Station",
+      "Sayeed Nagar",
+      "United International University (UIU)"
+    ],
+    "boundaryDescription": "North: Bashundhara R/A; South: Badda; East: Balu River; West: Pragati Sarani",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Zone 3, DMP Bhatara Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সাঁতারকুল",
+    "standardizedName": "Satarkul",
+    "alternativeNames": [
+      "Satarkul Union",
+      "সাতারকূল"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 41",
+    "thana": "Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.784,
+    "longitude": 90.448,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.77,
+      "east": 90.47,
+      "west": 90.435
+    },
+    "mainRoads": [
+      "Satarkul Road",
+      "Madani Avenue Extension"
+    ],
+    "nearbyAreas": [
+      "Badda",
+      "Beraid",
+      "Vatara"
+    ],
+    "landmarks": [
+      "United International University Campus",
+      "Satarkul Bazar"
+    ],
+    "boundaryDescription": "North: Vatara; South: Aftabnagar; East: Balu River; West: Badda",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Ward 41, RAJUK DAP",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বেরাইদ",
+    "standardizedName": "Beraid",
+    "alternativeNames": [
+      "Beraid Union",
+      "বৈরাঈদ"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 42",
+    "thana": "Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.792,
+    "longitude": 90.47,
+    "bounds": {
+      "north": 23.815,
+      "south": 23.775,
+      "east": 90.49,
+      "west": 90.45
+    },
+    "mainRoads": [
+      "Beraid Main Road",
+      "Madani Avenue Eastern Extension"
+    ],
+    "nearbyAreas": [
+      "Satarkul",
+      "Purbachal",
+      "Balu River"
+    ],
+    "landmarks": [
+      "Beraid Muslim High School",
+      "Balu River Ferry Ghat"
+    ],
+    "boundaryDescription": "Eastern fringe bordering Balu River across from Rupganj/Purbachal",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Ward 42, RAJUK DAP",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "আফতাবনগর",
+    "standardizedName": "Aftabnagar",
+    "alternativeNames": [
+      "Aftab Nagar",
+      "Jaharul Islam City",
+      "জহুরুল ইসলাম সিটি"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Dhaka North / East",
+    "ward": "Ward 37 (Part) / DSCC Ward 75 border",
+    "thana": "Badda Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.766,
+    "longitude": 90.435,
+    "bounds": {
+      "north": 23.778,
+      "south": 23.755,
+      "east": 90.455,
+      "west": 90.425
+    },
+    "mainRoads": [
+      "Aftabnagar Main Road",
+      "Rampura Bridge Link"
+    ],
+    "nearbyAreas": [
+      "Banasree",
+      "Merul Badda",
+      "Rampura",
+      "Balu River"
+    ],
+    "landmarks": [
+      "East West University (EWU)",
+      "Aftabnagar Cattle Market Field",
+      "Aftabnagar Gate 1/2"
+    ],
+    "boundaryDescription": "North: Badda; South: Banasree Canal / Rampura; East: Balu River; West: Pragati Sarani / Rampura canal",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "Eastern Housing Layout, DNCC, EWU Campus Map",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বনশ্রী",
+    "standardizedName": "Banasree",
+    "alternativeNames": [
+      "Banasree Residential Area",
+      "বনশ্রী আবাসিক এলাকা"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 3",
+    "thana": "Rampura / Khilgaon Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.76,
+    "longitude": 90.435,
+    "bounds": {
+      "north": 23.768,
+      "south": 23.75,
+      "east": 90.45,
+      "west": 90.422
+    },
+    "mainRoads": [
+      "Banasree Main Road",
+      "Rampura-Demra Link Road"
+    ],
+    "nearbyAreas": [
+      "Aftabnagar",
+      "Rampura",
+      "Khilgaon",
+      "Goran"
+    ],
+    "landmarks": [
+      "Farazy Hospital",
+      "Al-Razi Hospital",
+      "Banasree Central Jame Mosque",
+      "Blocks A through N"
+    ],
+    "boundaryDescription": "North: Aftabnagar Canal; South: Khilgaon / Taltola; East: Trimohoni canal; West: DIT Road Rampura",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DSCC Ward 3, Eastern Housing Master Plan",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "রামপুরা",
+    "standardizedName": "Rampura",
+    "alternativeNames": [
+      "East Rampura",
+      "West Rampura",
+      "Rampura TV Station Area"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North / South",
+    "ward": "DNCC Ward 22 / DSCC Ward 3",
+    "thana": "Rampura Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC / DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.761,
+    "longitude": 90.423,
+    "bounds": {
+      "north": 23.772,
+      "south": 23.752,
+      "east": 90.435,
+      "west": 90.412
+    },
+    "mainRoads": [
+      "DIT Road",
+      "Rampura Bridge",
+      "Hatirjheel Circular Road"
+    ],
+    "nearbyAreas": [
+      "Banasree",
+      "Aftabnagar",
+      "Malibagh",
+      "Hatirjheel"
+    ],
+    "landmarks": [
+      "BTV Center (Bangladesh Television)",
+      "Rampura Bridge",
+      "Better Life Hospital"
+    ],
+    "boundaryDescription": "North: Merul Badda; South: Malibagh Chowdhurypara; East: Banasree; West: Hatirjheel",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Zone 3, DMP Rampura Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মহাখালী",
+    "standardizedName": "Mohakhali",
+    "alternativeNames": [
+      "Mahakhali",
+      "Mohakhali Bus Terminal Area"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 20",
+    "thana": "Mohakhali / Banani Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.777,
+    "longitude": 90.404,
+    "bounds": {
+      "north": 23.788,
+      "south": 23.768,
+      "east": 90.415,
+      "west": 90.392
+    },
+    "mainRoads": [
+      "Bir Uttam AK Khandakar Road",
+      "Mohakhali Flyover",
+      "Wireless Gate Road"
+    ],
+    "nearbyAreas": [
+      "Banani",
+      "Gulshan 1",
+      "Tejgaon",
+      "Niketan"
+    ],
+    "landmarks": [
+      "Mohakhali Inter-District Bus Terminal",
+      "ICDDR,B",
+      "Universal Medical College",
+      "Wireless Gate"
+    ],
+    "boundaryDescription": "North: Banani; South: Tejgaon; East: Gulshan 1 / Niketan; West: Mohakhali DOHS / Cantonment",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 20, DMP Banani/Tejgaon",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মহাখালী ডিওএইচএস",
+    "standardizedName": "Mohakhali DOHS",
+    "alternativeNames": [
+      "DOHS Mohakhali"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Mohakhali",
+    "ward": "Ward 20",
+    "thana": "Cantonment Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.781,
+    "longitude": 90.396,
+    "bounds": {
+      "north": 23.788,
+      "south": 23.774,
+      "east": 90.402,
+      "west": 90.39
+    },
+    "mainRoads": [
+      "Mohakhali DOHS Central Road"
+    ],
+    "nearbyAreas": [
+      "Mohakhali",
+      "Dhaka Cantonment",
+      "Kochukhet"
+    ],
+    "landmarks": [
+      "Mohakhali DOHS Mosque",
+      "DOHS Lake Walkway",
+      "Raowa Club"
+    ],
+    "boundaryDescription": "Gated residential enclave west of Mohakhali terminal and east of old runway",
+    "recognitionLevel": "Official administrative name",
+    "source": "Cantonment Board, DOHS Council",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "তেজগাঁও",
+    "standardizedName": "Tejgaon",
+    "alternativeNames": [
+      "Tejgaon Industrial Area",
+      "Tejgaon I/A"
+    ],
+    "type": "Broad Area / Industrial Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 24, 25",
+    "thana": "Tejgaon Industrial Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.764,
+    "longitude": 90.401,
+    "bounds": {
+      "north": 23.776,
+      "south": 23.75,
+      "east": 90.415,
+      "west": 90.385
+    },
+    "mainRoads": [
+      "Shahid Tajuddin Ahmed Sarani",
+      "Bir Uttam Mir Shawkat Sarak",
+      "Bijoy Sarani"
+    ],
+    "nearbyAreas": [
+      "Farmgate",
+      "Mohakhali",
+      "Hatirjheel",
+      "Kawran Bazar"
+    ],
+    "landmarks": [
+      "Aarong Flagship Tejgaon",
+      "Channel i Office",
+      "Tivoli Garden",
+      "Ahsanullah University (AUST)"
+    ],
+    "boundaryDescription": "North: Mohakhali; South: Kawran Bazar / Maghbazar; East: Hatirjheel; West: Farmgate / Airport Railway",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Zone 3, DMP Tejgaon Industrial Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ফার্মগেট",
+    "standardizedName": "Farmgate",
+    "alternativeNames": [
+      "Farm Gate Intersection",
+      "ফার্মগেইট"
+    ],
+    "type": "Commercial Area / Transit Hub",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 27",
+    "thana": "Tejgaon Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.758,
+    "longitude": 90.389,
+    "bounds": {
+      "north": 23.765,
+      "south": 23.75,
+      "east": 90.398,
+      "west": 90.38
+    },
+    "mainRoads": [
+      "Kazi Nazrul Islam Avenue",
+      "Indira Road",
+      "Manik Mia Avenue"
+    ],
+    "nearbyAreas": [
+      "Tejgaon",
+      "Kawran Bazar",
+      "Green Road",
+      "Sher-e-Bangla Nagar"
+    ],
+    "landmarks": [
+      "MRT Line 6 Farmgate Station",
+      "Ananda Cinema Hall",
+      "Government Science College",
+      "Khamarbari"
+    ],
+    "boundaryDescription": "Major transit hub around Kazi Nazrul Islam Avenue and Green Road intersection",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 27, MRT Line 6 Authority",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "কারওয়ান বাজার",
+    "standardizedName": "Kawran Bazar",
+    "alternativeNames": [
+      "Karwan Bazar",
+      "কাওরান বাজার"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 26",
+    "thana": "Tejgaon Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.751,
+    "longitude": 90.394,
+    "bounds": {
+      "north": 23.758,
+      "south": 23.744,
+      "east": 90.402,
+      "west": 90.388
+    },
+    "mainRoads": [
+      "Kazi Nazrul Islam Avenue",
+      "Panthapath",
+      "Sonar Gaon Road"
+    ],
+    "nearbyAreas": [
+      "Farmgate",
+      "Panthapath",
+      "Shahbagh",
+      "Maghbazar"
+    ],
+    "landmarks": [
+      "Pan Pacific Sonargaon Hotel",
+      "Kawran Bazar Wholesale Market",
+      "Wasa Bhaban",
+      "Petrobangla"
+    ],
+    "boundaryDescription": "Largest wholesale produce hub and commercial corporate node in central Dhaka",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 26, Google Maps",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "হাতিরঝিল",
+    "standardizedName": "Hatirjheel",
+    "alternativeNames": [
+      "Hatirjheel Integrated Lake",
+      "হাতিরঝিল লেক"
+    ],
+    "type": "Locality / Landmark",
+    "parentLocation": "Dhaka Central",
+    "ward": "Spans DNCC Wards 19, 22, 24, 35",
+    "thana": "Tejgaon / Gulshan / Rampura Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC / DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.769,
+    "longitude": 90.413,
+    "bounds": {
+      "north": 23.778,
+      "south": 23.758,
+      "east": 90.428,
+      "west": 90.398
+    },
+    "mainRoads": [
+      "Hatirjheel Expressway / Circular Road"
+    ],
+    "nearbyAreas": [
+      "Gulshan 1",
+      "Niketan",
+      "Rampura",
+      "Tejgaon",
+      "Maghbazar"
+    ],
+    "landmarks": [
+      "Hatirjheel Amphitheatre",
+      "Water Taxi Terminals",
+      "Hatirjheel Viaduct Bridges"
+    ],
+    "boundaryDescription": "Water retention and transit ring connecting Gulshan, Badda, Rampura, and Tejgaon",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Hatirjheel Project, Bangladesh Army Special Works",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ধানমন্ডি",
+    "standardizedName": "Dhanmondi",
+    "alternativeNames": [
+      "Dhanmondi R/A",
+      "ধানমন্ডি আবাসিক এলাকা"
+    ],
+    "type": "Broad Area / Residential Area",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 15",
+    "thana": "Dhanmondi Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7465,
+    "longitude": 90.376,
+    "bounds": {
+      "north": 23.759,
+      "south": 23.734,
+      "east": 90.388,
+      "west": 90.366
+    },
+    "mainRoads": [
+      "Mirpur Road",
+      "Satmasjid Road",
+      "Road 27 (Old) / 16 (New)",
+      "Road 2"
+    ],
+    "nearbyAreas": [
+      "Mohammadpur",
+      "Kalabagan",
+      "Zigatola",
+      "Lalmatia",
+      "Science Lab"
+    ],
+    "landmarks": [
+      "Dhanmondi Lake",
+      "Rabindra Sarobar",
+      "Bangabandhu Memorial Museum (Road 32)",
+      "Shimanto Square"
+    ],
+    "boundaryDescription": "North: Manik Mia Avenue / Asad Gate; South: BDR / Pilkhana; East: Mirpur Road / Green Road; West: Satmasjid Road",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 15, RAJUK Dhanmondi Scheme",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সাতমসজিদ রোড",
+    "standardizedName": "Satmasjid Road",
+    "alternativeNames": [
+      "Sat Masjid Road",
+      "Dhanmondi Food Street"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Dhanmondi",
+    "ward": "Ward 15",
+    "thana": "Dhanmondi Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.749,
+    "longitude": 90.37,
+    "bounds": {
+      "north": 23.758,
+      "south": 23.738,
+      "east": 90.374,
+      "west": 90.365
+    },
+    "mainRoads": [
+      "Satmasjid Road"
+    ],
+    "nearbyAreas": [
+      "Dhanmondi",
+      "Rayer Bazar",
+      "Mohammadpur",
+      "Zigatola"
+    ],
+    "landmarks": [
+      "Saat Masjid (Historic 7-domed mosque)",
+      "Abahani Club Field",
+      "Star Cineplex Shimanto Shombhar"
+    ],
+    "boundaryDescription": "Western commercial backbone of Dhanmondi running north-south",
+    "recognitionLevel": "Common local name",
+    "source": "DSCC, Google Maps, Local Trade Directory",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "কলাবাগান",
+    "standardizedName": "Kalabagan",
+    "alternativeNames": [
+      "Kolabagan"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 16",
+    "thana": "Kalabagan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.751,
+    "longitude": 90.383,
+    "bounds": {
+      "north": 23.757,
+      "south": 23.745,
+      "east": 90.389,
+      "west": 90.378
+    },
+    "mainRoads": [
+      "Mirpur Road",
+      "Lake Circus Road",
+      "Panthapath"
+    ],
+    "nearbyAreas": [
+      "Dhanmondi",
+      "Panthapath",
+      "Green Road",
+      "Kathalbagan"
+    ],
+    "landmarks": [
+      "Kalabagan Krira Chakra Ground",
+      "Bashundhara City Link",
+      "Square Hospital"
+    ],
+    "boundaryDescription": "North: Panthapath; South: Science Lab; East: Green Road; West: Mirpur Road (Dhanmondi border)",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 16, DMP Kalabagan Thana",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "শাহবাগ",
+    "standardizedName": "Shahbagh",
+    "alternativeNames": [
+      "Shahbag",
+      "Shahbag Intersection"
+    ],
+    "type": "Neighborhood / Cultural Hub",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 21",
+    "thana": "Shahbagh Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7388,
+    "longitude": 90.3957,
+    "bounds": {
+      "north": 23.745,
+      "south": 23.731,
+      "east": 90.403,
+      "west": 90.388
+    },
+    "mainRoads": [
+      "Kazi Nazrul Islam Avenue",
+      "Mirpur Road Link",
+      "Shahbagh Avenue"
+    ],
+    "nearbyAreas": [
+      "Ramna",
+      "Dhaka University Campus",
+      "Kawran Bazar",
+      "Paltan"
+    ],
+    "landmarks": [
+      "Bangabandhu Sheikh Mujib Medical University (BSMMU / PG Hospital)",
+      "National Museum",
+      "Dhaka Club",
+      "Public Library"
+    ],
+    "boundaryDescription": "North: InterContinental / Ramna; South: Dhaka University Curzon/Arts; East: Suhrawardy Udyan; West: Katabon",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 21, DMP Shahbagh Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "রমনা",
+    "standardizedName": "Ramna",
+    "alternativeNames": [
+      "Ramna Park Area",
+      "Ramna Thana"
+    ],
+    "type": "Neighborhood / Administrative Unit",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 19",
+    "thana": "Ramna Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.741,
+    "longitude": 90.403,
+    "bounds": {
+      "north": 23.749,
+      "south": 23.734,
+      "east": 90.412,
+      "west": 90.395
+    },
+    "mainRoads": [
+      "Minto Road",
+      "Hare Road",
+      "Park Avenue"
+    ],
+    "nearbyAreas": [
+      "Shahbagh",
+      "Maghbazar",
+      "Kakrail",
+      "Suhrawardy Udyan"
+    ],
+    "landmarks": [
+      "Ramna Batamul (Pohela Boishakh site)",
+      "Ramna Green Park",
+      "State Guest House Sugandha",
+      "Foreign Ministry"
+    ],
+    "boundaryDescription": "Historic civic park and diplomatic ministry zone",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 19, DMP Ramna Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মোহাম্মদপুর",
+    "standardizedName": "Mohammadpur",
+    "alternativeNames": [
+      "Mohammadpur Thana Area"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 29, 31, 32, 33, 34",
+    "thana": "Mohammadpur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7658,
+    "longitude": 90.3584,
+    "bounds": {
+      "north": 23.78,
+      "south": 23.748,
+      "east": 90.375,
+      "west": 90.342
+    },
+    "mainRoads": [
+      "Satmasjid Road",
+      "Tajmahal Road",
+      "Noorjahan Road",
+      "Ring Road",
+      "Beribadh Road"
+    ],
+    "nearbyAreas": [
+      "Dhanmondi",
+      "Lalmatia",
+      "Shyamoli",
+      "Rayer Bazar",
+      "Bosila"
+    ],
+    "landmarks": [
+      "Town Hall Market",
+      "Shia Masjid",
+      "Geneva Camp",
+      "Suchona Community Center",
+      "Salimullah Road"
+    ],
+    "boundaryDescription": "North: Shyamoli / Ring Road; South: Rayer Bazar / Hazaribagh; East: Asad Gate / Mirpur Road; West: Turag River / Bosila",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Zone 5, DMP Mohammadpur Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "লালমাটিয়া",
+    "standardizedName": "Lalmatia",
+    "alternativeNames": [
+      "Lalmatia Housing Society",
+      "Lalmatia Block A-G"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Mohammadpur",
+    "ward": "Ward 32",
+    "thana": "Mohammadpur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.758,
+    "longitude": 90.372,
+    "bounds": {
+      "north": 23.765,
+      "south": 23.751,
+      "east": 90.378,
+      "west": 90.365
+    },
+    "mainRoads": [
+      "Satmasjid Road Link",
+      "Lalmatia Main Road"
+    ],
+    "nearbyAreas": [
+      "Dhanmondi",
+      "Mohammadpur",
+      "Asad Gate"
+    ],
+    "landmarks": [
+      "Lalmatia Mohila College",
+      "Mina Bazar Lalmatia",
+      "New Colony Field"
+    ],
+    "boundaryDescription": "North: Asad Avenue; South: Dhanmondi 27; East: Mirpur Road; West: Satmasjid Road",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 32, RAJUK Housing Records",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "বসিলা",
+    "standardizedName": "Bosila",
+    "alternativeNames": [
+      "Washpur",
+      "Bosila Bridge Area",
+      "বসীলা"
+    ],
+    "type": "Sub-area / Expansion",
+    "parentLocation": "Mohammadpur",
+    "ward": "Ward 33",
+    "thana": "Mohammadpur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.755,
+    "longitude": 90.342,
+    "bounds": {
+      "north": 23.768,
+      "south": 23.742,
+      "east": 90.355,
+      "west": 90.328
+    },
+    "mainRoads": [
+      "Bosila Road",
+      "Beribadh Road"
+    ],
+    "nearbyAreas": [
+      "Mohammadpur",
+      "Keraniganj",
+      "Hazaribagh"
+    ],
+    "landmarks": [
+      "Shaheed Buddhijibi Bridge (Bosila Bridge)",
+      "Bosila Garden City"
+    ],
+    "boundaryDescription": "Western riverfront expansion across Buriganga River towards Keraniganj",
+    "recognitionLevel": "Common local name",
+    "source": "DNCC Ward 33, RAJUK DAP Western Fringe",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "আদাবর",
+    "standardizedName": "Adabor",
+    "alternativeNames": [
+      "Adabor Thana",
+      "Shekhertek",
+      "Mansurabad"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 30",
+    "thana": "Adabor Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.771,
+    "longitude": 90.355,
+    "bounds": {
+      "north": 23.78,
+      "south": 23.762,
+      "east": 90.365,
+      "west": 90.345
+    },
+    "mainRoads": [
+      "Ring Road",
+      "Baitul Aman Housing Road"
+    ],
+    "nearbyAreas": [
+      "Mohammadpur",
+      "Shyamoli",
+      "Beribadh"
+    ],
+    "landmarks": [
+      "Adabor Police Station",
+      "Shekhertek Main Road",
+      "Japan Garden City Link"
+    ],
+    "boundaryDescription": "North: Shyamoli; South: Mohammadia Housing; East: Ring Road; West: Beribadh embankment",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Ward 30, DMP Adabor Thana",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "শ্যামলী",
+    "standardizedName": "Shyamoli",
+    "alternativeNames": [
+      "Shyamoli Cinema Hall Area",
+      "Shyamoli Square"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 28",
+    "thana": "Mohammadpur / Sher-e-Bangla Nagar Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7715,
+    "longitude": 90.3644,
+    "bounds": {
+      "north": 23.778,
+      "south": 23.764,
+      "east": 90.372,
+      "west": 90.356
+    },
+    "mainRoads": [
+      "Mirpur Road",
+      "Ring Road"
+    ],
+    "nearbyAreas": [
+      "Kallyanpur",
+      "Agargaon",
+      "Adabor",
+      "Mohammadpur"
+    ],
+    "landmarks": [
+      "Shyamoli Square",
+      "Shishu Hospital Link",
+      "National Institute of Diseases of the Chest (NIDCH)"
+    ],
+    "boundaryDescription": "North: Kallyanpur; South: Asad Gate; East: Sher-e-Bangla Nagar; West: Ring Road / Adabor",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 28, Google Maps",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "আগারগাঁও",
+    "standardizedName": "Agargaon",
+    "alternativeNames": [
+      "Sher-e-Bangla Nagar Administrative Hub",
+      "ICT Hub Agargaon"
+    ],
+    "type": "Neighborhood / Administrative Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 28",
+    "thana": "Sher-e-Bangla Nagar Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.778,
+    "longitude": 90.376,
+    "bounds": {
+      "north": 23.788,
+      "south": 23.768,
+      "east": 90.385,
+      "west": 90.367
+    },
+    "mainRoads": [
+      "Mirpur-Agargaon Road",
+      "Pegang Avenue",
+      "Begum Rokeya Sarani Link"
+    ],
+    "nearbyAreas": [
+      "Sher-e-Bangla Nagar",
+      "Kafrul",
+      "Shewrapara",
+      "Shyamoli"
+    ],
+    "landmarks": [
+      "MRT Line 6 Agargaon Station",
+      "Passport Office (DIP)",
+      "National Archives",
+      "Election Commission Bhaban",
+      "BCC / ICT Tower"
+    ],
+    "boundaryDescription": "Central governmental administrative strip north of National Parliament",
+    "recognitionLevel": "Official administrative name",
+    "source": "Survey of Bangladesh, MRT Line 6, DNCC",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "শেরে বাংলা নগর",
+    "standardizedName": "Sher-e-Bangla Nagar",
+    "alternativeNames": [
+      "National Parliament Area",
+      "Jatiya Sangsad Area"
+    ],
+    "type": "Administrative Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 27",
+    "thana": "Sher-e-Bangla Nagar Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.766,
+    "longitude": 90.378,
+    "bounds": {
+      "north": 23.774,
+      "south": 23.758,
+      "east": 90.386,
+      "west": 90.37
+    },
+    "mainRoads": [
+      "Manik Mia Avenue",
+      "Mirpur Road",
+      "Lake Road"
+    ],
+    "nearbyAreas": [
+      "Agargaon",
+      "Farmgate",
+      "Dhanmondi",
+      "Mohammadpur"
+    ],
+    "landmarks": [
+      "Jatiya Sangsad Bhaban (Louis Kahn)",
+      "Chandrima Udyan",
+      "Bangabandhu International Conference Center (BICC)"
+    ],
+    "boundaryDescription": "National parliamentary complex between Farmgate and Mirpur Road",
+    "recognitionLevel": "Official administrative name",
+    "source": "Survey of Bangladesh, National Parliament Secretariat",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মিরপুর",
+    "standardizedName": "Mirpur",
+    "alternativeNames": [
+      "Mirpur Model Town",
+      "মিরপুর মডেল টাউন"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14",
+    "thana": "Mirpur / Pallabi / Shah Ali / Darus Salam / Kafrul Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.807,
+    "longitude": 90.3685,
+    "bounds": {
+      "north": 23.835,
+      "south": 23.775,
+      "east": 90.395,
+      "west": 90.335
+    },
+    "mainRoads": [
+      "Begum Rokeya Sarani",
+      "Mirpur Road",
+      "Pallabi Avenue",
+      "Zoo Road",
+      "Mazar Road"
+    ],
+    "nearbyAreas": [
+      "Pallabi",
+      "Kafrul",
+      "Cantonment",
+      "Agargaon",
+      "Gabtoli"
+    ],
+    "landmarks": [
+      "Sher-e-Bangla National Cricket Stadium",
+      "National Zoo",
+      "National Botanical Garden",
+      "Mirpur 10 Circle"
+    ],
+    "boundaryDescription": "North: Pallabi / Turag; South: Agargaon / Shyamoli; East: Dhaka Cantonment; West: Turag River / Gabtoli",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Zones 2 & 4, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মিরপুর ১",
+    "standardizedName": "Mirpur 1",
+    "alternativeNames": [
+      "Mirpur-1 Roundabout",
+      "Muktodhara Area"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Mirpur",
+    "ward": "Ward 8",
+    "thana": "Shah Ali / Darus Salam Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.795,
+    "longitude": 90.354,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.785,
+      "east": 90.362,
+      "west": 90.342
+    },
+    "mainRoads": [
+      "Mirpur Road",
+      "Mazar Road",
+      "Zoo Road"
+    ],
+    "nearbyAreas": [
+      "Mirpur 2",
+      "Tolarbag",
+      "Gabtoli",
+      "Kallyanpur"
+    ],
+    "landmarks": [
+      "Hazrat Shah Ali Mazar",
+      "Sony Cinema Hall / Square",
+      "Mirpur 1 Wholesale Bazar"
+    ],
+    "boundaryDescription": "North: Zoo Road; South: Kallyanpur; East: Mirpur 2; West: Mazar Road / Gabtoli",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 8, Google Maps",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "মিরপুর ১০",
+    "standardizedName": "Mirpur 10",
+    "alternativeNames": [
+      "Mirpur 10 Golchokkor",
+      "Mirpur 10 Circle"
+    ],
+    "type": "Transit Hub / Commercial Area",
+    "parentLocation": "Mirpur",
+    "ward": "Ward 3",
+    "thana": "Mirpur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.807,
+    "longitude": 90.3685,
+    "bounds": {
+      "north": 23.815,
+      "south": 23.799,
+      "east": 90.376,
+      "west": 90.36
+    },
+    "mainRoads": [
+      "Begum Rokeya Sarani",
+      "Mirpur 10-14 Link Road",
+      "Senpara Parbata Road"
+    ],
+    "nearbyAreas": [
+      "Mirpur 2",
+      "Mirpur 11",
+      "Mirpur 13",
+      "Kazipara"
+    ],
+    "landmarks": [
+      "MRT Line 6 Mirpur 10 Station",
+      "Sher-e-Bangla National Cricket Stadium",
+      "Fire Service Mirpur 10"
+    ],
+    "boundaryDescription": "Central intersection of Mirpur connecting North-South Metro corridor with East-West transit",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 3, MRT Line 6",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "পল্লবী",
+    "standardizedName": "Pallabi",
+    "alternativeNames": [
+      "Pallabi Thana",
+      "Mirpur 11 / 12 Extension"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Mirpur",
+    "ward": "Ward 2, 5",
+    "thana": "Pallabi Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.822,
+    "longitude": 90.363,
+    "bounds": {
+      "north": 23.838,
+      "south": 23.812,
+      "east": 90.375,
+      "west": 90.352
+    },
+    "mainRoads": [
+      "Pallabi Avenue",
+      "Mirpur 12 Bus Stand Road"
+    ],
+    "nearbyAreas": [
+      "Mirpur 11",
+      "Mirpur 12",
+      "Mirpur DOHS",
+      "Rupnagar"
+    ],
+    "landmarks": [
+      "MRT Line 6 Pallabi Station",
+      "Purobi Cinema Hall",
+      "Pallabi Thana"
+    ],
+    "boundaryDescription": "North: Mirpur DOHS / Cantonment; South: Mirpur 10; East: Kalshi Link; West: Rupnagar",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC Zone 2, DMP Pallabi Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মিরপুর ডিওএইচএস",
+    "standardizedName": "Mirpur DOHS",
+    "alternativeNames": [
+      "DOHS Mirpur"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Mirpur",
+    "ward": "Ward 2",
+    "thana": "Pallabi / Cantonment Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.838,
+    "longitude": 90.369,
+    "bounds": {
+      "north": 23.848,
+      "south": 23.828,
+      "east": 90.378,
+      "west": 90.36
+    },
+    "mainRoads": [
+      "DOHS Avenue",
+      "Kalshi Link Road"
+    ],
+    "nearbyAreas": [
+      "Pallabi",
+      "Uttara Sector 18",
+      "Dhaka Cantonment"
+    ],
+    "landmarks": [
+      "Mirpur DOHS Cultural Center",
+      "DOHS Lake",
+      "MIST Campus nearby"
+    ],
+    "boundaryDescription": "Gated cantonment residential layout north of Pallabi connecting to Kalshi Flyover",
+    "recognitionLevel": "Official administrative name",
+    "source": "Cantonment Board, DOHS Council",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "কাজীপাড়া",
+    "standardizedName": "Kazipara",
+    "alternativeNames": [
+      "North Kazipara",
+      "South Kazipara",
+      "কাজিপাড়া"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Mirpur",
+    "ward": "Ward 13",
+    "thana": "Mirpur / Kafrul Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7985,
+    "longitude": 90.3725,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.792,
+      "east": 90.38,
+      "west": 90.365
+    },
+    "mainRoads": [
+      "Begum Rokeya Sarani"
+    ],
+    "nearbyAreas": [
+      "Shewrapara",
+      "Mirpur 10",
+      "Senpara Parbata",
+      "Ibrahimpur"
+    ],
+    "landmarks": [
+      "MRT Line 6 Kazipara Station",
+      "Kazipara Bazar",
+      "Haji Ali Hossain High School"
+    ],
+    "boundaryDescription": "North: Mirpur 10; South: Shewrapara; East: Kafrul / Ibrahimpur; West: Paikpara",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 13, MRT Line 6",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "শেওড়াপাড়া",
+    "standardizedName": "Shewrapara",
+    "alternativeNames": [
+      "West Shewrapara",
+      "East Shewrapara",
+      "শেওড়াপাড়া"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Mirpur",
+    "ward": "Ward 14",
+    "thana": "Mirpur / Kafrul Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7885,
+    "longitude": 90.3735,
+    "bounds": {
+      "north": 23.795,
+      "south": 23.781,
+      "east": 90.381,
+      "west": 90.366
+    },
+    "mainRoads": [
+      "Begum Rokeya Sarani"
+    ],
+    "nearbyAreas": [
+      "Kazipara",
+      "Agargaon",
+      "Ibrahimpur",
+      "Paikpara"
+    ],
+    "landmarks": [
+      "MRT Line 6 Shewrapara Station",
+      "Shewrapara Bazar",
+      "Al-Helal Hospital"
+    ],
+    "boundaryDescription": "North: Kazipara; South: Agargaon; East: Kafrul; West: Tolarbag / Paikpara",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 14, MRT Line 6",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ইব্রাহিমপুর",
+    "standardizedName": "Ibrahimpur",
+    "alternativeNames": [
+      "Ebrahimpur",
+      "Ibrahimpur Pul"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 16",
+    "thana": "Kafrul Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.797,
+    "longitude": 90.385,
+    "bounds": {
+      "north": 23.805,
+      "south": 23.788,
+      "east": 90.395,
+      "west": 90.375
+    },
+    "mainRoads": [
+      "Kafrul Main Road",
+      "Kochukhet Link Road"
+    ],
+    "nearbyAreas": [
+      "Kochukhet",
+      "Kafrul",
+      "Kazipara",
+      "Cantonment"
+    ],
+    "landmarks": [
+      "Ibrahimpur Bazar",
+      "Ibrahimpur Central Jame Mosque"
+    ],
+    "boundaryDescription": "North: Dhaka Cantonment; South: Kafrul; East: Kochukhet; West: Begum Rokeya Sarani",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 16, DMP Kafrul Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "কচুক্ষেত",
+    "standardizedName": "Kochukhet",
+    "alternativeNames": [
+      "Kachukhet",
+      "Kochukhet Bazar"
+    ],
+    "type": "Commercial Area / Neighborhood",
+    "parentLocation": "Dhaka North",
+    "ward": "Ward 16",
+    "thana": "Cantonment / Kafrul Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.796,
+    "longitude": 90.392,
+    "bounds": {
+      "north": 23.802,
+      "south": 23.789,
+      "east": 90.399,
+      "west": 90.385
+    },
+    "mainRoads": [
+      "Kochukhet Main Road",
+      "Old Airport Road"
+    ],
+    "nearbyAreas": [
+      "Dhaka Cantonment",
+      "Ibrahimpur",
+      "Banani DOHS",
+      "Mohakhali DOHS"
+    ],
+    "landmarks": [
+      "Kochukhet Bazar",
+      "Sena Shopping Complex",
+      "Armed Forces Medical College nearby"
+    ],
+    "boundaryDescription": "Commercial gate market at cantonment entry corridor",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 16, Cantonment Board",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "কাফরুল",
+    "standardizedName": "Kafrul",
+    "alternativeNames": [
+      "Kafrul Thana Area"
+    ],
+    "type": "Neighborhood / Thana",
+    "parentLocation": "Dhaka North",
+    "ward": "Wards 14, 16",
+    "thana": "Kafrul Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.792,
+    "longitude": 90.382,
+    "bounds": {
+      "north": 23.8,
+      "south": 23.782,
+      "east": 90.392,
+      "west": 90.373
+    },
+    "mainRoads": [
+      "Kafrul Thana Road",
+      "Kazipara-Kafrul Link"
+    ],
+    "nearbyAreas": [
+      "Shewrapara",
+      "Ibrahimpur",
+      "Agargaon",
+      "Kochukhet"
+    ],
+    "landmarks": [
+      "Kafrul Police Station",
+      "BRTA Head Office nearby"
+    ],
+    "boundaryDescription": "Between Begum Rokeya Sarani and Dhaka Cantonment",
+    "recognitionLevel": "Official administrative name",
+    "source": "DNCC, DMP Kafrul Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সেনানিবাস এলাকা",
+    "standardizedName": "Dhaka Cantonment",
+    "alternativeNames": [
+      "Dhaka Cantonment",
+      "সেনানিবাস",
+      "Cantonment Area"
+    ],
+    "type": "Administrative / Defense Area",
+    "parentLocation": "Dhaka North",
+    "ward": "Cantonment Board Administration",
+    "thana": "Cantonment Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "Cantonment Board",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.815,
+    "longitude": 90.395,
+    "bounds": {
+      "north": 23.845,
+      "south": 23.785,
+      "east": 90.41,
+      "west": 90.38
+    },
+    "mainRoads": [
+      "Airport Road",
+      "Zia Colony Road",
+      "Matikata Road"
+    ],
+    "nearbyAreas": [
+      "Banani DOHS",
+      "Mirpur DOHS",
+      "Baridhara DOHS",
+      "Kochukhet"
+    ],
+    "landmarks": [
+      "Army Headquarters",
+      "Combined Military Hospital (CMH)",
+      "Kurmitola Golf Club",
+      "Dhaka Cantonment Railway Station"
+    ],
+    "boundaryDescription": "North: Kurmitola / Airport; South: Mohakhali; East: Airport Road; West: Mirpur",
+    "recognitionLevel": "Official administrative name",
+    "source": "Ministry of Defence, Cantonment Board Dhaka",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "গাবতলী",
+    "standardizedName": "Gabtoli",
+    "alternativeNames": [
+      "Gabtoli Bus Terminal Area",
+      "গাবতলি"
+    ],
+    "type": "Transit Hub / Neighborhood",
+    "parentLocation": "Dhaka North / West",
+    "ward": "Ward 9",
+    "thana": "Darus Salam Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DNCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.783,
+    "longitude": 90.344,
+    "bounds": {
+      "north": 23.795,
+      "south": 23.772,
+      "east": 90.355,
+      "west": 90.332
+    },
+    "mainRoads": [
+      "Dhaka-Aricha Highway",
+      "Mirpur Beribadh Road"
+    ],
+    "nearbyAreas": [
+      "Mirpur 1",
+      "Kallyanpur",
+      "Aminbazar (across Turag)"
+    ],
+    "landmarks": [
+      "Gabtoli Inter-District Bus Terminal",
+      "Gabtoli Cattle Market (Pashur Haat)",
+      "Aminbazar Bridge over Turag"
+    ],
+    "boundaryDescription": "Western transit gateway connecting Dhaka to northern and southwestern districts across Turag River",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DNCC Ward 9, DMP Traffic Division",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সদরঘাট",
+    "standardizedName": "Sadarghat",
+    "alternativeNames": [
+      "Sadarghat Launch Terminal",
+      "সদরঘাট লঞ্চ টার্মিনাল"
+    ],
+    "type": "Transit Hub / Port",
+    "parentLocation": "Old Dhaka",
+    "ward": "Ward 37",
+    "thana": "Kotwali Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7042,
+    "longitude": 90.4116,
+    "bounds": {
+      "north": 23.712,
+      "south": 23.698,
+      "east": 90.418,
+      "west": 90.402
+    },
+    "mainRoads": [
+      "Buckland Embankment Road",
+      "Liaquat Avenue",
+      "Johnson Road"
+    ],
+    "nearbyAreas": [
+      "Kotwali",
+      "Sutrapur",
+      "Patuatuli",
+      "Islampur"
+    ],
+    "landmarks": [
+      "Dhaka River Port (Sadarghat Launch Terminal)",
+      "Ahsan Manzil nearby",
+      "Jagannath University"
+    ],
+    "boundaryDescription": "Primary river port terminal on northern bank of Buriganga River",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "BIWTA, DSCC Ward 37",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "কোতয়ালী",
+    "standardizedName": "Kotwali",
+    "alternativeNames": [
+      "Kotwali Thana Area",
+      "কোতোয়ালী"
+    ],
+    "type": "Administrative Unit / Neighborhood",
+    "parentLocation": "Old Dhaka",
+    "ward": "Wards 36, 37",
+    "thana": "Kotwali Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.709,
+    "longitude": 90.408,
+    "bounds": {
+      "north": 23.716,
+      "south": 23.702,
+      "east": 90.415,
+      "west": 90.401
+    },
+    "mainRoads": [
+      "Johnson Road",
+      "Nawabpur Road",
+      "Court House Street"
+    ],
+    "nearbyAreas": [
+      "Sadarghat",
+      "Islampur",
+      "Patuatuli",
+      "Bangshal"
+    ],
+    "landmarks": [
+      "Dhaka Judge Court",
+      "Jagannath University",
+      "St. Gregory High School",
+      "DC Court"
+    ],
+    "boundaryDescription": "Historic administrative and legal center of Old Dhaka",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC, DMP Kotwali Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ইসলামপুর",
+    "standardizedName": "Islampur",
+    "alternativeNames": [
+      "Islampur Textile Market",
+      "ইসলামপুর কাপড়ের বাজার"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Old Dhaka",
+    "ward": "Ward 37",
+    "thana": "Kotwali Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7075,
+    "longitude": 90.4045,
+    "bounds": {
+      "north": 23.712,
+      "south": 23.702,
+      "east": 90.41,
+      "west": 90.398
+    },
+    "mainRoads": [
+      "Islampur Road",
+      "Mitford Road Link"
+    ],
+    "nearbyAreas": [
+      "Chawkbazar",
+      "Babu Bazar",
+      "Sadarghat",
+      "Patuatuli"
+    ],
+    "landmarks": [
+      "Ahsan Manzil (Nawab Palace)",
+      "Bikrampur Garden City Market",
+      "Hakim Habibur Rahman Road"
+    ],
+    "boundaryDescription": "Country's largest wholesale textile and fabric trade district along Buriganga bank",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DSCC Ward 37, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "চকবাজার",
+    "standardizedName": "Chawkbazar",
+    "alternativeNames": [
+      "Chawk Bazar",
+      "Chawkbazar Shahi Masjid Area"
+    ],
+    "type": "Commercial Area / Historic Locality",
+    "parentLocation": "Old Dhaka",
+    "ward": "Ward 31",
+    "thana": "Chawkbazar Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.715,
+    "longitude": 90.3965,
+    "bounds": {
+      "north": 23.722,
+      "south": 23.708,
+      "east": 90.404,
+      "west": 90.389
+    },
+    "mainRoads": [
+      "Chawk Circular Road",
+      "Water Works Road",
+      "Urdu Road"
+    ],
+    "nearbyAreas": [
+      "Lalbagh",
+      "Bakshibazar",
+      "Islampur",
+      "Mitford"
+    ],
+    "landmarks": [
+      "Chawkbazar Shahi Mosque",
+      "Historic Iftar Market",
+      "Bara Katra",
+      "Chhota Katra"
+    ],
+    "boundaryDescription": "Mughal-era commercial square and traditional wholesale bazaar of Dhaka",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 31, DMP Chawkbazar Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "লালবাগ",
+    "standardizedName": "Lalbagh",
+    "alternativeNames": [
+      "Lalbagh Fort Area",
+      "কেল্লার মোড়"
+    ],
+    "type": "Neighborhood / Historic Area",
+    "parentLocation": "Old Dhaka",
+    "ward": "Wards 23, 24",
+    "thana": "Lalbagh Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.718,
+    "longitude": 90.388,
+    "bounds": {
+      "north": 23.726,
+      "south": 23.71,
+      "east": 90.395,
+      "west": 90.38
+    },
+    "mainRoads": [
+      "Lalbagh Road",
+      "Subhash Bose Avenue",
+      "Azimpur Road Link"
+    ],
+    "nearbyAreas": [
+      "Chawkbazar",
+      "Azimpur",
+      "Kamrangirchar",
+      "Hazaribagh"
+    ],
+    "landmarks": [
+      "Lalbagh Fort (Fort Aurangabad)",
+      "Khan Mohammad Mridha Mosque",
+      "Pari Bibi Tomb"
+    ],
+    "boundaryDescription": "North: Azimpur; South: Buriganga River; East: Chawkbazar; West: Hazaribagh",
+    "recognitionLevel": "Official administrative name",
+    "source": "Department of Archaeology, DSCC Ward 24",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "হাজারীবাগ",
+    "standardizedName": "Hazaribagh",
+    "alternativeNames": [
+      "Hazaribag",
+      "Tannery Area (Historic)"
+    ],
+    "type": "Neighborhood / Thana",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 14, 22",
+    "thana": "Hazaribagh Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.734,
+    "longitude": 90.366,
+    "bounds": {
+      "north": 23.745,
+      "south": 23.722,
+      "east": 90.378,
+      "west": 90.355
+    },
+    "mainRoads": [
+      "Hazaribagh Main Road",
+      "Beribadh Road",
+      "Zigatola Link"
+    ],
+    "nearbyAreas": [
+      "Dhanmondi",
+      "Zigatola",
+      "Rayer Bazar",
+      "Lalbagh",
+      "Kamrangirchar"
+    ],
+    "landmarks": [
+      "Hazaribagh Park",
+      "Leather Engineering College (DU)",
+      "Hazaribagh Police Station"
+    ],
+    "boundaryDescription": "North: Zigatola / Dhanmondi; South: Buriganga / Kamrangirchar; East: Pilkhana; West: Beribadh",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Zone 3, DMP Hazaribagh Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "কামরাঙ্গীরচর",
+    "standardizedName": "Kamrangirchar",
+    "alternativeNames": [
+      "Kamrangir Char Thana",
+      "কামরাঙ্গীর চর"
+    ],
+    "type": "Neighborhood / Riverine Island",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 55, 56, 57",
+    "thana": "Kamrangirchar Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.715,
+    "longitude": 90.37,
+    "bounds": {
+      "north": 23.728,
+      "south": 23.7,
+      "east": 90.385,
+      "west": 90.355
+    },
+    "mainRoads": [
+      "Rony Market Road",
+      "Ashrafabad Main Road",
+      "Loha Pul"
+    ],
+    "nearbyAreas": [
+      "Lalbagh",
+      "Hazaribagh",
+      "Zinjira (across Buriganga)"
+    ],
+    "landmarks": [
+      "Kamrangirchar Thana",
+      "Loha Pul Bridge",
+      "Ashrafabad High School"
+    ],
+    "boundaryDescription": "Riverine peninsula bounded by Buriganga River and canal branches",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Zone 3, DMP Kamrangirchar Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ওয়ারী",
+    "standardizedName": "Wari",
+    "alternativeNames": [
+      "Wari Residential Area",
+      "ওয়ারী"
+    ],
+    "type": "Residential Area",
+    "parentLocation": "Old Dhaka",
+    "ward": "Ward 41",
+    "thana": "Wari Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7185,
+    "longitude": 90.4185,
+    "bounds": {
+      "north": 23.725,
+      "south": 23.712,
+      "east": 90.426,
+      "west": 90.411
+    },
+    "mainRoads": [
+      "Ranking Street",
+      "Larmini Street",
+      "Hare Street",
+      "Tipu Sultan Road"
+    ],
+    "nearbyAreas": [
+      "Sutrapur",
+      "Narinda",
+      "Motijheel",
+      "Tikatuli"
+    ],
+    "landmarks": [
+      "Baldha Garden",
+      "Rose Garden Palace nearby",
+      "Christian Cemetery",
+      "Wari Club"
+    ],
+    "boundaryDescription": "19th century planned residential colony between Motijheel and Sutrapur",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 41, DMP Wari Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সূত্রাপুর",
+    "standardizedName": "Sutrapur",
+    "alternativeNames": [
+      "Sutrapur Thana"
+    ],
+    "type": "Neighborhood / Administrative Unit",
+    "parentLocation": "Old Dhaka",
+    "ward": "Wards 43, 44",
+    "thana": "Sutrapur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.708,
+    "longitude": 90.417,
+    "bounds": {
+      "north": 23.715,
+      "south": 23.701,
+      "east": 90.424,
+      "west": 90.41
+    },
+    "mainRoads": [
+      "RMG Street",
+      "Liaquat Avenue Link"
+    ],
+    "nearbyAreas": [
+      "Sadarghat",
+      "Wari",
+      "Farashganj",
+      "Gendaria"
+    ],
+    "landmarks": [
+      "Sutrapur Police Station",
+      "Iron Bridge (Lohar Pool)",
+      "Dhaka Collegiate School"
+    ],
+    "boundaryDescription": "North: Wari; South: Buriganga / Farashganj; East: Gendaria / Dholai Khal; West: Sadarghat",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 43/44, DMP Sutrapur Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "গেণ্ডারিয়া",
+    "standardizedName": "Gendaria",
+    "alternativeNames": [
+      "Gandaria",
+      "গেণ্ডারিয়া"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Old Dhaka",
+    "ward": "Ward 45",
+    "thana": "Gendaria Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.705,
+    "longitude": 90.428,
+    "bounds": {
+      "north": 23.715,
+      "south": 23.695,
+      "east": 90.438,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "DIT Plot Road",
+      "Gendaria Rail Station Road"
+    ],
+    "nearbyAreas": [
+      "Sutrapur",
+      "Wari",
+      "Jatrabari",
+      "Jurain"
+    ],
+    "landmarks": [
+      "Gendaria Railway Station",
+      "Dhupkhola Field",
+      "Kishoreganj Sweet Market"
+    ],
+    "boundaryDescription": "North: Dayaganj; South: Buriganga River; East: Jurain / Railway; West: Sutrapur",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 45, DMP Gendaria Thana",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "নিমতলি",
+    "standardizedName": "Nimtoli",
+    "alternativeNames": [
+      "Nimtoli Palace Area",
+      "Nimtoli Gate"
+    ],
+    "type": "Historic Locality",
+    "parentLocation": "Old Dhaka",
+    "ward": "Ward 33",
+    "thana": "Bangshal Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.723,
+    "longitude": 90.404,
+    "bounds": {
+      "north": 23.728,
+      "south": 23.718,
+      "east": 90.409,
+      "west": 90.398
+    },
+    "mainRoads": [
+      "Nazimuddin Road",
+      "Kazi Alauddin Road"
+    ],
+    "nearbyAreas": [
+      "Bakshibazar",
+      "Bangshal",
+      "Dhaka Medical",
+      "Chawkbazar"
+    ],
+    "landmarks": [
+      "Nimtoli Deuri (Historic Gateway)",
+      "Old Dhaka Central Jail site"
+    ],
+    "boundaryDescription": "North: Dhaka Medical College; South: Bangshal; East: Siddique Bazar; West: Chawkbazar",
+    "recognitionLevel": "Historic local name",
+    "source": "DSCC Ward 33, Asiatic Society of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মতিঝিল",
+    "standardizedName": "Motijheel",
+    "alternativeNames": [
+      "Motijheel Commercial Area",
+      "Motijheel C/A"
+    ],
+    "type": "Commercial Area / Financial District",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 9, 10",
+    "thana": "Motijheel Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.733,
+    "longitude": 90.418,
+    "bounds": {
+      "north": 23.742,
+      "south": 23.724,
+      "east": 90.428,
+      "west": 90.408
+    },
+    "mainRoads": [
+      "Bangabandhu Avenue",
+      "Dilkusha Commercial Road",
+      "Toyenbee Circular Road"
+    ],
+    "nearbyAreas": [
+      "Dilkusha",
+      "Paltan",
+      "Kamalapur",
+      "Arambagh",
+      "Wari"
+    ],
+    "landmarks": [
+      "Bangladesh Bank (Central Bank)",
+      "Shapla Chottor (Water Lily Roundabout)",
+      "Sena Kalyan Bhaban",
+      "MRT Line 6 Motijheel Terminal"
+    ],
+    "boundaryDescription": "Central business district and financial core of Bangladesh",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC, Bangladesh Bank, MRT Line 6",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "দিলকুশা",
+    "standardizedName": "Dilkusha",
+    "alternativeNames": [
+      "Dilkusha C/A"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Motijheel",
+    "ward": "Ward 9",
+    "thana": "Motijheel Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.731,
+    "longitude": 90.417,
+    "bounds": {
+      "north": 23.736,
+      "south": 23.726,
+      "east": 90.421,
+      "west": 90.412
+    },
+    "mainRoads": [
+      "Dilkusha Road"
+    ],
+    "nearbyAreas": [
+      "Motijheel",
+      "Baitul Mukarram",
+      "Arambagh"
+    ],
+    "landmarks": [
+      "Sonali Bank Head Office",
+      "Jiban Bima Bhaban",
+      "Janata Bank Bhaban"
+    ],
+    "boundaryDescription": "Financial center core within Motijheel Commercial Area",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DSCC Ward 9, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "পল্টন",
+    "standardizedName": "Paltan",
+    "alternativeNames": [
+      "Purana Paltan",
+      "Naya Paltan",
+      "Paltan Thana Area"
+    ],
+    "type": "Neighborhood / Administrative Unit",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 13",
+    "thana": "Paltan Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.735,
+    "longitude": 90.412,
+    "bounds": {
+      "north": 23.742,
+      "south": 23.728,
+      "east": 90.418,
+      "west": 90.404
+    },
+    "mainRoads": [
+      "Topkhana Road",
+      "VIP Road",
+      "Bangabandhu Avenue"
+    ],
+    "nearbyAreas": [
+      "Motijheel",
+      "Shahbagh",
+      "Segunbagicha",
+      "Bijoynagar"
+    ],
+    "landmarks": [
+      "Baitul Mukarram National Mosque",
+      "Bangabandhu National Stadium",
+      "Press Club",
+      "Mukta Mancha"
+    ],
+    "boundaryDescription": "Civic, sports, and religious hub north of Motijheel",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 13, DMP Paltan Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "কমলাপুর",
+    "standardizedName": "Kamalapur",
+    "alternativeNames": [
+      "Kamlapur",
+      "Kamalapur Railway Station Area"
+    ],
+    "type": "Transit Hub / Neighborhood",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 8",
+    "thana": "Motijheel Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.7335,
+    "longitude": 90.426,
+    "bounds": {
+      "north": 23.742,
+      "south": 23.725,
+      "east": 90.435,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Atish Dipankar Road",
+      "Outer Circular Road"
+    ],
+    "nearbyAreas": [
+      "Motijheel",
+      "Mugda",
+      "Sayedabad",
+      "Khilgaon"
+    ],
+    "landmarks": [
+      "Dhaka Central Railway Station (Kamalapur Station)",
+      "Kamalapur ICD",
+      "Buddhist Temple (Dharmarajika)"
+    ],
+    "boundaryDescription": "Principal railway gateway for Bangladesh and multimodal transit terminal",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "Bangladesh Railway, DSCC Ward 8",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "খিলগাঁও",
+    "standardizedName": "Khilgaon",
+    "alternativeNames": [
+      "Khilgaon Taltola",
+      "Khilgaon Thana"
+    ],
+    "type": "Broad Area",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 1, 2, 8",
+    "thana": "Khilgaon Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.751,
+    "longitude": 90.424,
+    "bounds": {
+      "north": 23.765,
+      "south": 23.738,
+      "east": 90.442,
+      "west": 90.412
+    },
+    "mainRoads": [
+      "Khilgaon Flyover",
+      "Taltola Road",
+      "Shahid Baki Road"
+    ],
+    "nearbyAreas": [
+      "Malibagh",
+      "Rampura",
+      "Banasree",
+      "Basabo",
+      "Goran"
+    ],
+    "landmarks": [
+      "Khilgaon Taltola Super Market",
+      "Khilgaon Restaurant Hub Road",
+      "Khilgaon Girls School"
+    ],
+    "boundaryDescription": "North: Rampura; South: Motijheel / Kamalapur; East: Goran / Sipahibagh; West: Malibagh Flyover",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Zone 2, DMP Khilgaon Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সবুজবাগ",
+    "standardizedName": "Sabujbagh",
+    "alternativeNames": [
+      "Sabujbag",
+      "Basabo-Madartek Area"
+    ],
+    "type": "Administrative Unit / Neighborhood",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 4, 5",
+    "thana": "Sabujbagh Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.742,
+    "longitude": 90.432,
+    "bounds": {
+      "north": 23.752,
+      "south": 23.732,
+      "east": 90.445,
+      "west": 90.422
+    },
+    "mainRoads": [
+      "Atish Dipankar Road",
+      "Basabo Main Road"
+    ],
+    "nearbyAreas": [
+      "Basabo",
+      "Mugda",
+      "Khilgaon",
+      "Kamalapur"
+    ],
+    "landmarks": [
+      "Sabujbagh Thana",
+      "Bashaboo Balur Maidan",
+      "Madartek High School"
+    ],
+    "boundaryDescription": "North: Khilgaon; South: Mugda / Maniknagar; East: Manda canal; West: Kamalapur railway",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Zone 2, DMP Sabujbagh Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "যাত্রাবাড়ী",
+    "standardizedName": "Jatrabari",
+    "alternativeNames": [
+      "Jatrabari Flyover Junction",
+      "যাত্রাবাড়ি"
+    ],
+    "type": "Broad Area / Transit Hub",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 48, 49, 50",
+    "thana": "Jatrabari Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.711,
+    "longitude": 90.434,
+    "bounds": {
+      "north": 23.725,
+      "south": 23.695,
+      "east": 90.455,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Mayor Mohammad Hanif Flyover",
+      "Dhaka-Chittagong Highway",
+      "Dhaka-Mawa Expressway Link"
+    ],
+    "nearbyAreas": [
+      "Sayedabad",
+      "Dania",
+      "Demra",
+      "Jurain",
+      "Gendaria"
+    ],
+    "landmarks": [
+      "Mayor Hanif Flyover Toll Plaza",
+      "Jatrabari Chowrasta",
+      "Jatrabari Park"
+    ],
+    "boundaryDescription": "Gateway junction connecting Dhaka to Chittagong Highway and Padma Bridge Expressway",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Zone 5, DMP Jatrabari Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "জুরাইন",
+    "standardizedName": "Jurain",
+    "alternativeNames": [
+      "Jurain Railgate",
+      "জুরাইন রেলগেট"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 53, 54",
+    "thana": "Kadamtali / Shyampur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.696,
+    "longitude": 90.431,
+    "bounds": {
+      "north": 23.705,
+      "south": 23.685,
+      "east": 90.442,
+      "west": 90.42
+    },
+    "mainRoads": [
+      "Jurain-Postogola Road",
+      "Dhaka-Narayanganj Railway Link"
+    ],
+    "nearbyAreas": [
+      "Postogola",
+      "Shyampur",
+      "Jatrabari",
+      "Gendaria"
+    ],
+    "landmarks": [
+      "Jurain Railway Station",
+      "Jurain Graveyard",
+      "Jurain Bazar"
+    ],
+    "boundaryDescription": "North: Gendaria; South: Postogola / Buriganga; East: Dania; West: Shyampur",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "DSCC Ward 53, DMP Kadamtali",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "দনিয়া",
+    "standardizedName": "Dania",
+    "alternativeNames": [
+      "Daniya",
+      "Dania University College Area"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 60",
+    "thana": "Kadamtali / Jatrabari Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.701,
+    "longitude": 90.448,
+    "bounds": {
+      "north": 23.712,
+      "south": 23.69,
+      "east": 90.46,
+      "west": 90.435
+    },
+    "mainRoads": [
+      "Dhaka-Chittagong Highway",
+      "Dania Main Road"
+    ],
+    "nearbyAreas": [
+      "Jatrabari",
+      "Shanir Akhra",
+      "Matuail",
+      "Jurain"
+    ],
+    "landmarks": [
+      "Dania College",
+      "Shanir Akhra Bus Stand nearby"
+    ],
+    "boundaryDescription": "Suburban residential sprawl south of Dhaka-Chittagong highway",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 60, DMP Kadamtali",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "শ্যামপুর",
+    "standardizedName": "Shyampur",
+    "alternativeNames": [
+      "Shampur",
+      "Shyampur Industrial Area"
+    ],
+    "type": "Neighborhood / Industrial Area",
+    "parentLocation": "Dhaka South",
+    "ward": "Ward 47",
+    "thana": "Shyampur Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.688,
+    "longitude": 90.428,
+    "bounds": {
+      "north": 23.698,
+      "south": 23.678,
+      "east": 90.438,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Postogola Riverfront Road",
+      "Dhaka-Narayanganj Highway"
+    ],
+    "nearbyAreas": [
+      "Postogola",
+      "Jurain",
+      "Fatullah (border)"
+    ],
+    "landmarks": [
+      "Buriganga 1st Bridge (Postogola Bridge)",
+      "Shyampur Steel Mills",
+      "Postogola Fire Station"
+    ],
+    "boundaryDescription": "Industrial and river transport corridor along southern tip of DSCC",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 47, DMP Shyampur Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ডেমরা",
+    "standardizedName": "Demra",
+    "alternativeNames": [
+      "Demra Ghat",
+      "Demra Thana"
+    ],
+    "type": "Broad Area / Peri-urban Zone",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 67, 68, 69, 70",
+    "thana": "Demra Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.722,
+    "longitude": 90.485,
+    "bounds": {
+      "north": 23.745,
+      "south": 23.7,
+      "east": 90.515,
+      "west": 90.46
+    },
+    "mainRoads": [
+      "Demra-Staff Quarter Road",
+      "Sultana Kamal Bridge Link",
+      "Rampura-Demra Road"
+    ],
+    "nearbyAreas": [
+      "Matuail",
+      "Sarulia",
+      "Tarabo (across Shitalakshya)"
+    ],
+    "landmarks": [
+      "Sultana Kamal Bridge (Demra Bridge)",
+      "Demra Ghat",
+      "Staff Quarter Roundabout"
+    ],
+    "boundaryDescription": "Eastern municipal boundary bounded by Shitalakshya River and Balu River",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Zone 8, DMP Demra Thana",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "মাতুয়াইল",
+    "standardizedName": "Matuail",
+    "alternativeNames": [
+      "Matuail Medical Area"
+    ],
+    "type": "Neighborhood",
+    "parentLocation": "Dhaka South",
+    "ward": "Wards 65, 66",
+    "thana": "Demra / Jatrabari Thana",
+    "upazila": "Metropolitan Thana",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.712,
+    "longitude": 90.465,
+    "bounds": {
+      "north": 23.725,
+      "south": 23.698,
+      "east": 90.482,
+      "west": 90.45
+    },
+    "mainRoads": [
+      "Dhaka-Chittagong Highway"
+    ],
+    "nearbyAreas": [
+      "Jatrabari",
+      "Dania",
+      "Demra",
+      "Konapara"
+    ],
+    "landmarks": [
+      "Matuail Mother & Child Health Institute",
+      "Matuail Landfill (Engineered)",
+      "Mriddhabari"
+    ],
+    "boundaryDescription": "North: Konapara; South: Dania; East: Demra; West: Shanir Akhra",
+    "recognitionLevel": "Official administrative name",
+    "source": "DSCC Ward 65/66, DMP Demra",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সাভার উপজেলা",
+    "standardizedName": "Savar Upazila",
+    "alternativeNames": [
+      "Savar Thana",
+      "সাভার"
+    ],
+    "type": "Upazila / Administrative Unit",
+    "parentLocation": "Greater Dhaka (West)",
+    "ward": "Savar Municipality + 12 Unions",
+    "thana": "Savar Model Thana / Ashulia Thana",
+    "upazila": "Savar Upazila",
+    "city": "Savar (Greater Dhaka Metro)",
+    "cityCorporation": "None (Pourashava & Upazila)",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.848,
+    "longitude": 90.258,
+    "bounds": {
+      "north": 23.95,
+      "south": 23.76,
+      "east": 90.335,
+      "west": 90.2
+    },
+    "mainRoads": [
+      "Dhaka-Aricha Highway",
+      "Abdullahpur-Ashulia-Baipail Highway",
+      "Hemayetpur-Singair Road"
+    ],
+    "nearbyAreas": [
+      "Gabtoli",
+      "Keraniganj",
+      "Gazipur",
+      "Dhamrai"
+    ],
+    "landmarks": [
+      "Savar Pourashava Bhaban",
+      "Jahangirnagar University",
+      "Savar Cantonment",
+      "BPATC"
+    ],
+    "boundaryDescription": "Western metropolitan fringe defined by RAJUK DAP, bounded by Dhaleshwari and Turag rivers",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK DAP Western Study Area, Savar Upazila Parishad",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সাভার পৌরসভা",
+    "standardizedName": "Savar Town",
+    "alternativeNames": [
+      "Savar Pourashava",
+      "Savar Bazar",
+      "Savar Sadar"
+    ],
+    "type": "Municipality / City",
+    "parentLocation": "Savar Upazila",
+    "ward": "Wards 1-9",
+    "thana": "Savar Model Thana",
+    "upazila": "Savar Upazila",
+    "city": "Savar (Greater Dhaka)",
+    "cityCorporation": "Savar Pourashava",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.844,
+    "longitude": 90.26,
+    "bounds": {
+      "north": 23.865,
+      "south": 23.825,
+      "east": 90.285,
+      "west": 90.235
+    },
+    "mainRoads": [
+      "Dhaka-Aricha Highway",
+      "Savar Bazar Road"
+    ],
+    "nearbyAreas": [
+      "Hemayetpur",
+      "Jahangirnagar University",
+      "Savar Cantonment"
+    ],
+    "landmarks": [
+      "Savar Bus Stand",
+      "Savar City Centre",
+      "Enam Medical College & Hospital"
+    ],
+    "boundaryDescription": "Urban commercial and civic core of Savar municipality along Dhaka-Aricha highway",
+    "recognitionLevel": "Official administrative name",
+    "source": "Savar Pourashava, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "জাতীয় স্মৃতিসৌধ, সাভার",
+    "standardizedName": "National Martyrs' Memorial, Savar",
+    "alternativeNames": [
+      "Jatiyo Smriti Soudho",
+      "National Monument, Savar",
+      "স্মৃতিসৌধ"
+    ],
+    "type": "Landmark",
+    "parentLocation": "Savar Upazila",
+    "ward": "Yarpur Union",
+    "thana": "Ashulia Thana",
+    "upazila": "Savar Upazila",
+    "city": "Savar",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.9114,
+    "longitude": 90.2547,
+    "bounds": {
+      "north": 23.918,
+      "south": 23.905,
+      "east": 90.262,
+      "west": 90.247
+    },
+    "mainRoads": [
+      "Dhaka-Aricha Highway",
+      "Nabinagar Intersection"
+    ],
+    "nearbyAreas": [
+      "Nabinagar",
+      "Jahangirnagar University",
+      "Baipail"
+    ],
+    "landmarks": [
+      "National Martyrs' Memorial Complex (designed by Syed Mainul Hossain)",
+      "Savar Golf Course"
+    ],
+    "boundaryDescription": "Historic national architectural landmark situated at Nabinagar, Savar",
+    "recognitionLevel": "Official administrative name",
+    "source": "Public Works Department, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "আশুলিয়া",
+    "standardizedName": "Ashulia",
+    "alternativeNames": [
+      "Ashulia Model Thana",
+      "আশুলিয়া"
+    ],
+    "type": "Broad Area / Industrial Hub",
+    "parentLocation": "Savar Upazila",
+    "ward": "Ashulia, Yearpur, Dhamsona Unions",
+    "thana": "Ashulia Thana",
+    "upazila": "Savar Upazila",
+    "city": "Ashulia (Greater Dhaka)",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.898,
+    "longitude": 90.325,
+    "bounds": {
+      "north": 23.945,
+      "south": 23.86,
+      "east": 90.355,
+      "west": 90.28
+    },
+    "mainRoads": [
+      "Abdullahpur-Ashulia-Baipail Highway",
+      "Mirpur-Ashulia Beribadh Road"
+    ],
+    "nearbyAreas": [
+      "Uttara (Diabari)",
+      "Baipail",
+      "Birulia",
+      "Tongi"
+    ],
+    "landmarks": [
+      "Fantasy Kingdom Theme Park",
+      "Dhaka EPZ (DEPZ nearby)",
+      "Ashulia Lake"
+    ],
+    "boundaryDescription": "North: Gazipur border; South: Turag River / Mirpur; East: Uttara / Tongi; West: Nabinagar",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK DAP Northern-Western Area, Dhaka District Administration",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "বিরুলিয়া",
+    "standardizedName": "Birulia",
+    "alternativeNames": [
+      "Birulia Union",
+      "Golap Gram (Rose Village)"
+    ],
+    "type": "Locality / Union",
+    "parentLocation": "Savar Upazila",
+    "ward": "Birulia Union",
+    "thana": "Savar Model Thana",
+    "upazila": "Savar Upazila",
+    "city": "Savar (Greater Dhaka)",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.848,
+    "longitude": 90.32,
+    "bounds": {
+      "north": 23.875,
+      "south": 23.825,
+      "east": 90.345,
+      "west": 90.295
+    },
+    "mainRoads": [
+      "Birulia-Daffodil Road",
+      "Mirpur-Beribadh Link"
+    ],
+    "nearbyAreas": [
+      "Mirpur 1",
+      "Ashulia",
+      "Savar Sadar"
+    ],
+    "landmarks": [
+      "Birulia Bridge over Turag",
+      "Daffodil International University (Smart City)",
+      "Sadullapur Rose Gardens"
+    ],
+    "boundaryDescription": "Peri-urban education and horticulture enclave between Turag River and Savar mainland",
+    "recognitionLevel": "Official administrative name",
+    "source": "Savar Upazila Parishad, DIU Campus Registry",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "হেমায়েতপুর",
+    "standardizedName": "Hemayetpur",
+    "alternativeNames": [
+      "Hemayetpur Bus Stand",
+      "হেমায়েতপুর"
+    ],
+    "type": "Neighborhood / Industrial Area",
+    "parentLocation": "Savar Upazila",
+    "ward": "Tetuljhora Union",
+    "thana": "Savar Model Thana",
+    "upazila": "Savar Upazila",
+    "city": "Savar (Greater Dhaka)",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.805,
+    "longitude": 90.27,
+    "bounds": {
+      "north": 23.825,
+      "south": 23.785,
+      "east": 90.295,
+      "west": 90.245
+    },
+    "mainRoads": [
+      "Dhaka-Aricha Highway",
+      "Hemayetpur-Singair Road"
+    ],
+    "nearbyAreas": [
+      "Aminbazar",
+      "Savar Town",
+      "Keraniganj link"
+    ],
+    "landmarks": [
+      "Tannery Industrial Estate Savar (Chamra Shilpanagari)",
+      "Hemayetpur Junction"
+    ],
+    "boundaryDescription": "Industrial node along Dhaka-Aricha highway between Aminbazar and Savar town",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "BSCIC Tannery Estate, RAJUK DAP",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "আমিনবাজার",
+    "standardizedName": "Aminbazar",
+    "alternativeNames": [
+      "Amin Bazar",
+      "Gabtoli-Aminbazar Bridge Area"
+    ],
+    "type": "Locality / Transit Gate",
+    "parentLocation": "Savar Upazila",
+    "ward": "Aminbazar Union",
+    "thana": "Savar Model Thana",
+    "upazila": "Savar Upazila",
+    "city": "Savar (Greater Dhaka)",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.785,
+    "longitude": 90.325,
+    "bounds": {
+      "north": 23.8,
+      "south": 23.77,
+      "east": 90.34,
+      "west": 90.305
+    },
+    "mainRoads": [
+      "Dhaka-Aricha Highway"
+    ],
+    "nearbyAreas": [
+      "Gabtoli",
+      "Hemayetpur",
+      "Mirpur"
+    ],
+    "landmarks": [
+      "Aminbazar 230kV Grid Substation",
+      "Aminbazar Bridge over Turag"
+    ],
+    "boundaryDescription": "Direct entry gateway to Dhaka metropolitan area from western districts",
+    "recognitionLevel": "Official administrative name",
+    "source": "Savar Upazila, Roads & Highways Department",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "কেরানীগঞ্জ উপজেলা",
+    "standardizedName": "Keraniganj Upazila",
+    "alternativeNames": [
+      "Keraniganj",
+      "কেরানীগঞ্জ"
+    ],
+    "type": "Upazila / Administrative Unit",
+    "parentLocation": "Greater Dhaka (South)",
+    "ward": "12 Unions",
+    "thana": "Keraniganj Model Thana / South Keraniganj Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj (Greater Dhaka Metro)",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.685,
+    "longitude": 90.36,
+    "bounds": {
+      "north": 23.74,
+      "south": 23.61,
+      "east": 90.435,
+      "west": 90.28
+    },
+    "mainRoads": [
+      "Dhaka-Mawa Expressway (Bangabandhu Expressway)",
+      "Babubazar Bridge Road",
+      "Postogola Bridge Road"
+    ],
+    "nearbyAreas": [
+      "Old Dhaka",
+      "Narayanganj",
+      "Savar",
+      "Sirajdikhan"
+    ],
+    "landmarks": [
+      "Dhaka Central Jail (Keraniganj)",
+      "Jhilmil Residential Scheme",
+      "Babubazar 2nd Buriganga Bridge"
+    ],
+    "boundaryDescription": "Southern bank of Buriganga River directly facing Old Dhaka, included in RAJUK DAP",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK DAP Southern Planning Zone, Keraniganj Upazila Administration",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "জিঞ্জিরা",
+    "standardizedName": "Zinjira",
+    "alternativeNames": [
+      "Jinjira",
+      "Jinjira Bazar",
+      "জিঞ্জিরা বাজার"
+    ],
+    "type": "Commercial Area / Neighborhood",
+    "parentLocation": "Keraniganj Upazila",
+    "ward": "Zinjira Union",
+    "thana": "Keraniganj Model Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.702,
+    "longitude": 90.395,
+    "bounds": {
+      "north": 23.708,
+      "south": 23.692,
+      "east": 90.405,
+      "west": 90.385
+    },
+    "mainRoads": [
+      "Zinjira-Babubazar Road",
+      "Buriganga Riverbank Road"
+    ],
+    "nearbyAreas": [
+      "Aganagar",
+      "Old Dhaka (Chawkbazar / Mitford across river)",
+      "Kamrangirchar"
+    ],
+    "landmarks": [
+      "Historic Jinjira Palace (জুনজিরা প্রাসাদ)",
+      "Zinjira Metal Craft & Hardware Market"
+    ],
+    "boundaryDescription": "Directly opposite Chawkbazar and Mitford across Buriganga River",
+    "recognitionLevel": "Official administrative name",
+    "source": "Keraniganj Upazila, Asiatic Society of Bangladesh",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "আগানগর",
+    "standardizedName": "Aganagar",
+    "alternativeNames": [
+      "Aganagar Cloth Market",
+      "Babubazar Bridge South"
+    ],
+    "type": "Commercial Area",
+    "parentLocation": "Keraniganj Upazila",
+    "ward": "Aganagar Union",
+    "thana": "South Keraniganj Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.705,
+    "longitude": 90.402,
+    "bounds": {
+      "north": 23.71,
+      "south": 23.695,
+      "east": 90.412,
+      "west": 90.395
+    },
+    "mainRoads": [
+      "Babubazar Bridge Ramp",
+      "Aganagar Main Road"
+    ],
+    "nearbyAreas": [
+      "Zinjira",
+      "Sadarghat",
+      "Islampur"
+    ],
+    "landmarks": [
+      "Babubazar Bridge Landing",
+      "Aganagar Mega Garments Market"
+    ],
+    "boundaryDescription": "Wholesale ready-made garments hub directly at the foot of Babubazar Bridge",
+    "recognitionLevel": "Official administrative name",
+    "source": "South Keraniganj Administration, Trade Records",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "হাসনাবাদ",
+    "standardizedName": "Hasnabad",
+    "alternativeNames": [
+      "Hasnabad Housing",
+      "Postogola South"
+    ],
+    "type": "Neighborhood / Sub-area",
+    "parentLocation": "Keraniganj Upazila",
+    "ward": "Konda Union",
+    "thana": "South Keraniganj Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.678,
+    "longitude": 90.428,
+    "bounds": {
+      "north": 23.688,
+      "south": 23.668,
+      "east": 90.438,
+      "west": 90.418
+    },
+    "mainRoads": [
+      "Postogola Bridge Link Road",
+      "Dhaka-Mawa Expressway Connection"
+    ],
+    "nearbyAreas": [
+      "Postogola",
+      "Tegharia",
+      "Fatullah (across Buriganga)"
+    ],
+    "landmarks": [
+      "Buriganga Bridge 1 Landing",
+      "Hasnabad Housing Projects"
+    ],
+    "boundaryDescription": "Directly opposite Shyampur / Postogola at southern approach of Buriganga Bridge 1",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "South Keraniganj Administration, RAJUK DAP",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "হাসনাবাদের ভবনরাজি",
+    "standardizedName": "Hasnabad Housing Cluster",
+    "alternativeNames": [
+      "Hasnabad Building Projects",
+      "Hasnabad Bhabanraji"
+    ],
+    "type": "Building / Property Cluster",
+    "parentLocation": "Hasnabad",
+    "ward": "Konda Union",
+    "thana": "South Keraniganj Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.676,
+    "longitude": 90.426,
+    "bounds": {
+      "north": 23.68,
+      "south": 23.67,
+      "east": 90.43,
+      "west": 90.42
+    },
+    "mainRoads": [
+      "Hasnabad Housing Access Road"
+    ],
+    "nearbyAreas": [
+      "Hasnabad",
+      "Tegharia"
+    ],
+    "landmarks": [
+      "Hasnabad Real Estate Towers"
+    ],
+    "boundaryDescription": "High-density residential housing project development cluster within Hasnabad locality",
+    "recognitionLevel": "Property/address usage",
+    "source": "Survey of Bangladesh, Real Estate Registry",
+    "confidence": "Medium",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "তেঘড়িয়া",
+    "standardizedName": "Tegharia",
+    "alternativeNames": [
+      "Teghoria Union",
+      "তেঘড়িয়া"
+    ],
+    "type": "Neighborhood / Union",
+    "parentLocation": "Keraniganj Upazila",
+    "ward": "Tegharia Union",
+    "thana": "South Keraniganj Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj",
+    "cityCorporation": "None",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.662,
+    "longitude": 90.398,
+    "bounds": {
+      "north": 23.675,
+      "south": 23.648,
+      "east": 90.415,
+      "west": 90.38
+    },
+    "mainRoads": [
+      "Dhaka-Mawa Expressway (N8)"
+    ],
+    "nearbyAreas": [
+      "Jhilmil",
+      "Hasnabad",
+      "Rajendrapur"
+    ],
+    "landmarks": [
+      "Tegharia Expressway Interchange",
+      "Dhaka Central Jail nearby"
+    ],
+    "boundaryDescription": "North: Aganagar/Hasnabad; South: Jhilmil; East: Konda; West: Rajendrapur",
+    "recognitionLevel": "Official administrative name",
+    "source": "South Keraniganj Administration, RAJUK DAP",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "ঝিলমিল",
+    "standardizedName": "Jhilmil",
+    "alternativeNames": [
+      "Jhilmil Residential Project",
+      "ঝিলমিল আবাসিক প্রকল্প"
+    ],
+    "type": "Residential Project / Planned Township",
+    "parentLocation": "Keraniganj Upazila",
+    "ward": "Tegharia Union",
+    "thana": "South Keraniganj Thana",
+    "upazila": "Keraniganj Upazila",
+    "city": "Keraniganj (Greater Dhaka)",
+    "cityCorporation": "None (RAJUK Project)",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.652,
+    "longitude": 90.388,
+    "bounds": {
+      "north": 23.665,
+      "south": 23.638,
+      "east": 90.402,
+      "west": 90.375
+    },
+    "mainRoads": [
+      "Dhaka-Mawa Expressway",
+      "Jhilmil Central Boulevard"
+    ],
+    "nearbyAreas": [
+      "Tegharia",
+      "Rajendrapur",
+      "Padma Bridge Approach"
+    ],
+    "landmarks": [
+      "RAJUK Jhilmil New Town Project",
+      "Jhilmil Apartment City"
+    ],
+    "boundaryDescription": "Major 381-acre master-planned residential satellite town developed by RAJUK south of Buriganga",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK Master Plan, DAP Planned Unit",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "নারায়ণগঞ্জ",
+    "standardizedName": "Narayanganj",
+    "alternativeNames": [
+      "Narayanganj City Corporation",
+      "নারায়ণগঞ্জ সদর"
+    ],
+    "type": "City / Metropolitan Sub-zone",
+    "parentLocation": "Greater Dhaka (Southeast)",
+    "ward": "NCC Wards 1-27",
+    "thana": "Narayanganj Sadar / Fatullah / Siddhirganj",
+    "upazila": "Narayanganj Sadar Upazila",
+    "city": "Narayanganj (Greater Dhaka Metro)",
+    "cityCorporation": "NCC (Narayanganj City Corporation)",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.6238,
+    "longitude": 90.5,
+    "bounds": {
+      "north": 23.69,
+      "south": 23.58,
+      "east": 90.54,
+      "west": 90.46
+    },
+    "mainRoads": [
+      "Dhaka-Narayanganj Link Road",
+      "Bangabandhu Road",
+      "Dhaka-Chittagong Highway"
+    ],
+    "nearbyAreas": [
+      "Fatullah",
+      "Siddhirganj",
+      "Chashara",
+      "Demra"
+    ],
+    "landmarks": [
+      "Chashara Shaheed Minar",
+      "Narayanganj Railway Station",
+      "Shitalakshya River Port",
+      "BIDC"
+    ],
+    "boundaryDescription": "Directly connected southeastern industrial, river port, and commercial metro corridor included in RAJUK DAP",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK DAP Southeastern Zone, NCC Master Plan",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "চাষাড়া",
+    "standardizedName": "Chashara",
+    "alternativeNames": [
+      "Chashara Roundabout",
+      "চাষাঢ়া"
+    ],
+    "type": "Commercial Center / Transit Hub",
+    "parentLocation": "Narayanganj",
+    "ward": "NCC Ward 13",
+    "thana": "Narayanganj Sadar Thana",
+    "upazila": "Narayanganj Sadar",
+    "city": "Narayanganj",
+    "cityCorporation": "NCC",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.626,
+    "longitude": 90.498,
+    "bounds": {
+      "north": 23.633,
+      "south": 23.618,
+      "east": 90.505,
+      "west": 90.49
+    },
+    "mainRoads": [
+      "Bangabandhu Road",
+      "Dhaka-Narayanganj Link Road",
+      "Nawab Sirajuddaula Road"
+    ],
+    "nearbyAreas": [
+      "Fatullah",
+      "Khanpur",
+      "Missionpara"
+    ],
+    "landmarks": [
+      "Chashara Shaheed Minar",
+      "Chashara Railway Station",
+      "Rifles Club"
+    ],
+    "boundaryDescription": "Primary commercial and civic hub of Narayanganj city",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "NCC Ward 13, Survey of Bangladesh",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "ফতুল্লা",
+    "standardizedName": "Fatullah",
+    "alternativeNames": [
+      "Fatulla",
+      "ফতুল্লা ক্রিকেট স্টেডিয়াম এলাকা"
+    ],
+    "type": "Neighborhood / Industrial Area",
+    "parentLocation": "Narayanganj",
+    "ward": "Fatullah Union / NCC Border",
+    "thana": "Fatullah Thana",
+    "upazila": "Narayanganj Sadar",
+    "city": "Narayanganj (Greater Dhaka)",
+    "cityCorporation": "None / NCC Buffer",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.655,
+    "longitude": 90.482,
+    "bounds": {
+      "north": 23.675,
+      "south": 23.635,
+      "east": 90.505,
+      "west": 90.455
+    },
+    "mainRoads": [
+      "Dhaka-Narayanganj Old Road",
+      "Dhaka-Narayanganj Link Road"
+    ],
+    "nearbyAreas": [
+      "Shyampur / Postogola",
+      "Chashara",
+      "Siddhirganj"
+    ],
+    "landmarks": [
+      "Khan Shaheb Osman Ali International Cricket Stadium",
+      "Fatullah Railway Station",
+      "Panchabati Junction"
+    ],
+    "boundaryDescription": "Textile manufacturing and sports corridor connecting Dhaka Postogola to Narayanganj city",
+    "recognitionLevel": "Official administrative name",
+    "source": "RAJUK DAP, DMP/NMP Jurisdiction Map",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সিদ্ধিরগঞ্জ",
+    "standardizedName": "Siddhirganj",
+    "alternativeNames": [
+      "Siddirganj",
+      "Kanchpur Link Area"
+    ],
+    "type": "Neighborhood / Industrial Area",
+    "parentLocation": "Narayanganj",
+    "ward": "NCC Wards 1-10",
+    "thana": "Siddhirganj Thana",
+    "upazila": "Narayanganj Sadar",
+    "city": "Narayanganj (Greater Dhaka)",
+    "cityCorporation": "NCC",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.678,
+    "longitude": 90.525,
+    "bounds": {
+      "north": 23.705,
+      "south": 23.645,
+      "east": 90.545,
+      "west": 90.505
+    },
+    "mainRoads": [
+      "Dhaka-Chittagong Highway",
+      "Narayanganj-Demra Road"
+    ],
+    "nearbyAreas": [
+      "Signboard",
+      "Kanchpur",
+      "Demra",
+      "Chashara"
+    ],
+    "landmarks": [
+      "Siddhirganj Power Station (335MW)",
+      "Signboard Junction",
+      "Projonmo Hospital"
+    ],
+    "boundaryDescription": "North: Demra / Jatrabari; South: Narayanganj Sadar; East: Shitalakshya River / Kanchpur; West: Fatullah",
+    "recognitionLevel": "Official administrative name",
+    "source": "NCC Wards 1-10, RAJUK DAP",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "সাইনবোর্ড",
+    "standardizedName": "Signboard",
+    "alternativeNames": [
+      "Signboard Mor",
+      "Signboard Bus Stand"
+    ],
+    "type": "Transit Hub / Commercial Node",
+    "parentLocation": "Siddhirganj",
+    "ward": "NCC Ward 1",
+    "thana": "Siddhirganj Thana",
+    "upazila": "Narayanganj Sadar",
+    "city": "Narayanganj / Dhaka Border",
+    "cityCorporation": "NCC",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.692,
+    "longitude": 90.495,
+    "bounds": {
+      "north": 23.698,
+      "south": 23.685,
+      "east": 90.505,
+      "west": 90.485
+    },
+    "mainRoads": [
+      "Dhaka-Chittagong Highway",
+      "Dhaka-Narayanganj Link Road"
+    ],
+    "nearbyAreas": [
+      "Jatrabari",
+      "Dania",
+      "Fatullah",
+      "Siddhirganj"
+    ],
+    "landmarks": [
+      "Signboard Flyover Junction",
+      "Proshika Building"
+    ],
+    "boundaryDescription": "Strategic highway tri-junction connecting Dhaka city to Narayanganj Link Road and Chittagong Highway",
+    "recognitionLevel": "Common local name",
+    "source": "Roads & Highways Department, DMP/NMP",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "কাঁচপুর",
+    "standardizedName": "Kanchpur",
+    "alternativeNames": [
+      "Kanchpur Bridge Area",
+      "Kanchpur Chowrasta"
+    ],
+    "type": "Transit Hub / Industrial Area",
+    "parentLocation": "Greater Dhaka (East Gateway)",
+    "ward": "Sonargaon Upazila / DAP Fringe",
+    "thana": "Sonargaon Thana",
+    "upazila": "Sonargaon Upazila",
+    "city": "Narayanganj (Greater Dhaka)",
+    "cityCorporation": "None",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.705,
+    "longitude": 90.528,
+    "bounds": {
+      "north": 23.715,
+      "south": 23.695,
+      "east": 90.54,
+      "west": 90.515
+    },
+    "mainRoads": [
+      "Dhaka-Chittagong Highway",
+      "Dhaka-Sylhet Highway (N2)"
+    ],
+    "nearbyAreas": [
+      "Siddhirganj",
+      "Demra",
+      "Tarabo"
+    ],
+    "landmarks": [
+      "Kanchpur 1st & 2nd Bridges over Shitalakshya",
+      "Kanchpur Industrial Zone"
+    ],
+    "boundaryDescription": "Crucial eastern highway junction splitting Dhaka-Chittagong and Dhaka-Sylhet national corridors",
+    "recognitionLevel": "Official/local geographic name",
+    "source": "RAJUK DAP Eastern Border, RHD",
+    "confidence": "High",
+    "status": "DISCOVERED"
+  },
+  {
+    "name": "নারায়ণগঞ্জের ভবনরাজি",
+    "standardizedName": "Narayanganj Commercial & Property Clusters",
+    "alternativeNames": [
+      "Narayanganj Building Clusters",
+      "Narayanganj Property Complexes"
+    ],
+    "type": "Building / Property Cluster",
+    "parentLocation": "Narayanganj",
+    "ward": "NCC Wards 13-15",
+    "thana": "Narayanganj Sadar Thana",
+    "upazila": "Narayanganj Sadar",
+    "city": "Narayanganj",
+    "cityCorporation": "NCC",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.625,
+    "longitude": 90.501,
+    "bounds": {
+      "north": 23.63,
+      "south": 23.62,
+      "east": 90.506,
+      "west": 90.495
+    },
+    "mainRoads": [
+      "Bangabandhu Road"
+    ],
+    "nearbyAreas": [
+      "Chashara",
+      "Tanbazar"
+    ],
+    "landmarks": [
+      "Ali Ahmed Chunka City Library",
+      "Narayanganj Club Towers"
+    ],
+    "boundaryDescription": "High-density commercial building cluster along Bangabandhu Road in Narayanganj downtown",
+    "recognitionLevel": "Property/address usage",
+    "source": "Survey of Bangladesh, NCC Commercial Records",
+    "confidence": "Medium",
+    "status": "SUBDIVISION"
+  },
+  {
+    "name": "ঢাকা দক্ষিণ সিটি করপোরেশন",
+    "standardizedName": "Dhaka South City Corporation (DSCC)",
+    "alternativeNames": [
+      "DSCC",
+      "ডিএসসিসি"
+    ],
+    "type": "City Corporation",
+    "parentLocation": "Dhaka City",
+    "ward": "Wards 1-75",
+    "thana": "25 Police Stations (Thanas)",
+    "upazila": "Metropolitan Area",
+    "city": "Dhaka",
+    "cityCorporation": "DSCC",
+    "district": "Dhaka",
+    "division": "Dhaka",
+    "latitude": 23.722,
+    "longitude": 90.41,
+    "bounds": {
+      "north": 23.76,
+      "south": 23.67,
+      "east": 90.51,
+      "west": 90.35
+    },
+    "mainRoads": [
+      "Kazi Nazrul Islam Avenue",
+      "Bangabandhu Avenue",
+      "Mayor Hanif Flyover",
+      "Mirpur Road (South)"
+    ],
+    "nearbyAreas": [
+      "DNCC",
+      "Keraniganj",
+      "Narayanganj"
+    ],
+    "landmarks": [
+      "Nagar Bhaban (DSCC Headquarters)"
+    ],
+    "boundaryDescription": "Administrative entity covering 75 wards across Old Dhaka, Dhanmondi, Motijheel, Jatrabari, Khilgaon, and Demra",
+    "recognitionLevel": "Official administrative name",
+    "source": "Local Government Division, Gazette Notification 2011",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "গাজীপুর জেলা",
+    "standardizedName": "Gazipur District",
+    "alternativeNames": [
+      "Gazipur Zila",
+      "গাজীপুর"
+    ],
+    "type": "District",
+    "parentLocation": "Dhaka Division",
+    "ward": "5 Upazilas (Gazipur Sadar, Kaliakair, Sreepur, Kapasia, Kaliganj)",
+    "thana": "Gazipur Sadar, Tongi, etc.",
+    "upazila": "District Level",
+    "city": "Gazipur",
+    "cityCorporation": "GCC (in urban part)",
+    "district": "Gazipur",
+    "division": "Dhaka",
+    "latitude": 24.0023,
+    "longitude": 90.4264,
+    "bounds": {
+      "north": 24.35,
+      "south": 23.885,
+      "east": 90.7,
+      "west": 90.15
+    },
+    "mainRoads": [
+      "Dhaka-Mymensingh Highway",
+      "Dhaka Bypass"
+    ],
+    "nearbyAreas": [
+      "Dhaka District",
+      "Narayanganj District",
+      "Narsingdi District"
+    ],
+    "landmarks": [
+      "Bhawal National Park",
+      "Bhawal Rajbari"
+    ],
+    "boundaryDescription": "Broad administrative district (1,741 km²). NOTE: Only southern urban metropolitan sectors (Tongi, Board Bazar, Chowrasta) fall within the Greater Dhaka study area.",
+    "recognitionLevel": "Official administrative name",
+    "source": "Ministry of Public Administration",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  },
+  {
+    "name": "নারায়ণগঞ্জ জেলা",
+    "standardizedName": "Narayanganj District",
+    "alternativeNames": [
+      "Narayanganj Zila",
+      "নারায়ণগঞ্জ"
+    ],
+    "type": "District",
+    "parentLocation": "Dhaka Division",
+    "ward": "5 Upazilas (Sadar, Bandar, Rupganj, Sonargaon, Araihazar)",
+    "thana": "Narayanganj Sadar, Fatullah, Siddhirganj, etc.",
+    "upazila": "District Level",
+    "city": "Narayanganj",
+    "cityCorporation": "NCC (in urban part)",
+    "district": "Narayanganj",
+    "division": "Dhaka",
+    "latitude": 23.6333,
+    "longitude": 90.5,
+    "bounds": {
+      "north": 23.8,
+      "south": 23.55,
+      "east": 90.75,
+      "west": 90.43
+    },
+    "mainRoads": [
+      "Dhaka-Chittagong Highway",
+      "Dhaka-Sylhet Highway",
+      "Dhaka-Narayanganj Link Road"
+    ],
+    "nearbyAreas": [
+      "Dhaka District",
+      "Munshiganj District",
+      "Gazipur District"
+    ],
+    "landmarks": [
+      "Shitalakshya River",
+      "Meghna River"
+    ],
+    "boundaryDescription": "Broad administrative district (684 km²). NOTE: Only western and northern urban segments (Narayanganj City, Fatullah, Siddhirganj, Kanchpur) belong to the Greater Dhaka study area.",
+    "recognitionLevel": "Official administrative name",
+    "source": "Ministry of Public Administration",
+    "confidence": "High",
+    "status": "FROM MY LIST"
+  }
+]

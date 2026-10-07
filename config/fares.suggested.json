@@ -1,0 +1,50 @@
+{
+  "walk": {
+    "name": "Walking",
+    "baseFare": 0,
+    "perKm": 0,
+    "perMinute": 0,
+    "maxFeasibleDistanceMeters": 1800,
+    "trafficMultiplier": {
+      "low": 1,
+      "moderate": 1,
+      "heavy": 1
+    }
+  },
+  "rickshaw": {
+    "name": "Rickshaw",
+    "baseFare": 1,
+    "perKm": 28,
+    "perMinute": 0,
+    "maxFeasibleDistanceMeters": 4000,
+    "trafficMultiplier": {
+      "low": 1,
+      "moderate": 1.1,
+      "heavy": 1.25
+    }
+  },
+  "cng": {
+    "name": "CNG Auto-rickshaw",
+    "baseFare": 64,
+    "perKm": 19,
+    "perMinute": 0,
+    "maxFeasibleDistanceMeters": 25000,
+    "trafficMultiplier": {
+      "low": 1,
+      "moderate": 1.15,
+      "heavy": 1.35
+    }
+  },
+  "car": {
+    "name": "Car / Ride-share",
+    "baseFare": 103,
+    "perKm": 26,
+    "perMinute": 2,
+    "maxFeasibleDistanceMeters": 50000,
+    "trafficMultiplier": {
+      "low": 1,
+      "moderate": 1.2,
+      "heavy": 1.5
+    }
+  }
+}

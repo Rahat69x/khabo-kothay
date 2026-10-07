@@ -18,6 +18,9 @@ class QuotaAndUsageManager {
     };
     this.endpointCounters = new Map(); // key: endpoint -> { count, totalDurationMs, errors }
     this.totalRequests = 0;
+    this.googleDailyDate = this.getCurrentDateKey();
+    this.googleDailyCalls = 0;
+    this.googleCallsBreakdown = { places: 0, routes: 0 };
   }
 
   getCurrentDateKey() {
@@ -26,6 +29,39 @@ class QuotaAndUsageManager {
 
   getCurrentMonthKey() {
     return new Date().toISOString().slice(0, 7); // YYYY-MM
+  }
+
+  /**
+   * Hard daily cap on external Google Places & Routes API requests (fails closed)
+   */
+  checkAndRecordGoogleApiCall(apiName = 'places') {
+    const maxGoogleDaily = parseInt(process.env.MAX_GOOGLE_REQUESTS_PER_DAY || '200', 10);
+    const today = this.getCurrentDateKey();
+    if (this.googleDailyDate !== today) {
+      this.googleDailyDate = today;
+      this.googleDailyCalls = 0;
+      this.googleCallsBreakdown = { places: 0, routes: 0 };
+    }
+
+    if (this.googleDailyCalls >= maxGoogleDaily) {
+      const err = new Error(`Daily Google API request cap reached (${this.googleDailyCalls}/${maxGoogleDaily}). Failing closed to prevent unexpected costs.`);
+      err.statusCode = 429;
+      err.code = 'GOOGLE_DAILY_CAP_EXCEEDED';
+      throw err;
+    }
+
+    this.googleDailyCalls++;
+    if (this.googleCallsBreakdown[apiName] !== undefined) {
+      this.googleCallsBreakdown[apiName]++;
+    } else {
+      this.googleCallsBreakdown[apiName] = 1;
+    }
+
+    return {
+      count: this.googleDailyCalls,
+      limit: maxGoogleDaily,
+      remaining: maxGoogleDaily - this.googleDailyCalls
+    };
   }
 
   /**
@@ -162,7 +198,10 @@ class QuotaAndUsageManager {
       today: {
         date: today,
         searches: todaySearches,
-        activeDevices: activeDevicesToday
+        activeDevices: activeDevicesToday,
+        googleApiCalls: this.googleDailyCalls,
+        googleApiLimit: parseInt(process.env.MAX_GOOGLE_REQUESTS_PER_DAY || '200', 10),
+        googleCallsBreakdown: this.googleCallsBreakdown
       },
       endpoints,
       cache: cacheStats

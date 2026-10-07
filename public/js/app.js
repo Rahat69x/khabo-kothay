@@ -50,6 +50,8 @@ async function initApp() {
     initFilterChips();
     initModals();
     ui.initDidYouGoPrompt();
+    initFeedbackCard();
+    initPwaInstall();
 
     // 5. Run Initial Search
     await executeSearch();
@@ -376,9 +378,91 @@ async function executeSearch(options = {}) {
     if (countTag) {
       countTag.textContent = `${data.results.length} places ranked`;
     }
+
+    // Show feedback card
+    const feedbackCard = document.getElementById('feedbackCard');
+    if (feedbackCard) {
+      feedbackCard.classList.remove('hidden');
+    }
   } catch (err) {
     console.error('Search failed:', err);
     ui.showError(err.message, () => executeSearch(options));
+  }
+}
+
+function initFeedbackCard() {
+  const card = document.getElementById('feedbackCard');
+  if (!card) return;
+
+  let selectedAnswer = null;
+  const buttons = card.querySelectorAll('.feedback-btn');
+  const reasonRow = document.getElementById('feedbackReasonRow');
+  const reasonInput = document.getElementById('feedbackReasonInput');
+  const submitBtn = document.getElementById('submitFeedbackBtn');
+  const thanksMsg = document.getElementById('feedbackThanks');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedAnswer = btn.dataset.answer;
+      if (reasonRow) reasonRow.classList.remove('hidden');
+    });
+  });
+
+  submitBtn?.addEventListener('click', async () => {
+    if (!selectedAnswer) return;
+    const topPick = state.topPicks?.[0] || state.results?.[0];
+    const payload = {
+      areaName: state.currentLocation?.name,
+      cuisine: state.cuisine,
+      priority: state.priority,
+      topPickId: topPick?.id,
+      answer: selectedAnswer,
+      reason: reasonInput?.value?.trim() || ''
+    };
+
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (thanksMsg) thanksMsg.classList.remove('hidden');
+      if (reasonRow) reasonRow.classList.add('hidden');
+      setTimeout(() => {
+        card.classList.add('hidden');
+      }, 3000);
+    } catch (e) {
+      console.warn('Feedback submit error:', e);
+    }
+  });
+}
+
+function initPwaInstall() {
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+      installBtn.classList.remove('hidden');
+      installBtn.onclick = () => {
+        installBtn.classList.add('hidden');
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+        });
+      };
+    }
+  });
+
+  if ('serviceWorker' in navigator && (window.location.protocol.startsWith('http') || window.location.hostname === 'localhost')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('SW registration:', err);
+      });
+    });
   }
 }
 

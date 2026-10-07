@@ -1,9 +1,9 @@
 # Khabo Kothay? Project Progress Tracker
 
 ## Status Overview
-- **Current Phase Completed**: **P2 - Smarter Decisions (MUST)** ✅
-- **Test Pass Rate**: 🟢 **81 / 81 Tests Passing (100%) across 15 test suites**
-- **Engine Code Coverage**: **> 92%**
+- **Day 1 Stages Completed**: **Stages 0 to 6 + Dhaka Location Database Research** ✅
+- **Test Pass Rate**: 🟢 **104 / 104 Tests Passing (100%) across 18 test suites**
+- **Security & Contrast**: 🟢 **Zero raw colors, 100% WCAG contrast passing, zero secret leaks**
 - **Next Phase**: **P3 - Ask in your own words, by text or voice (SHOULD)**
 
 ---
@@ -75,3 +75,45 @@
 - [ ] **P8 - Polish and experience (MUST)** — Design system tokens, Bengali typography (Noto Sans Bengali), data saver mode, accessibility pass.
 - [ ] **P9 - Security, privacy and release readiness (MUST)** — Google Play Integrity verification, OWASP API review, Play Store preparation.
 - [ ] **P10 - Measure and maintain (SHOULD)** — Privacy-friendly KPI telemetry, in-app problem report, changelog.
+
+---
+
+## Day 1 Stages 0 to 6 Implementation & Deliverables
+
+### Stage 0: Safety and Project Hygiene
+- Created `.git/hooks/pre-commit` wired to `scripts/security-check.js` to block committing API keys.
+- Implemented Google API hard daily quota cap in `server/services/quota.js` (default 200/day).
+- Added `GET /api/admin/usage` endpoint for daily quota tracking.
+- Created `docs/SETUP_GOOGLE.md` with step-by-step console setup, key restrictions, and billing alerts.
+- Populated `docs/prompts/README.md` and placeholder prompt templates `01-day1.md` through `08-future.md`.
+
+### Stage 1: Data Reality Check
+- Created `scripts/data-check.js` supporting `--dry-run`, `--limit`, and offline evaluation.
+- Generated `docs/DATA_CHECK.md` auditing field mask availability, pricing voids, and billing cost impacts.
+
+### Stage 2: Thin Vertical Slice
+- Full end-to-end recommendation flow in `server/services/recommend.js` with 10-minute caching.
+- Verified traffic-aware ranking: closer place in heavy traffic loses to farther place in light traffic.
+
+### Stage 3: Installable PWA
+- Configured `public/manifest.webmanifest` and `public/sw.js` for standalone home screen install and offline shell caching.
+- Wired native `beforeinstallprompt` event in `public/js/app.js` with install button.
+- Documented bilingual installation guide in `docs/INSTALL_PHONE.md`.
+
+### Stage 4: Real Fare Tuning
+- Configured default fare matrix in `config/fares.json` and sample log in `docs/fare-log.csv`.
+- Built `scripts/tune-fares.js` using ordinary least squares regression to calculate suggested base/km fares in `config/fares.suggested.json`.
+- Added vitest tests in `server/tests/tune-fares.test.js`.
+
+### Stage 5: Tester Feedback Loop
+- Added in-app feedback card asking *"Did the top pick make sense?"* with Yes/No/Not sure.
+- Mounted rate-limited `POST /api/feedback` appending to `server/data/feedback.jsonl`.
+- Built `scripts/feedback-report.js` and bilingual tester guide in `docs/TESTER_GUIDE.md`.
+
+### Stage 6: Scope & Postponed Features
+- Created `docs/SCOPE.md` detailing personal/friends testing checklist vs public release checklist.
+- Documented feature flags and architectural constraints in `docs/DECISIONS.md`.
+
+### Complete Dhaka Location Database
+- Comprehensive geographic coverage research covering Level 1 (DNCC & DSCC) and Level 2 (Greater Dhaka / RAJUK DAP).
+- Built 118 verified canonical location records in `server/data/dhaka-locations.json` with 24 required attributes.

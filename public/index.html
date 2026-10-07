@@ -11,7 +11,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="alternate icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/style.css">
   <script>
@@ -44,6 +44,9 @@
           <span class="weather-icon">🌤️</span>
           <span class="weather-text">28°C Dhaka</span>
         </div>
+        <button id="installAppBtn" class="btn btn-primary header-btn hidden" aria-label="Install app on phone">
+          <span>📲</span> Install
+        </button>
         <button id="themeToggleBtn" class="btn btn-secondary header-btn" aria-label="Toggle theme mode" title="Switch Theme (System / Light / Dark)">
           <span id="themeToggleIcon">🌓</span> <span id="themeToggleLabel">Auto</span>
         </button>
@@ -159,6 +162,24 @@
 
     <!-- Top Picks Hero Box -->
     <section id="topPicksContainer" class="top-picks-section" aria-label="Top recommendations for you right now"></section>
+
+    <!-- Feedback Card: "Did the top pick make sense?" -->
+    <section id="feedbackCard" class="feedback-card card-glass hidden" aria-label="Recommendation feedback">
+      <div class="feedback-inner">
+        <h4>🤔 Did the top pick make sense?</h4>
+        <div class="feedback-buttons">
+          <button type="button" class="btn btn-outline btn-sm feedback-btn" data-answer="Yes">👍 Yes</button>
+          <button type="button" class="btn btn-outline btn-sm feedback-btn" data-answer="No">👎 No</button>
+          <button type="button" class="btn btn-outline btn-sm feedback-btn" data-answer="Not sure">🤷 Not sure</button>
+        </div>
+        <div id="feedbackReasonRow" class="feedback-reason-row hidden">
+          <input type="text" id="feedbackReasonInput" class="form-input feedback-input" placeholder="Optional reason (e.g., closer place had better food)..." maxlength="200" />
+          <button type="button" id="submitFeedbackBtn" class="btn btn-primary btn-sm">Send</button>
+        </div>
+        <p class="feedback-consent">Anonymous feedback helps tune ranking weights. No device IDs or precise locations are stored.</p>
+        <div id="feedbackThanks" class="feedback-thanks hidden">Thanks for helping improve the picks! 🙌</div>
+      </div>
+    </section>
 
     <!-- Results & Interactive Map Section -->
     <section class="results-map-grid">
