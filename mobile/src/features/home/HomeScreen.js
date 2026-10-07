@@ -215,15 +215,15 @@ export default function HomeScreen({ navigation, theme }) {
     >
       {/* Weather Banner */}
       {weather?.isRaining && (
-        <View style={styles.rainBanner}>
-          <Text style={styles.rainText}>{t('home.rainBanner')}</Text>
+        <View style={[styles.rainBanner, { backgroundColor: theme.colors.primaryTint }]}>
+          <Text style={[styles.rainText, { color: theme.colors.primary }]}>{t('home.rainBanner')}</Text>
         </View>
       )}
 
       {/* Offline Cache Banner */}
       {isCachedData && (
-        <View style={styles.offlineBanner}>
-          <Text style={styles.offlineText}>
+        <View style={[styles.offlineBanner, { backgroundColor: theme.colors.warningTint }]}>
+          <Text style={[styles.offlineText, { color: theme.colors.warning }]}>
             {t('home.offlineBanner', { mins: getUpdatedMinutesAgo() })}
           </Text>
         </View>
@@ -231,9 +231,9 @@ export default function HomeScreen({ navigation, theme }) {
 
       {/* Server Cold-Start Warm-up Banner */}
       {serverWakingMsg && (
-        <View style={styles.wakeUpBanner}>
-          <ActivityIndicator size="small" color="#FFFFFF" style={{ marginRight: 8 }} />
-          <Text style={styles.wakeUpText}>{serverWakingMsg}</Text>
+        <View style={[styles.wakeUpBanner, { backgroundColor: theme.colors.primary }]}>
+          <ActivityIndicator size="small" color={theme.colors.onPrimary} style={{ marginRight: 8 }} />
+          <Text style={[styles.wakeUpText, { color: theme.colors.onPrimary }]}>{serverWakingMsg}</Text>
         </View>
       )}
 
@@ -264,7 +264,7 @@ export default function HomeScreen({ navigation, theme }) {
         accessibilityRole="button"
         accessibilityLabel={t('home.eatNow')}
       >
-        <Text style={styles.eatNowText}>{t('home.eatNow')}</Text>
+        <Text style={[styles.eatNowText, { color: theme.colors.onPrimary }]}>{t('home.eatNow')}</Text>
       </TouchableOpacity>
 
       {/* "For You Right Now" Top Picks Section */}
@@ -278,12 +278,12 @@ export default function HomeScreen({ navigation, theme }) {
               </Text>
             )}
           </View>
-          <Text style={[styles.whySummary, { color: theme.colors.secondary }]}>{topPicks.summary}</Text>
+          <Text style={[styles.whySummary, { color: theme.colors.primary }]}>{topPicks.summary}</Text>
 
           {/* Counterfactual Trade-off Explanation */}
           {topPicks.counterfactual && (
-            <View style={[styles.counterfactualBox, { backgroundColor: 'rgba(234, 179, 8, 0.12)', borderColor: 'rgba(234, 179, 8, 0.3)' }]}>
-              <Text style={[styles.counterfactualText, { color: '#FACC15' }]}>
+            <View style={[styles.counterfactualBox, { backgroundColor: theme.colors.warningTint, borderColor: theme.colors.warning }]}>
+              <Text style={[styles.counterfactualText, { color: theme.colors.warning }]}>
                 💡 {topPicks.counterfactual}
               </Text>
             </View>
@@ -291,27 +291,32 @@ export default function HomeScreen({ navigation, theme }) {
 
           {/* Bandit Personal Preference Note */}
           {topPicks.banditNote && (
-            <View style={[styles.banditBox, { backgroundColor: 'rgba(99, 102, 241, 0.12)', borderColor: 'rgba(99, 102, 241, 0.3)' }]}>
-              <Text style={[styles.banditText, { color: '#818CF8' }]}>
+            <View style={[styles.banditBox, { backgroundColor: theme.colors.primaryTint, borderColor: theme.colors.primary }]}>
+              <Text style={[styles.banditText, { color: theme.colors.primary }]}>
                 🎯 {topPicks.banditNote}
               </Text>
             </View>
           )}
 
+          {/* Badge Usage Rules:
+              Best overall = saffron fill with onAccent text
+              Fastest to reach = primaryTint with primary text
+              Try something new = outlined, accentStrong text
+              Community-verified = success tint */}
           {topPicks.bestMatch && (
             <TouchableOpacity
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.bestMatch })}
             >
               <View style={styles.pickBadgeRow}>
-                <View style={[styles.badgePill, { backgroundColor: theme.colors.primaryGlow }]}>
-                  <Text style={{ color: theme.colors.primary, fontWeight: '800', fontSize: 12 }}>
+                <View style={[styles.badgePill, { backgroundColor: theme.colors.badgeBest }]}>
+                  <Text style={{ color: theme.colors.badgeBestText, fontWeight: '800', fontSize: 12 }}>
                     🌟 {t('picks.bestMatch')}
                   </Text>
                 </View>
                 {topPicks.bestMatch.departurePredictions?.bestSuggestion && (
-                  <View style={[styles.predictionPill, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
-                    <Text style={{ color: '#10B981', fontWeight: '800', fontSize: 11 }}>
+                  <View style={[styles.predictionPill, { backgroundColor: theme.colors.badgeVerified }]}>
+                    <Text style={{ color: theme.colors.badgeVerifiedText, fontWeight: '800', fontSize: 11 }}>
                       ⏱️ {topPicks.bestMatch.departurePredictions.bestSuggestion.message}
                     </Text>
                   </View>
@@ -327,8 +332,8 @@ export default function HomeScreen({ navigation, theme }) {
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.fastestOrNearest })}
             >
-              <View style={[styles.badgePill, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}>
-                <Text style={{ color: '#3B82F6', fontWeight: '800', fontSize: 12 }}>
+              <View style={[styles.badgePill, { backgroundColor: theme.colors.badgeFast }]}>
+                <Text style={{ color: theme.colors.badgeFastText, fontWeight: '800', fontSize: 12 }}>
                   ⚡ {t('picks.fastestOption')}
                 </Text>
               </View>
@@ -342,8 +347,8 @@ export default function HomeScreen({ navigation, theme }) {
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.trySomethingNew })}
             >
-              <View style={[styles.badgePill, { backgroundColor: 'rgba(236, 72, 153, 0.2)' }]}>
-                <Text style={{ color: '#EC4899', fontWeight: '800', fontSize: 12 }}>
+              <View style={[styles.badgePill, { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.colors.badgeNewBorder }]}>
+                <Text style={{ color: theme.colors.badgeNewText, fontWeight: '800', fontSize: 12 }}>
                   🎲 {t('picks.trySomethingNew')}
                 </Text>
               </View>
@@ -365,6 +370,7 @@ export default function HomeScreen({ navigation, theme }) {
                 key={tb.label}
                 style={[
                   styles.chip,
+                  { borderColor: theme.colors.border },
                   active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => {
@@ -372,7 +378,7 @@ export default function HomeScreen({ navigation, theme }) {
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, tb.value);
                 }}
               >
-                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{tb.label}</Text>
+                <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{tb.label}</Text>
               </TouchableOpacity>
             );
           })}
@@ -390,14 +396,15 @@ export default function HomeScreen({ navigation, theme }) {
                 key={comp.label}
                 style={[
                   styles.chip,
-                  active && { backgroundColor: theme.colors.secondary, borderColor: theme.colors.secondary }
+                  { borderColor: theme.colors.border },
+                  active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => {
                   setSelectedCompanion(comp.value);
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, selectedTimeBudget, comp.value);
                 }}
               >
-                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{comp.label}</Text>
+                <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{comp.label}</Text>
               </TouchableOpacity>
             );
           })}
@@ -419,7 +426,8 @@ export default function HomeScreen({ navigation, theme }) {
                 key={pref.key}
                 style={[
                   styles.chip,
-                  active && { backgroundColor: '#10B981', borderColor: '#10B981' }
+                  { borderColor: theme.colors.border },
+                  active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => {
                   const updated = { ...selectedPreferences, [pref.key]: !active };
@@ -427,7 +435,7 @@ export default function HomeScreen({ navigation, theme }) {
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, selectedTimeBudget, selectedCompanion, updated);
                 }}
               >
-                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>
+                <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                   {pref.label} {active ? '✓' : ''}
                 </Text>
               </TouchableOpacity>
@@ -447,7 +455,8 @@ export default function HomeScreen({ navigation, theme }) {
                 key={m}
                 style={[
                   styles.chip,
-                  active && { backgroundColor: theme.colors.accent, borderColor: theme.colors.accent }
+                  { borderColor: theme.colors.border },
+                  active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => {
                   const nextMood = active ? null : m;
@@ -455,7 +464,7 @@ export default function HomeScreen({ navigation, theme }) {
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, nextMood);
                 }}
               >
-                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{m}</Text>
+                <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{m}</Text>
               </TouchableOpacity>
             );
           })}
@@ -473,6 +482,7 @@ export default function HomeScreen({ navigation, theme }) {
                 key={c}
                 style={[
                   styles.chip,
+                  { borderColor: theme.colors.border },
                   active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => {
@@ -481,7 +491,7 @@ export default function HomeScreen({ navigation, theme }) {
                   loadRecommendations(location, c, selectedPriority, selectedBudget, null);
                 }}
               >
-                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{c}</Text>
+                <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{c}</Text>
               </TouchableOpacity>
             );
           })}
@@ -499,14 +509,15 @@ export default function HomeScreen({ navigation, theme }) {
                 key={p}
                 style={[
                   styles.chip,
-                  active && { backgroundColor: theme.colors.secondary, borderColor: theme.colors.secondary }
+                  { borderColor: theme.colors.border },
+                  active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => {
                   setSelectedPriority(p);
                   loadRecommendations(location, selectedCuisine, p, selectedBudget, selectedMood);
                 }}
               >
-                <Text style={[styles.chipText, active && { color: '#FFFFFF' }]}>{p}</Text>
+                <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{p}</Text>
               </TouchableOpacity>
             );
           })}
@@ -529,7 +540,7 @@ export default function HomeScreen({ navigation, theme }) {
                 loadRecommendations(location, selectedCuisine, selectedPriority, b, selectedMood);
               }}
             >
-              <Text style={[styles.budgetText, selectedBudget === b && { color: '#FFFFFF' }]}>
+              <Text style={[styles.budgetText, { color: selectedBudget === b ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 {'৳'.repeat(b)}
               </Text>
             </TouchableOpacity>
@@ -538,22 +549,27 @@ export default function HomeScreen({ navigation, theme }) {
       </View>
 
       {/* Strict Allergen & Unverified Disclaimer Banner */}
-      <View style={[styles.disclaimerBanner, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.25)' }]}>
-        <Text style={styles.disclaimerText}>
-          ⚠️ Dietary and spice preferences are unverified and estimated. Never rely on this for allergen safety.
+      <View style={[styles.disclaimerBanner, { borderColor: theme.colors.danger, backgroundColor: theme.colors.dangerTint }]}>
+        <Text style={[styles.disclaimerText, { color: theme.colors.danger }]}>
+          ⚠️ Allergy Notice: Halal & allergen tags are crowd-sourced & unverified by lab. Inquire with restaurant kitchen directly.
         </Text>
       </View>
 
-      {/* Find My Best Option Button */}
+      {/* View Full Ranked Results Button */}
       <TouchableOpacity
         style={[styles.mainCtaBtn, { backgroundColor: theme.colors.primary }]}
         onPress={() => navigation.navigate('Results', { results, location })}
+        accessibilityRole="button"
+        accessibilityLabel={t('home.viewRankedList')}
       >
-        <Text style={styles.mainCtaText}>
-          {t('home.findBestOption')} ({results.length} found) →
-        </Text>
+        {loading ? (
+          <ActivityIndicator color={theme.colors.onPrimary} />
+        ) : (
+          <Text style={[styles.mainCtaText, { color: theme.colors.onPrimary }]}>
+            {t('home.viewRankedList')} ({results.length})
+          </Text>
+        )}
       </TouchableOpacity>
-
       <View style={{ height: 40 }} />
     </ScrollView>
   );
@@ -562,18 +578,17 @@ export default function HomeScreen({ navigation, theme }) {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
   wakeUpBanner: {
-    backgroundColor: '#E05326',
     padding: 12,
     borderRadius: 12,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center'
   },
-  wakeUpText: { color: '#FFFFFF', fontSize: 13, fontWeight: '700', flex: 1 },
-  rainBanner: { backgroundColor: 'rgba(56, 189, 248, 0.2)', padding: 12, borderRadius: 12, marginBottom: 12 },
-  rainText: { color: '#38BDF8', fontSize: 13, fontWeight: '700' },
-  offlineBanner: { backgroundColor: 'rgba(245, 158, 11, 0.2)', padding: 10, borderRadius: 12, marginBottom: 12 },
-  offlineText: { color: '#F59E0B', fontSize: 12, fontWeight: '600' },
+  wakeUpText: { fontSize: 13, fontWeight: '700', flex: 1 },
+  rainBanner: { padding: 12, borderRadius: 12, marginBottom: 12 },
+  rainText: { fontSize: 13, fontWeight: '700' },
+  offlineBanner: { padding: 10, borderRadius: 12, marginBottom: 12 },
+  offlineText: { fontSize: 12, fontWeight: '600' },
   locationCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -589,7 +604,7 @@ const styles = StyleSheet.create({
   gpsBtn: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
   gpsBtnText: { fontWeight: '800', fontSize: 13 },
   eatNowBtn: { paddingVertical: 16, borderRadius: 16, alignItems: 'center', marginBottom: 16 },
-  eatNowText: { color: '#FFFFFF', fontSize: 17, fontWeight: '800' },
+  eatNowText: { fontSize: 17, fontWeight: '800' },
   sectionCard: { padding: 16, borderRadius: 16, borderWidth: 1, marginBottom: 20 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionTitle: { fontSize: 18, fontWeight: '800' },
@@ -607,13 +622,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
     backgroundColor: 'rgba(255,255,255,0.04)',
     marginRight: 8,
     minHeight: 40,
     justifyContent: 'center'
   },
-  chipText: { color: '#94A3B8', fontWeight: '700', fontSize: 13 },
+  chipText: { fontWeight: '700', fontSize: 13 },
   budgetRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   budgetChips: { flexDirection: 'row', gap: 6 },
   budgetBtn: {
@@ -622,9 +636,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'rgba(255,255,255,0.06)'
   },
-  budgetText: { color: '#94A3B8', fontWeight: '800', fontSize: 14 },
+  budgetText: { fontWeight: '800', fontSize: 14 },
   mainCtaBtn: { paddingVertical: 16, borderRadius: 16, alignItems: 'center' },
-  mainCtaText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' },
+  mainCtaText: { fontSize: 16, fontWeight: '800' },
   counterfactualBox: {
     padding: 10,
     borderRadius: 10,
@@ -647,5 +661,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16
   },
-  disclaimerText: { color: '#EF4444', fontSize: 11, fontWeight: '700', textAlign: 'center', lineHeight: 15 }
+  disclaimerText: { fontSize: 11, fontWeight: '700', textAlign: 'center', lineHeight: 15 }
 });

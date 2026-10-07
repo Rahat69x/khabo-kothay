@@ -82,7 +82,7 @@ export default function TasteScreen({ theme }) {
           <Switch
             value={learningEnabled}
             onValueChange={handleToggleLearning}
-            trackColor={{ false: '#334155', true: theme.colors.primary }}
+            trackColor={{ false: theme.colors.skeleton, true: theme.colors.primary }}
           />
         </View>
 
@@ -99,11 +99,11 @@ export default function TasteScreen({ theme }) {
                   const updated = await apiClient.toggleBandit(val);
                   setBanditProfile(updated.profile);
                 }}
-                trackColor={{ false: '#334155', true: '#818CF8' }}
+                trackColor={{ false: theme.colors.skeleton, true: theme.colors.primary }}
               />
             </View>
 
-            <Text style={[styles.banditNote, { color: '#818CF8' }]}>
+            <Text style={[styles.banditNote, { color: theme.colors.primary }]}>
               {banditProfile.explanationNote || "Learning your personal balance between speed, rating, cost, and distance."}
             </Text>
 
@@ -144,16 +144,16 @@ export default function TasteScreen({ theme }) {
                 <Text style={[styles.scoreVal, { color: theme.colors.primary }]}>{score}%</Text>
               </View>
 
-              <View style={styles.barTrack}>
+              <View style={[styles.barTrack, { backgroundColor: theme.colors.primaryTint }]}>
                 <View style={[styles.barFill, { width: `${score}%`, backgroundColor: theme.colors.primary }]} />
               </View>
 
               <View style={styles.controls}>
-                <TouchableOpacity style={styles.stepBtn} onPress={() => adjustScore(cuisine, -10)}>
-                  <Text style={styles.stepBtnText}>-10%</Text>
+                <TouchableOpacity style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]} onPress={() => adjustScore(cuisine, -10)}>
+                  <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>-10%</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.stepBtn} onPress={() => adjustScore(cuisine, 10)}>
-                  <Text style={styles.stepBtnText}>+10%</Text>
+                <TouchableOpacity style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]} onPress={() => adjustScore(cuisine, 10)}>
+                  <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>+10%</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -188,12 +188,11 @@ const styles = StyleSheet.create({
   barFill: { height: '100%', borderRadius: 9999 },
   controls: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 8 },
   stepBtn: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8
   },
-  stepBtnText: { color: '#E2E8F0', fontWeight: '700', fontSize: 12 },
+  stepBtnText: { fontWeight: '700', fontSize: 12 },
   banditCard: {
     padding: 16,
     borderRadius: 14,

@@ -17,6 +17,7 @@ export default function SettingsScreen({ theme, onThemeChange }) {
   const [currentLang, setCurrentLang] = useState(getLocale());
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [learningEnabled, setLearningEnabled] = useState(true);
+  const [currentThemeMode, setCurrentThemeMode] = useState('system');
 
   useEffect(() => {
     loadSettings();
@@ -25,11 +26,22 @@ export default function SettingsScreen({ theme, onThemeChange }) {
   const loadSettings = async () => {
     const isLearn = await mobileStorage.isLearningEnabled();
     setLearningEnabled(isLearn);
+    const prefs = await mobileStorage.getPreferences();
+    if (prefs.themeMode) {
+      setCurrentThemeMode(prefs.themeMode);
+    }
   };
 
   const handleLangToggle = (lang) => {
     setCurrentLang(lang);
     setLocale(lang);
+  };
+
+  const handleThemeSelect = (mode) => {
+    setCurrentThemeMode(mode);
+    if (onThemeChange) {
+      onThemeChange(mode);
+    }
   };
 
   const handleNotificationsToggle = async (val) => {
@@ -79,11 +91,11 @@ export default function SettingsScreen({ theme, onThemeChange }) {
             <TouchableOpacity
               style={[
                 styles.langBtn,
-                currentLang === 'en' && { backgroundColor: theme.colors.primary }
+                { backgroundColor: currentLang === 'en' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleLangToggle('en')}
             >
-              <Text style={[styles.langBtnText, currentLang === 'en' && { color: '#FFFFFF' }]}>
+              <Text style={[styles.langBtnText, { color: currentLang === 'en' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 English
               </Text>
             </TouchableOpacity>
@@ -91,42 +103,54 @@ export default function SettingsScreen({ theme, onThemeChange }) {
             <TouchableOpacity
               style={[
                 styles.langBtn,
-                currentLang === 'bn' && { backgroundColor: theme.colors.primary }
+                { backgroundColor: currentLang === 'bn' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleLangToggle('bn')}
             >
-              <Text style={[styles.langBtnText, currentLang === 'bn' && { color: '#FFFFFF' }]}>
+              <Text style={[styles.langBtnText, { color: currentLang === 'bn' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 বাংলা (Bangla)
               </Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Theme Appearance Selection */}
+        {/* Theme Appearance Selection: System / Light / Dark */}
         <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🎨 {t('settings.theme')}</Text>
           <View style={styles.btnRow}>
             <TouchableOpacity
               style={[
                 styles.langBtn,
-                theme.isDark && { backgroundColor: theme.colors.primary }
+                { backgroundColor: currentThemeMode === 'system' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
-              onPress={() => onThemeChange && onThemeChange('dark')}
+              onPress={() => handleThemeSelect('system')}
             >
-              <Text style={[styles.langBtnText, theme.isDark && { color: '#FFFFFF' }]}>
-                {t('settings.themeDark')}
+              <Text style={[styles.langBtnText, { color: currentThemeMode === 'system' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
+                {t('settings.themeSystem')}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
                 styles.langBtn,
-                !theme.isDark && { backgroundColor: theme.colors.primary }
+                { backgroundColor: currentThemeMode === 'light' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
-              onPress={() => onThemeChange && onThemeChange('light')}
+              onPress={() => handleThemeSelect('light')}
             >
-              <Text style={[styles.langBtnText, !theme.isDark && { color: '#FFFFFF' }]}>
+              <Text style={[styles.langBtnText, { color: currentThemeMode === 'light' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 {t('settings.themeLight')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.langBtn,
+                { backgroundColor: currentThemeMode === 'dark' ? theme.colors.primary : theme.colors.surfaceAlt }
+              ]}
+              onPress={() => handleThemeSelect('dark')}
+            >
+              <Text style={[styles.langBtnText, { color: currentThemeMode === 'dark' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
+                {t('settings.themeDark')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -138,26 +162,26 @@ export default function SettingsScreen({ theme, onThemeChange }) {
             <View>
               <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🔔 {t('settings.notifications')}</Text>
               <Text style={[styles.subText, { color: theme.colors.textMuted }]}>
-                {t('settings.lunchNudge')} & {t('settings.dinnerNudge')}
+                {t('settings.lunchNudge')} &amp; {t('settings.dinnerNudge')}
               </Text>
             </View>
             <Switch
               value={notificationsEnabled}
               onValueChange={handleNotificationsToggle}
-              trackColor={{ false: '#334155', true: theme.colors.primary }}
+              trackColor={{ false: theme.colors.skeleton, true: theme.colors.primary }}
             />
           </View>
         </View>
 
         {/* Privacy & Data Management */}
         <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🔒 Privacy & Data</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🔒 Privacy &amp; Data</Text>
           <Text style={[styles.privacyNote, { color: theme.colors.textSubtle }]}>
             {t('settings.privacyNote')}
           </Text>
 
           <TouchableOpacity style={styles.actionBtn} onPress={handleExportData}>
-            <Text style={{ color: theme.colors.secondary, fontWeight: '700' }}>
+            <Text style={{ color: theme.colors.primary, fontWeight: '700' }}>
               📥 {t('settings.exportData')}
             </Text>
           </TouchableOpacity>
@@ -195,10 +219,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center'
   },
-  langBtnText: { color: '#94A3B8', fontWeight: '700', fontSize: 14 },
+  langBtnText: { fontWeight: '700', fontSize: 13 },
   switchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   privacyNote: { fontSize: 12, lineHeight: 18, marginBottom: 16 },
   actionBtn: { paddingVertical: 12 },

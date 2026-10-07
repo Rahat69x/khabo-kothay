@@ -1,7 +1,16 @@
 /**
  * Interactive Map Controller
- * Supports Google Maps JavaScript API with fallback interactive tile map for mock mode
+ * Supports Google Maps JavaScript API with fallback interactive vector map
+ * Themed to brand tokens: Indigo and saffron in light and dark mode
  */
+
+function getBrandColor(propName, fallback = 'currentColor') {
+  if (typeof window !== 'undefined' && window.getComputedStyle) {
+    const val = getComputedStyle(document.documentElement).getPropertyValue(propName).trim();
+    if (val) return val;
+  }
+  return fallback;
+}
 
 class MapController {
   constructor() {
@@ -11,6 +20,7 @@ class MapController {
     this.routePolyline = null;
     this.isGoogleMapsLoaded = false;
     this.activeId = null;
+    this.darkMapStyles = null;
   }
 
   async init(containerId, googleApiKey) {
@@ -29,7 +39,7 @@ class MapController {
     }
 
     if (this.isGoogleMapsLoaded && window.google?.maps) {
-      this.initGoogleMap();
+      await this.initGoogleMap();
     } else {
       this.initMockMap();
     }
@@ -47,28 +57,53 @@ class MapController {
     });
   }
 
-  initGoogleMap() {
+  async loadDarkMapStyle() {
+    if (this.darkMapStyles) return this.darkMapStyles;
+    try {
+      const res = await fetch('/brand/map-style-dark.json');
+      if (res.ok) {
+        this.darkMapStyles = await res.json();
+        return this.darkMapStyles;
+      }
+    } catch (e) {
+      console.warn('Could not load /brand/map-style-dark.json', e);
+    }
+    return [];
+  }
+
+  async initGoogleMap() {
     const center = { lat: 23.7925, lng: 90.4150 }; // Gulshan 2
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+      (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    let styles = [];
+    if (isDark) {
+      styles = await this.loadDarkMapStyle();
+    }
+
     this.mapInstance = new google.maps.Map(this.container, {
       center,
       zoom: 14,
-      styles: [
-        { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
-        { elementType: 'labels.text.stroke', stylers: [{ color: '#0f172a' }] },
-        { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] }
-      ],
+      styles,
       disableDefaultUI: false,
       zoomControl: true
     });
+  }
+
+  async applyTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+      (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (this.mapInstance && typeof google !== 'undefined' && google.maps) {
+      const styles = isDark ? await this.loadDarkMapStyle() : [];
+      this.mapInstance.setOptions({ styles });
+    }
   }
 
   initMockMap() {
     this.container.innerHTML = `
       <div class="mock-map-view" id="mockMapCanvas">
         <div class="map-overlay-badge">
-          <span>📍 Dhaka Food Map (Mock View)</span>
+          <span>📍 Dhaka Food Map (Interactive View)</span>
         </div>
         <svg id="mockMapSvg" class="map-svg-layer" viewBox="0 0 800 600"></svg>
         <div id="mockMapMarkers" class="map-markers-layer"></div>
@@ -86,15 +121,17 @@ class MapController {
   }
 
   updateGoogleMap(userLocation, restaurants) {
-    // Clear old markers
     if (this.userMarker) this.userMarker.setMap(null);
-    for (const m of this.restaurantMarkers) m.setMap(null);
+    for (const m of this.restaurantMarkers) m.marker.setMap(null);
     this.restaurantMarkers = [];
     if (this.routePolyline) this.routePolyline.setMap(null);
 
     const bounds = new google.maps.LatLngBounds();
+    const primaryColor = getBrandColor('--color-primary', 'indigo');
+    const onPrimaryColor = getBrandColor('--color-on-primary', 'white');
+    const surfaceColor = getBrandColor('--color-surface', 'white');
 
-    // User Marker
+    // User Marker: primary dot with a white ring
     const userLatLng = { lat: userLocation.lat, lng: userLocation.lng };
     bounds.extend(userLatLng);
     this.userMarker = new google.maps.Marker({
@@ -104,14 +141,14 @@ class MapController {
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: 9,
-        fillColor: '#3B82F6',
+        fillColor: primaryColor,
         fillOpacity: 1,
-        strokeColor: '#FFFFFF',
+        strokeColor: surfaceColor,
         strokeWeight: 3
       }
     });
 
-    // Restaurant Markers
+    // Restaurant Markers: primary with onPrimary numbers
     restaurants.forEach((r, idx) => {
       const pos = { lat: r.location.latitude, lng: r.location.longitude };
       bounds.extend(pos);
@@ -121,7 +158,7 @@ class MapController {
         map: this.mapInstance,
         label: {
           text: String(idx + 1),
-          color: '#FFFFFF',
+          color: onPrimaryColor,
           fontWeight: 'bold'
         },
         title: `${idx + 1}. ${r.displayName}`
@@ -149,22 +186,20 @@ class MapController {
     svgLayer.innerHTML = `
       <defs>
         <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--color-line)" stroke-width="1"/>
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="#0F172A"/>
+      <rect width="100%" height="100%" fill="var(--color-bg)"/>
       <rect width="100%" height="100%" fill="url(#grid)" />
       <!-- Gulshan Lake Graphic -->
-      <path d="M 450 0 C 430 180, 480 320, 440 600" fill="none" stroke="#1E3A8A" stroke-width="40" opacity="0.6"/>
-      <path d="M 450 0 C 430 180, 480 320, 440 600" fill="none" stroke="#38BDF8" stroke-width="4" opacity="0.8"/>
+      <path d="M 450 0 C 430 180, 480 320, 440 600" fill="none" stroke="var(--color-surface-alt)" stroke-width="40" opacity="0.6"/>
+      <path d="M 450 0 C 430 180, 480 320, 440 600" fill="none" stroke="var(--color-primary-tint)" stroke-width="4" opacity="0.8"/>
       <!-- Main Roads -->
-      <line x1="50" y1="280" x2="750" y2="280" stroke="#334155" stroke-width="12" stroke-linecap="round"/>
-      <line x1="380" y1="50" x2="380" y2="550" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
+      <line x1="50" y1="280" x2="750" y2="280" stroke="var(--color-line)" stroke-width="12" stroke-linecap="round"/>
+      <line x1="380" y1="50" x2="380" y2="550" stroke="var(--color-line)" stroke-width="10" stroke-linecap="round"/>
       <g id="mockRouteLines"></g>
     `;
 
-    // Coordinates mapping to 800x600 viewBox
-    // Gulshan roughly lat 23.77 - 23.81, lng 90.40 - 90.43
     const minLat = 23.770, maxLat = 23.810;
     const minLng = 90.395, maxLng = 90.435;
 
@@ -176,10 +211,10 @@ class MapController {
     const uY = toY(userLocation.lat);
 
     const userPin = document.createElement('div');
-    userPin.className = 'map-user-pin';
+    userPin.className = 'map-user-pin user-marker';
     userPin.style.left = `${(uX / 800) * 100}%`;
     userPin.style.top = `${(uY / 600) * 100}%`;
-    userPin.innerHTML = `<div class="pulse-ring"></div><div class="user-dot" title="You are here">📍</div>`;
+    userPin.innerHTML = `<div class="pulse-ring"></div><div class="user-dot" title="You are here"></div>`;
     markersContainer.appendChild(userPin);
 
     // Restaurant pins
@@ -210,12 +245,13 @@ class MapController {
 
   highlightRestaurant(userLocation, restaurant) {
     this.activeId = restaurant.id;
+    const primaryColor = getBrandColor('--color-primary', 'indigo');
 
     if (this.isGoogleMapsLoaded && this.mapInstance) {
       const pos = { lat: restaurant.location.latitude, lng: restaurant.location.longitude };
       this.mapInstance.panTo(pos);
 
-      // Draw polyline connecting user to restaurant
+      // Recommended route is a thick primary line
       if (this.routePolyline) this.routePolyline.setMap(null);
       this.routePolyline = new google.maps.Polyline({
         path: [
@@ -223,13 +259,12 @@ class MapController {
           pos
         ],
         geodesic: true,
-        strokeColor: '#10B981',
-        strokeOpacity: 0.9,
-        strokeWeight: 5,
+        strokeColor: primaryColor,
+        strokeOpacity: 0.95,
+        strokeWeight: 6,
         map: this.mapInstance
       });
     } else {
-      // Mock Map highlighting & line
       document.querySelectorAll('.map-place-pin').forEach(p => p.classList.remove('active'));
       const activePin = document.getElementById(`map-pin-${restaurant.id}`);
       if (activePin) activePin.classList.add('active');
@@ -247,7 +282,7 @@ class MapController {
         const rY = toY(restaurant.location.latitude);
 
         routeGroup.innerHTML = `
-          <line x1="${uX}" y1="${uY}" x2="${rX}" y2="${rY}" stroke="#10B981" stroke-width="4" stroke-dasharray="6 4"/>
+          <line x1="${uX}" y1="${uY}" x2="${rX}" y2="${rY}" stroke="var(--color-primary)" stroke-width="5" stroke-dasharray="6 4"/>
         `;
       }
     }

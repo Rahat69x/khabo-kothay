@@ -40,6 +40,7 @@ async function initApp() {
     await mapController.init('mapContainer', config.googleBrowserKey);
 
     // 4. Initialize Modals & Features
+    initTheme();
     initMoodUI('moodChipsContainer', (selectedMood) => {
       // If mood selected, trigger fresh search
       executeSearch({ mood: selectedMood });
@@ -240,6 +241,88 @@ function initModals() {
     closeHist?.addEventListener('click', () => histModal.classList.remove('open'));
     histModal.addEventListener('click', (e) => {
       if (e.target === histModal) histModal.classList.remove('open');
+    });
+  }
+}
+
+function initTheme() {
+  const toggleBtn = document.getElementById('themeToggleBtn');
+  const iconSpan = document.getElementById('themeToggleIcon');
+  const labelSpan = document.getElementById('themeToggleLabel');
+  const logoImg = document.getElementById('brandLogoImg');
+
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem('khabo_theme') || 'system';
+    } catch (e) {
+      return 'system';
+    }
+  }
+
+  function setStoredTheme(theme) {
+    try {
+      if (theme === 'system') {
+        localStorage.removeItem('khabo_theme');
+      } else {
+        localStorage.setItem('khabo_theme', theme);
+      }
+    } catch (e) {}
+  }
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+
+    if (iconSpan && labelSpan) {
+      if (theme === 'dark') {
+        iconSpan.textContent = '🌙';
+        labelSpan.textContent = 'Dark';
+      } else if (theme === 'light') {
+        iconSpan.textContent = '☀️';
+        labelSpan.textContent = 'Light';
+      } else {
+        iconSpan.textContent = '🌓';
+        labelSpan.textContent = 'Auto';
+      }
+    }
+
+    if (logoImg) {
+      const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      logoImg.src = isDark ? '/img/logo-dark.svg' : '/img/logo.svg';
+    }
+
+    if (mapController?.applyTheme) {
+      mapController.applyTheme();
+    }
+  }
+
+  let currentTheme = getStoredTheme();
+  applyTheme(currentTheme);
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      if (currentTheme === 'system') {
+        currentTheme = 'dark';
+      } else if (currentTheme === 'dark') {
+        currentTheme = 'light';
+      } else {
+        currentTheme = 'system';
+      }
+      setStoredTheme(currentTheme);
+      applyTheme(currentTheme);
+    });
+  }
+
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (currentTheme === 'system') {
+        applyTheme('system');
+      }
     });
   }
 }

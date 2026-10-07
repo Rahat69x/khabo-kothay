@@ -92,7 +92,7 @@ export default function OnboardingScreen({ navigation, theme }) {
                       }));
                     }}
                   >
-                    <Text style={[styles.chipText, isBoosted && { color: '#FFFFFF' }]}>
+                    <Text style={[styles.chipText, { color: isBoosted ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                       {cuisine} {isBoosted ? '❤️' : '🤍'}
                     </Text>
                   </TouchableOpacity>
@@ -106,7 +106,7 @@ export default function OnboardingScreen({ navigation, theme }) {
               accessibilityRole="button"
               accessibilityLabel="Complete onboarding"
             >
-              <Text style={styles.primaryBtnText}>Start Finding Food 🚀</Text>
+              <Text style={[styles.primaryBtnText, { color: theme.colors.onPrimary }]}>Start Finding Food 🚀</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12
   },
-  primaryBtnText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' },
+  primaryBtnText: { fontSize: 16, fontWeight: '800' },
   secondaryBtn: { paddingVertical: 12 },
   secondaryBtnText: { fontSize: 14, fontWeight: '600' },
   tasteChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center', marginVertical: 20 },
@@ -142,5 +142,5 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.15)',
     backgroundColor: 'rgba(255,255,255,0.05)'
   },
-  chipText: { color: '#94A3B8', fontWeight: '700', fontSize: 14 }
+  chipText: { fontWeight: '700', fontSize: 14 }
 });

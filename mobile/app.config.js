@@ -10,7 +10,12 @@ module.exports = {
     splash: {
       image: "./assets/splash.png",
       resizeMode: "contain",
-      backgroundColor: "#1C140E"
+      backgroundColor: "#3B3FA8",
+      dark: {
+        image: "./assets/splash-dark.png",
+        resizeMode: "contain",
+        backgroundColor: "#11122B"
+      }
     },
     assetBundlePatterns: ["**/*"],
     runtimeVersion: {
@@ -31,7 +36,9 @@ module.exports = {
       package: "com.khabokothay.app",
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#1C140E"
+        backgroundImage: "./assets/adaptive-icon-background.png",
+        backgroundColor: "#3B3FA8",
+        monochromeImage: "./assets/adaptive-icon-monochrome.png"
       },
       permissions: [
         "ACCESS_COARSE_LOCATION",
@@ -54,8 +61,8 @@ module.exports = {
       [
         "expo-notifications",
         {
-          icon: "./assets/icon.png",
-          color: "#E05326"
+          icon: "./assets/notification-icon.png",
+          color: "#3B3FA8"
         }
       ]
     ],

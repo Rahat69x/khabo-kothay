@@ -123,9 +123,9 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
           📍 {details.formattedAddress}
         </Text>
 
-        <View style={styles.reasonCard}>
+        <View style={[styles.reasonCard, { backgroundColor: theme.colors.surfaceAlt }]}>
           <Text style={styles.reasonIcon}>💡</Text>
-          <Text style={styles.reasonText}>{details.reason}</Text>
+          <Text style={[styles.reasonText, { color: theme.colors.text }]}>{details.reason}</Text>
         </View>
 
         {/* Primary Action Buttons */}
@@ -134,7 +134,7 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
             style={[styles.primaryAction, { backgroundColor: theme.colors.primary }]}
             onPress={handleCall}
           >
-            <Text style={styles.primaryActionText}>📞 {details.nationalPhoneNumber ? t('restaurant.call') : t('restaurant.noPhone')}</Text>
+            <Text style={[styles.primaryActionText, { color: theme.colors.onPrimary }]}>📞 {details.nationalPhoneNumber ? t('restaurant.call') : t('restaurant.noPhone')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -194,10 +194,10 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   reasonIcon: { fontSize: 18 },
-  reasonText: { flex: 1, fontSize: 13, color: '#E2E8F0', lineHeight: 18 },
+  reasonText: { flex: 1, fontSize: 13, lineHeight: 18 },
   actionGrid: { flexDirection: 'row', gap: 12, marginBottom: 16 },
   primaryAction: { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
-  primaryActionText: { color: '#FFFFFF', fontWeight: '800', fontSize: 15 },
+  primaryActionText: { fontWeight: '800', fontSize: 15 },
   secondaryAction: { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1 },
   secondaryActionText: { fontWeight: '800', fontSize: 15 },
   extraActions: { flexDirection: 'row', justifyContent: 'space-around', marginVertical: 12 },

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useColorScheme, Text } from 'react-native';
+import { useColorScheme, Text, Platform } from 'react-native';
 
 import { lightTheme, darkTheme } from './src/config/theme.js';
 import { mobileStorage } from './src/services/storage.js';
@@ -95,7 +95,7 @@ function BottomTabs({ theme, onThemeChange }) {
 
 export default function App() {
   const systemScheme = useColorScheme();
-  const [themeMode, setThemeMode] = useState('dark'); // dark by default
+  const [themeMode, setThemeMode] = useState('system'); // follows system setting by default
   const [localeTick, setLocaleTick] = useState(0);
   const [isOnboarded, setIsOnboarded] = useState(null);
 
@@ -116,7 +116,37 @@ export default function App() {
     }
   };
 
-  const activeTheme = themeMode === 'light' ? lightTheme : darkTheme;
+  const activeTheme = useMemo(() => {
+    if (themeMode === 'light') return lightTheme;
+    if (themeMode === 'dark') return darkTheme;
+    // Default: system setting
+    return systemScheme === 'dark' ? darkTheme : lightTheme;
+  }, [themeMode, systemScheme]);
+
+  // Sync Android system UI navigation & background color to eliminate flashes
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      import('expo-system-ui')
+        .then((SystemUI) => {
+          if (SystemUI && SystemUI.setBackgroundColorAsync) {
+            SystemUI.setBackgroundColorAsync(activeTheme.colors.background).catch(() => {});
+          }
+        })
+        .catch(() => {});
+    }
+  }, [activeTheme.colors.background]);
+
+  const navTheme = useMemo(() => ({
+    dark: activeTheme.isDark,
+    colors: {
+      primary: activeTheme.colors.primary,
+      background: activeTheme.colors.background,
+      card: activeTheme.colors.card,
+      text: activeTheme.colors.text,
+      border: activeTheme.colors.border,
+      notification: activeTheme.colors.accent
+    }
+  }), [activeTheme]);
 
   const handleThemeChange = async (mode) => {
     setThemeMode(mode);
@@ -128,9 +158,12 @@ export default function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <StatusBar style={activeTheme.isDark ? 'light' : 'dark'} />
-      <NavigationContainer>
+    <ErrorBoundary theme={activeTheme}>
+      <StatusBar
+        style={activeTheme.isDark ? 'light' : 'dark'}
+        backgroundColor={activeTheme.colors.card}
+      />
+      <NavigationContainer theme={navTheme}>
         <Stack.Navigator
           initialRouteName={isOnboarded ? 'MainTabs' : 'Onboarding'}
           screenOptions={{

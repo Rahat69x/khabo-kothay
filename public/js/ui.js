@@ -287,13 +287,13 @@ export class UIController {
         <p class="drawer-summary">${restaurant.reason}</p>
         
         <div class="breakdown-list">
-          ${this.renderBreakdownBar('Taste Affinity', b.taste, '#8B5CF6')}
-          ${this.renderBreakdownBar('Travel Time', b.time, '#10B981')}
-          ${this.renderBreakdownBar('Traffic Flow', b.traffic, '#3B82F6')}
-          ${this.renderBreakdownBar('Customer Rating', b.rating, '#F59E0B')}
-          ${this.renderBreakdownBar('Restaurant Price Level', b.price, '#EC4899')}
-          ${this.renderBreakdownBar('Transport Transit Cost', b.cost, '#14B8A6')}
-          ${this.renderBreakdownBar('Proximity Distance', b.distance, '#6366F1')}
+          ${this.renderBreakdownBar('Taste Affinity', b.taste)}
+          ${this.renderBreakdownBar('Travel Time', b.time)}
+          ${this.renderBreakdownBar('Traffic Flow', b.traffic)}
+          ${this.renderBreakdownBar('Customer Rating', b.rating)}
+          ${this.renderBreakdownBar('Restaurant Price Level', b.price)}
+          ${this.renderBreakdownBar('Transport Transit Cost', b.cost)}
+          ${this.renderBreakdownBar('Proximity Distance', b.distance)}
         </div>
       </div>
     `;
@@ -307,7 +307,7 @@ export class UIController {
     }
   }
 
-  renderBreakdownBar(label, value = 50, color = '#3B82F6') {
+  renderBreakdownBar(label, value = 50) {
     return `
       <div class="breakdown-item">
         <div class="breakdown-labels">
@@ -315,7 +315,7 @@ export class UIController {
           <span class="breakdown-pct">${value}%</span>
         </div>
         <div class="breakdown-track">
-          <div class="breakdown-bar" style="width: ${value}%; background-color: ${color};"></div>
+          <div class="breakdown-bar" style="width: ${value}%;"></div>
         </div>
       </div>
     `;

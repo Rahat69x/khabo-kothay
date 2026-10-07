@@ -5,21 +5,22 @@ export default function ExplainBottomSheet({ visible, onClose, restaurant, theme
   if (!restaurant) return null;
   const b = restaurant.factorBreakdown || {};
 
-  const renderBar = (label, val, color) => (
+  // Brand rule: Explain-this-recommendation bars: primary fill on a primaryTint track.
+  const renderBar = (label, val) => (
     <View style={styles.barItem} key={label}>
       <View style={styles.barHeader}>
         <Text style={[styles.barLabel, { color: theme.colors.textMuted }]}>{label}</Text>
         <Text style={[styles.barVal, { color: theme.colors.text }]}>{val || 50}%</Text>
       </View>
-      <View style={styles.barTrack}>
-        <View style={[styles.barFill, { width: `${val || 50}%`, backgroundColor: color }]} />
+      <View style={[styles.barTrack, { backgroundColor: theme.colors.primaryTint }]}>
+        <View style={[styles.barFill, { width: `${val || 50}%`, backgroundColor: theme.colors.primary }]} />
       </View>
     </View>
   );
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.backdrop}>
+      <View style={[styles.backdrop, { backgroundColor: theme.colors.scrim }]}>
         <View style={[styles.sheet, { backgroundColor: theme.colors.card }]}>
           <View style={styles.header}>
             <View>
@@ -35,13 +36,13 @@ export default function ExplainBottomSheet({ visible, onClose, restaurant, theme
             <Text style={[styles.reason, { color: theme.colors.textMuted }]}>{restaurant.reason}</Text>
 
             <View style={styles.barsContainer}>
-              {renderBar('Taste Match', b.taste, '#8B5CF6')}
-              {renderBar('Travel Time (Traffic Aware)', b.time, '#10B981')}
-              {renderBar('Traffic Smoothness', b.traffic, '#3B82F6')}
-              {renderBar('User Rating', b.rating, '#F59E0B')}
-              {renderBar('Restaurant Price Level', b.price, '#EC4899')}
-              {renderBar('Transport Transit Cost', b.cost, '#14B8A6')}
-              {renderBar('Proximity Distance', b.distance, '#6366F1')}
+              {renderBar('Taste Match', b.taste)}
+              {renderBar('Travel Time (Traffic Aware)', b.time)}
+              {renderBar('Traffic Smoothness', b.traffic)}
+              {renderBar('User Rating', b.rating)}
+              {renderBar('Restaurant Price Level', b.price)}
+              {renderBar('Transport Transit Cost', b.cost)}
+              {renderBar('Proximity Distance', b.distance)}
             </View>
           </ScrollView>
         </View>
@@ -51,7 +52,7 @@ export default function ExplainBottomSheet({ visible, onClose, restaurant, theme
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '80%', padding: 20 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   title: { fontSize: 18, fontWeight: '800' },
@@ -64,6 +65,6 @@ const styles = StyleSheet.create({
   barHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
   barLabel: { fontSize: 12, fontWeight: '600' },
   barVal: { fontSize: 12, fontWeight: '800' },
-  barTrack: { height: 8, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 9999, overflow: 'hidden' },
+  barTrack: { height: 8, borderRadius: 9999, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 9999 }
 });

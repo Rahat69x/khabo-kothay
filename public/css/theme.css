@@ -1,0 +1,385 @@
+/* AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY.
+ * Generated from brand/tokens.json by scripts/build-theme.js
+ */
+
+/* Self-Hosted Brand Fonts (Zero external Google Font requests) */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/PlusJakartaSans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Inter-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Inter-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans Bengali';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/NotoSansBengali-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans Bengali';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/NotoSansBengali-Bold.ttf') format('truetype');
+}
+
+:root {
+  --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-bangla: 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+
+  color-scheme: light;
+
+  --color-primary: #3B3FA8;
+  --color-primary-hover: #32368F;
+  --color-primary-pressed: #2A2D78;
+  --color-on-primary: #FFFFFF;
+  --color-primary-tint: #E6E7F7;
+
+  --color-accent: #FFB020;
+  --color-accent-hover: #F5A60F;
+  --color-accent-pressed: #E09600;
+  --color-on-accent: #3D2800;
+  --color-accent-strong: #8A5200;
+
+  --color-bg: #F6F6FB;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #EEEFF8;
+  --color-ink: #16183A;
+  --color-muted: #5E6088;
+  --color-line: rgba(22, 24, 58, 0.12);
+
+  --color-focus-ring: #3B3FA8;
+  --color-scrim: rgba(17, 18, 43, 0.5);
+  --color-skeleton: #E8E9F4;
+
+  --color-success: #197847;
+  --color-success-tint: #E3F4EA;
+  --color-warning: #8A5200;
+  --color-warning-tint: #FFF1D6;
+  --color-danger: #BE382A;
+  --color-danger-tint: #FCE4E1;
+
+  /* Semantic UI Aliases */
+  --bg-primary: var(--color-bg);
+  --bg-secondary: var(--color-surface-alt);
+  --bg-surface: var(--color-surface);
+  --text-main: var(--color-ink);
+  --text-muted: var(--color-muted);
+  --text-subtle: var(--color-muted);
+  --line-color: var(--color-line);
+  --border-color: var(--color-line);
+
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-pressed: var(--color-primary-pressed);
+  --primary-tint: var(--color-primary-tint);
+  --on-primary: var(--color-on-primary);
+
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --accent-pressed: var(--color-accent-pressed);
+  --accent-strong: var(--color-accent-strong);
+  --on-accent: var(--color-on-accent);
+
+  --focus-ring: var(--color-focus-ring);
+  --skeleton-color: var(--color-skeleton);
+  --scrim-color: var(--color-scrim);
+
+  --traffic-low: var(--color-success);
+  --traffic-low-tint: var(--color-success-tint);
+  --traffic-mod: var(--color-warning);
+  --traffic-mod-tint: var(--color-warning-tint);
+  --traffic-heavy: var(--color-danger);
+  --traffic-heavy-tint: var(--color-danger-tint);
+
+  --badge-best-bg: var(--color-accent);
+  --badge-best-text: var(--color-on-accent);
+  --badge-fast-bg: var(--color-primary-tint);
+  --badge-fast-text: var(--color-primary);
+  --badge-price-bg: var(--color-primary-tint);
+  --badge-price-text: var(--color-primary);
+  --badge-new-border: var(--color-accent-strong);
+  --badge-new-text: var(--color-accent-strong);
+  --badge-verified-bg: var(--color-success-tint);
+  --badge-verified-text: var(--color-success);
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+  --color-primary: #8B90F0;
+  --color-primary-hover: #A0A4F5;
+  --color-primary-pressed: #7A7FE6;
+  --color-on-primary: #0F1038;
+  --color-primary-tint: #25285A;
+
+  --color-accent: #FFB020;
+  --color-accent-hover: #FFC04D;
+  --color-accent-pressed: #F0A010;
+  --color-on-accent: #3D2800;
+  --color-accent-strong: #FFB020;
+
+  --color-bg: #11122B;
+  --color-surface: #1B1D45;
+  --color-surface-alt: #232650;
+  --color-ink: #ECECFA;
+  --color-muted: #A3A6D6;
+  --color-line: rgba(236, 236, 250, 0.14);
+
+  --color-focus-ring: #B6B9FF;
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --color-skeleton: #232650;
+
+  --color-success: #5FD08D;
+  --color-success-tint: #12372A;
+  --color-warning: #FFCB6B;
+  --color-warning-tint: #3A2D10;
+  --color-danger: #FF8A80;
+  --color-danger-tint: #3F1A1D;
+
+  /* Semantic UI Aliases */
+  --bg-primary: var(--color-bg);
+  --bg-secondary: var(--color-surface-alt);
+  --bg-surface: var(--color-surface);
+  --text-main: var(--color-ink);
+  --text-muted: var(--color-muted);
+  --text-subtle: var(--color-muted);
+  --line-color: var(--color-line);
+  --border-color: var(--color-line);
+
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-pressed: var(--color-primary-pressed);
+  --primary-tint: var(--color-primary-tint);
+  --on-primary: var(--color-on-primary);
+
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --accent-pressed: var(--color-accent-pressed);
+  --accent-strong: var(--color-accent-strong);
+  --on-accent: var(--color-on-accent);
+
+  --focus-ring: var(--color-focus-ring);
+  --skeleton-color: var(--color-skeleton);
+  --scrim-color: var(--color-scrim);
+
+  --traffic-low: var(--color-success);
+  --traffic-low-tint: var(--color-success-tint);
+  --traffic-mod: var(--color-warning);
+  --traffic-mod-tint: var(--color-warning-tint);
+  --traffic-heavy: var(--color-danger);
+  --traffic-heavy-tint: var(--color-danger-tint);
+
+  --badge-best-bg: var(--color-accent);
+  --badge-best-text: var(--color-on-accent);
+  --badge-fast-bg: var(--color-primary-tint);
+  --badge-fast-text: var(--color-primary);
+  --badge-price-bg: var(--color-primary-tint);
+  --badge-price-text: var(--color-primary);
+  --badge-new-border: var(--color-accent-strong);
+  --badge-new-text: var(--color-accent-strong);
+  --badge-verified-bg: var(--color-success-tint);
+  --badge-verified-text: var(--color-success);
+
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-primary: #8B90F0;
+  --color-primary-hover: #A0A4F5;
+  --color-primary-pressed: #7A7FE6;
+  --color-on-primary: #0F1038;
+  --color-primary-tint: #25285A;
+
+  --color-accent: #FFB020;
+  --color-accent-hover: #FFC04D;
+  --color-accent-pressed: #F0A010;
+  --color-on-accent: #3D2800;
+  --color-accent-strong: #FFB020;
+
+  --color-bg: #11122B;
+  --color-surface: #1B1D45;
+  --color-surface-alt: #232650;
+  --color-ink: #ECECFA;
+  --color-muted: #A3A6D6;
+  --color-line: rgba(236, 236, 250, 0.14);
+
+  --color-focus-ring: #B6B9FF;
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --color-skeleton: #232650;
+
+  --color-success: #5FD08D;
+  --color-success-tint: #12372A;
+  --color-warning: #FFCB6B;
+  --color-warning-tint: #3A2D10;
+  --color-danger: #FF8A80;
+  --color-danger-tint: #3F1A1D;
+
+  /* Semantic UI Aliases */
+  --bg-primary: var(--color-bg);
+  --bg-secondary: var(--color-surface-alt);
+  --bg-surface: var(--color-surface);
+  --text-main: var(--color-ink);
+  --text-muted: var(--color-muted);
+  --text-subtle: var(--color-muted);
+  --line-color: var(--color-line);
+  --border-color: var(--color-line);
+
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-pressed: var(--color-primary-pressed);
+  --primary-tint: var(--color-primary-tint);
+  --on-primary: var(--color-on-primary);
+
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --accent-pressed: var(--color-accent-pressed);
+  --accent-strong: var(--color-accent-strong);
+  --on-accent: var(--color-on-accent);
+
+  --focus-ring: var(--color-focus-ring);
+  --skeleton-color: var(--color-skeleton);
+  --scrim-color: var(--color-scrim);
+
+  --traffic-low: var(--color-success);
+  --traffic-low-tint: var(--color-success-tint);
+  --traffic-mod: var(--color-warning);
+  --traffic-mod-tint: var(--color-warning-tint);
+  --traffic-heavy: var(--color-danger);
+  --traffic-heavy-tint: var(--color-danger-tint);
+
+  --badge-best-bg: var(--color-accent);
+  --badge-best-text: var(--color-on-accent);
+  --badge-fast-bg: var(--color-primary-tint);
+  --badge-fast-text: var(--color-primary);
+  --badge-price-bg: var(--color-primary-tint);
+  --badge-price-text: var(--color-primary);
+  --badge-new-border: var(--color-accent-strong);
+  --badge-new-text: var(--color-accent-strong);
+  --badge-verified-bg: var(--color-success-tint);
+  --badge-verified-text: var(--color-success);
+
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-primary: #3B3FA8;
+  --color-primary-hover: #32368F;
+  --color-primary-pressed: #2A2D78;
+  --color-on-primary: #FFFFFF;
+  --color-primary-tint: #E6E7F7;
+
+  --color-accent: #FFB020;
+  --color-accent-hover: #F5A60F;
+  --color-accent-pressed: #E09600;
+  --color-on-accent: #3D2800;
+  --color-accent-strong: #8A5200;
+
+  --color-bg: #F6F6FB;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #EEEFF8;
+  --color-ink: #16183A;
+  --color-muted: #5E6088;
+  --color-line: rgba(22, 24, 58, 0.12);
+
+  --color-focus-ring: #3B3FA8;
+  --color-scrim: rgba(17, 18, 43, 0.5);
+  --color-skeleton: #E8E9F4;
+
+  --color-success: #197847;
+  --color-success-tint: #E3F4EA;
+  --color-warning: #8A5200;
+  --color-warning-tint: #FFF1D6;
+  --color-danger: #BE382A;
+  --color-danger-tint: #FCE4E1;
+
+  /* Semantic UI Aliases */
+  --bg-primary: var(--color-bg);
+  --bg-secondary: var(--color-surface-alt);
+  --bg-surface: var(--color-surface);
+  --text-main: var(--color-ink);
+  --text-muted: var(--color-muted);
+  --text-subtle: var(--color-muted);
+  --line-color: var(--color-line);
+  --border-color: var(--color-line);
+
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-pressed: var(--color-primary-pressed);
+  --primary-tint: var(--color-primary-tint);
+  --on-primary: var(--color-on-primary);
+
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --accent-pressed: var(--color-accent-pressed);
+  --accent-strong: var(--color-accent-strong);
+  --on-accent: var(--color-on-accent);
+
+  --focus-ring: var(--color-focus-ring);
+  --skeleton-color: var(--color-skeleton);
+  --scrim-color: var(--color-scrim);
+
+  --traffic-low: var(--color-success);
+  --traffic-low-tint: var(--color-success-tint);
+  --traffic-mod: var(--color-warning);
+  --traffic-mod-tint: var(--color-warning-tint);
+  --traffic-heavy: var(--color-danger);
+  --traffic-heavy-tint: var(--color-danger-tint);
+
+  --badge-best-bg: var(--color-accent);
+  --badge-best-text: var(--color-on-accent);
+  --badge-fast-bg: var(--color-primary-tint);
+  --badge-fast-text: var(--color-primary);
+  --badge-price-bg: var(--color-primary-tint);
+  --badge-price-text: var(--color-primary);
+  --badge-new-border: var(--color-accent-strong);
+  --badge-new-text: var(--color-accent-strong);
+  --badge-verified-bg: var(--color-success-tint);
+  --badge-verified-text: var(--color-success);
+
+}
+
+/* Typography Hierarchy & Language Auto-Selection */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+h1, h2, h3, h4, h5, h6, .brand-title, .modal-title {
+  font-family: var(--font-heading);
+}
+
+:lang(bn), .bn, .bn-title, [data-lang="bn"] {
+  font-family: var(--font-bangla);
+}
+
+h1:lang(bn), h2:lang(bn), h3:lang(bn), .brand-title:lang(bn) {
+  font-family: var(--font-bangla);
+}

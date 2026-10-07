@@ -5,19 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Khabo Kothay? – Food Finder (খাবো কোথায়?)</title>
   <meta name="description" content="Discover where to actually eat right now in Gulshan, Banani, Baridhara, and Notun Bazar with traffic-aware travel times, transport costs, and AI personalization.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F6F6FB">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#11122B">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="alternate icon" href="/favicon.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/style.css">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('khabo_theme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.setAttribute('data-theme', saved);
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <!-- Header / Navigation -->
   <header class="app-header">
     <div class="header-inner container">
       <div class="brand">
-        <img src="/img/logo.svg" alt="Khabo Kothay? Logo" class="brand-logo" width="38" height="38">
+        <img id="brandLogoImg" src="/img/logo.svg" alt="Khabo Kothay? Logo" class="brand-logo" width="38" height="38">
         <div class="brand-text">
           <h1>Khabo Kothay? <span class="bn-title">খাবো কোথায়?</span></h1>
           <span class="brand-tagline">Real-time traffic & personalized picks • Dhaka</span>
@@ -29,6 +44,9 @@
           <span class="weather-icon">🌤️</span>
           <span class="weather-text">28°C Dhaka</span>
         </div>
+        <button id="themeToggleBtn" class="btn btn-secondary header-btn" aria-label="Toggle theme mode" title="Switch Theme (System / Light / Dark)">
+          <span id="themeToggleIcon">🌓</span> <span id="themeToggleLabel">Auto</span>
+        </button>
         <button id="openTasteBtn" class="btn btn-secondary header-btn" aria-label="Open my taste profile">
           <span>🎯</span> My Taste
         </button>
