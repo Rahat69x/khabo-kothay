@@ -13,6 +13,7 @@ import { apiClient } from '../../api/client.js';
 import { mobileStorage } from '../../services/storage.js';
 import { getCurrentOrFallbackLocation, PRESET_LOCATIONS } from '../../services/location.js';
 import { t } from '../../i18n/index.js';
+import MealTimeView from './MealTimeView.js';
 
 const MOODS = [
   'Something spicy', 'Something light', 'Comfort food', 'Fast food',
@@ -60,6 +61,7 @@ export default function HomeScreen({ navigation, theme }) {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [isCachedData, setIsCachedData] = useState(false);
   const [serverWakingMsg, setServerWakingMsg] = useState(null);
+  const [activeAppMode, setActiveAppMode] = useState('standard'); // 'standard' | 'mealtime'
 
   useEffect(() => {
     initHome();
@@ -213,7 +215,52 @@ export default function HomeScreen({ navigation, theme }) {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
-      {/* Weather Banner */}
+      {/* Mode Switcher: Standard Recommender vs Meal-Time Mode */}
+      <View style={[styles.modeToggleBar, { backgroundColor: theme.colors.surfaceAlt, borderColor: theme.colors.border }]}>
+        <TouchableOpacity
+          style={[
+            styles.modeToggleBtn,
+            activeAppMode === 'standard' && { backgroundColor: theme.colors.primary }
+          ]}
+          onPress={() => setActiveAppMode('standard')}
+          accessibilityRole="button"
+          accessibilityLabel={t('home.standardMode')}
+        >
+          <Text
+            style={[
+              styles.modeToggleText,
+              { color: activeAppMode === 'standard' ? theme.colors.onPrimary : theme.colors.text }
+            ]}
+          >
+            {t('home.standardMode')}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.modeToggleBtn,
+            activeAppMode === 'mealtime' && { backgroundColor: theme.colors.primary }
+          ]}
+          onPress={() => setActiveAppMode('mealtime')}
+          accessibilityRole="button"
+          accessibilityLabel={t('mealTime.title')}
+        >
+          <Text
+            style={[
+              styles.modeToggleText,
+              { color: activeAppMode === 'mealtime' ? theme.colors.onPrimary : theme.colors.text }
+            ]}
+          >
+            ⏱️ {t('mealTime.title')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {activeAppMode === 'mealtime' ? (
+        <MealTimeView theme={theme} location={location} navigation={navigation} />
+      ) : (
+        <>
+          {/* Weather Banner */}
       {weather?.isRaining && (
         <View style={[styles.rainBanner, { backgroundColor: theme.colors.primaryTint }]}>
           <Text style={[styles.rainText, { color: theme.colors.primary }]}>{t('home.rainBanner')}</Text>
@@ -570,6 +617,8 @@ export default function HomeScreen({ navigation, theme }) {
           </Text>
         )}
       </TouchableOpacity>
+        </>
+      )}
       <View style={{ height: 40 }} />
     </ScrollView>
   );
@@ -577,6 +626,24 @@ export default function HomeScreen({ navigation, theme }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
+  modeToggleBar: {
+    flexDirection: 'row',
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 4,
+    marginBottom: 16
+  },
+  modeToggleBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  modeToggleText: {
+    fontSize: 13,
+    fontWeight: '800'
+  },
   wakeUpBanner: {
     padding: 12,
     borderRadius: 12,

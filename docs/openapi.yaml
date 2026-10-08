@@ -276,6 +276,56 @@ paths:
         '200':
           description: Updated toggle state
 
+  /meal-time/search:
+    post:
+      summary: Time-aware restaurant recommendation (Meal-Time Mode)
+      description: Recommends restaurants that fit within the user's total time budget (outbound + wait + eat + return + safety buffer) with independent return traffic prediction and opening hours verification.
+      parameters:
+        - $ref: '#/components/parameters/X-App-Token'
+        - $ref: '#/components/parameters/X-Device-Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealTimeSearchRequest'
+      responses:
+        '200':
+          description: Feasible restaurant recommendations and relaxations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MealTimeSearchResponse'
+        '400':
+          description: Invalid input or unsupported transport in Dhaka (e.g. public transport)
+        '429':
+          description: Rate limit exceeded
+        '503':
+          description: Meal-Time Mode feature flag disabled
+
+  /meal-time/feedback:
+    post:
+      summary: Record anonymous meal-time trip feedback
+      description: Accepts anonymous actual trip duration records to tune wait and eating times without storing personal details or location.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealTimeFeedbackRequest'
+      responses:
+        '200':
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  recorded:
+                    type: boolean
+
 components:
   parameters:
     X-App-Token:
@@ -492,3 +542,182 @@ components:
           type: object
         cache:
           type: object
+
+    MealTimeSearchRequest:
+      type: object
+      required: [availableMinutes, origin]
+      properties:
+        mode:
+          type: string
+          enum: [breakfast, lunch, snacks, dinner]
+          default: lunch
+        availableMinutes:
+          type: integer
+          minimum: 10
+          maximum: 240
+          example: 45
+        leaveAt:
+          type: string
+          format: date-time
+          description: Planned departure time (defaults to current time in Asia/Dhaka)
+        origin:
+          type: object
+          required: [lat, lng]
+          properties:
+            lat:
+              type: number
+            lng:
+              type: number
+            name:
+              type: string
+        destination:
+          oneOf:
+            - type: string
+              enum: [same-as-origin]
+            - type: object
+              properties:
+                lat:
+                  type: number
+                lng:
+                  type: number
+                name:
+                  type: string
+        transport:
+          type: string
+          enum: [car, walk, rickshaw, cng, ride-share, motorcycle, bicycle, public_transport]
+          default: car
+        diningStyle:
+          type: string
+          enum: [dine_in, takeaway]
+          default: dine_in
+        bufferPreference:
+          type: string
+          enum: [Balanced, Safe, Flexible]
+          default: Balanced
+        filters:
+          type: object
+          properties:
+            cuisine:
+              type: string
+            budget:
+              type: integer
+            vegetarian:
+              type: boolean
+            halal:
+              type: boolean
+        tasteProfile:
+          type: object
+
+    MealTimeSearchResponse:
+      type: object
+      required: [summary, results, flexibleResults, suggestions, assumptions]
+      properties:
+        summary:
+          type: object
+          required: [feasibleCount, message, mode]
+          properties:
+            feasibleCount:
+              type: integer
+            message:
+              type: string
+            mode:
+              type: string
+            availableMinutes:
+              type: integer
+            shortestFeasibleTime:
+              type: integer
+        results:
+          type: array
+          items:
+            type: object
+            required: [placeId, name, timeBreakdown, availableMinutes, spareMinutes, status, openCheck, score, reasons, flags]
+            properties:
+              placeId:
+                type: string
+              name:
+                type: string
+              timeBreakdown:
+                type: object
+                required: [outbound, wait, eat, return, buffer, total, spareMinutes]
+                properties:
+                  outbound:
+                    type: integer
+                  wait:
+                    type: integer
+                  eat:
+                    type: integer
+                  return:
+                    type: integer
+                  buffer:
+                    type: integer
+                  total:
+                    type: integer
+                  spareMinutes:
+                    type: integer
+              availableMinutes:
+                type: integer
+              spareMinutes:
+                type: integer
+              status:
+                type: string
+                enum: [SAFE, TIGHT, NOT_RECOMMENDED]
+              openCheck:
+                type: object
+                required: [openAtArrival, mealServiceVerified]
+                properties:
+                  openAtArrival:
+                    type: boolean
+                  closesAt:
+                    type: string
+                  finishAt:
+                    type: string
+                  mealServiceVerified:
+                    type: boolean
+              detourMinutes:
+                type: integer
+              score:
+                type: number
+              reasons:
+                type: array
+                items:
+                  type: string
+              flags:
+                type: array
+                items:
+                  type: string
+        flexibleResults:
+          type: array
+          items:
+            type: object
+        suggestions:
+          type: array
+          items:
+            type: object
+            required: [type, count, label]
+            properties:
+              type:
+                type: string
+              count:
+                type: integer
+              label:
+                type: string
+        assumptions:
+          type: array
+          items:
+            type: string
+
+    MealTimeFeedbackRequest:
+      type: object
+      required: [mode, venueType, actualTotalMinutes, wasLate]
+      properties:
+        mode:
+          type: string
+          enum: [breakfast, lunch, snacks, dinner]
+        venueType:
+          type: string
+        actualTotalMinutes:
+          type: integer
+        wasLate:
+          type: boolean
+        placeId:
+          type: string

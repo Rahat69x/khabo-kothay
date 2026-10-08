@@ -75,6 +75,16 @@
   <main class="container main-layout">
     <!-- Search & Control Panel -->
     <section class="control-panel card-glass" aria-label="Restaurant search options">
+      <!-- App Mode Switcher Tabs -->
+      <div class="mode-tab-bar" role="tablist">
+        <button type="button" id="tabStandardMode" class="mode-tab active" role="tab" aria-selected="true">
+          <span>🔍</span> Standard Search
+        </button>
+        <button type="button" id="tabMealTimeMode" class="mode-tab" role="tab" aria-selected="false">
+          <span>⏱️</span> Meal-Time Mode <span class="badge-new">New</span>
+        </button>
+      </div>
+
       <!-- Location Selector -->
       <div class="control-group">
         <label class="control-label">📍 Where are you right now?</label>
@@ -95,69 +105,75 @@
         <div id="locationStatus" class="location-status-text">Starting from: Notun Bazar</div>
       </div>
 
-      <!-- Mood Chips -->
-      <div class="control-group">
-        <label class="control-label">✨ What are you in the mood for?</label>
-        <div id="moodChipsContainer" class="chips-scroll-row">
-          <!-- Populated by mood-ui.js -->
-        </div>
-      </div>
-
-      <!-- Cuisine Chips -->
-      <div class="control-group">
-        <label class="control-label">🍴 Or choose a specific cuisine</label>
-        <div id="cuisineChipsContainer" class="chips-scroll-row">
-          <button type="button" class="chip cuisine-chip active" data-cuisine="All">All</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Japanese">Japanese</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Bangladeshi">Bangladeshi</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Indian">Indian</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Chinese">Chinese</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Korean">Korean</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Fast Food">Fast Food</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Cafe">Cafe</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Kabab">Kabab</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Biriyani">Biriyani</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Dessert">Dessert</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Coffee">Coffee</button>
-          <button type="button" class="chip cuisine-chip" data-cuisine="Burger">Burger</button>
-        </div>
-      </div>
-
-      <!-- Priority Chips -->
-      <div class="control-group">
-        <label class="control-label">🎯 What matters most to you?</label>
-        <div id="priorityChipsContainer" class="chips-grid">
-          <button type="button" class="chip priority-chip active" data-priority="Best Overall">🌟 Best Overall</button>
-          <button type="button" class="chip priority-chip" data-priority="Fastest">⚡ Fastest to Reach</button>
-          <button type="button" class="chip priority-chip" data-priority="Closest">📍 Closest Distance</button>
-          <button type="button" class="chip priority-chip" data-priority="Cheapest">💰 Cheapest</button>
-          <button type="button" class="chip priority-chip" data-priority="Best Rated">⭐ Best Rated</button>
-          <button type="button" class="chip priority-chip" data-priority="Best Value">💎 Best Value</button>
-          <button type="button" class="chip priority-chip" data-priority="Personalized">🧬 Personalized</button>
-        </div>
-      </div>
-
-      <!-- Budget Selector & Submit CTA -->
-      <div class="filter-footer-row">
-        <div class="budget-selector-group">
-          <label class="control-label">Budget:</label>
-          <div class="budget-chips">
-            <button type="button" class="chip budget-chip" data-budget="1">৳</button>
-            <button type="button" class="chip budget-chip active" data-budget="2">৳৳</button>
-            <button type="button" class="chip budget-chip" data-budget="3">৳৳৳</button>
-            <button type="button" class="chip budget-chip" data-budget="4">৳৳৳৳</button>
+      <!-- Standard Search Panel Wrapper -->
+      <div id="standardSearchPanel">
+        <!-- Mood Chips -->
+        <div class="control-group">
+          <label class="control-label">✨ What are you in the mood for?</label>
+          <div id="moodChipsContainer" class="chips-scroll-row">
+            <!-- Populated by mood-ui.js -->
           </div>
         </div>
 
-        <div class="action-buttons-group">
-          <button id="surpriseBtn" class="btn btn-secondary" type="button" title="High exploration rate for unusual recommendations">
-            🎲 Surprise Me
-          </button>
-          <button id="searchBtn" class="btn btn-primary btn-lg" type="button">
-            🚀 Find My Best Option
-          </button>
+        <!-- Cuisine Chips -->
+        <div class="control-group">
+          <label class="control-label">🍴 Or choose a specific cuisine</label>
+          <div id="cuisineChipsContainer" class="chips-scroll-row">
+            <button type="button" class="chip cuisine-chip active" data-cuisine="All">All</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Japanese">Japanese</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Bangladeshi">Bangladeshi</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Indian">Indian</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Chinese">Chinese</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Korean">Korean</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Fast Food">Fast Food</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Cafe">Cafe</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Kabab">Kabab</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Biriyani">Biriyani</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Dessert">Dessert</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Coffee">Coffee</button>
+            <button type="button" class="chip cuisine-chip" data-cuisine="Burger">Burger</button>
+          </div>
+        </div>
+
+        <!-- Priority Chips -->
+        <div class="control-group">
+          <label class="control-label">🎯 What matters most to you?</label>
+          <div id="priorityChipsContainer" class="chips-grid">
+            <button type="button" class="chip priority-chip active" data-priority="Best Overall">🌟 Best Overall</button>
+            <button type="button" class="chip priority-chip" data-priority="Fastest">⚡ Fastest to Reach</button>
+            <button type="button" class="chip priority-chip" data-priority="Closest">📍 Closest Distance</button>
+            <button type="button" class="chip priority-chip" data-priority="Cheapest">💰 Cheapest</button>
+            <button type="button" class="chip priority-chip" data-priority="Best Rated">⭐ Best Rated</button>
+            <button type="button" class="chip priority-chip" data-priority="Best Value">💎 Best Value</button>
+            <button type="button" class="chip priority-chip" data-priority="Personalized">🧬 Personalized</button>
+          </div>
+        </div>
+
+        <!-- Budget Selector & Submit CTA -->
+        <div class="filter-footer-row">
+          <div class="budget-selector-group">
+            <label class="control-label">Budget:</label>
+            <div class="budget-chips">
+              <button type="button" class="chip budget-chip" data-budget="1">৳</button>
+              <button type="button" class="chip budget-chip active" data-budget="2">৳৳</button>
+              <button type="button" class="chip budget-chip" data-budget="3">৳৳৳</button>
+              <button type="button" class="chip budget-chip" data-budget="4">৳৳৳৳</button>
+            </div>
+          </div>
+
+          <div class="action-buttons-group">
+            <button id="surpriseBtn" class="btn btn-secondary" type="button" title="High exploration rate for unusual recommendations">
+              🎲 Surprise Me
+            </button>
+            <button id="searchBtn" class="btn btn-primary btn-lg" type="button">
+              🚀 Find My Best Option
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Meal-Time Mode Panel Wrapper -->
+      <div id="mealTimeControlPanel" class="hidden"></div>
     </section>
 
     <!-- Top Picks Hero Box -->

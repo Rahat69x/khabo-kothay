@@ -23,7 +23,10 @@ export const featureFlags = {
   enableABTestingWeights: false,
 
   // Advanced features
-  enableCollaborativeFiltering: false
+  enableCollaborativeFiltering: false,
+
+  // Meal-Time Mode (Time-aware dining recommendation system)
+  mealTimeMode: process.env.FEATURE_MEAL_TIME_MODE !== 'false'
 };
 
 export default featureFlags;

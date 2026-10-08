@@ -16,6 +16,7 @@ import { getBanditProfile, updateBanditWeights, resetBanditProfile, setBanditEna
 import { logEvalEvent } from '../services/eval-logger.js';
 import preferencesConfig from '../config/preferences.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
+import { searchMealTime } from '../services/mealtime.js';
 
 const router = express.Router();
 
@@ -565,6 +566,119 @@ router.post('/feedback', (req, res) => {
     res.json({ success: true, message: 'Thank you for your feedback!' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to record feedback' });
+  }
+});
+
+/**
+ * POST /api/meal-time/search (or /api/v1/meal-time/search)
+ * Time-aware dining recommendations constrained by total available trip time
+ */
+router.post('/meal-time/search', async (req, res) => {
+  if (!featureFlags.mealTimeMode) {
+    return res.status(403).json({
+      error: 'Meal-Time Mode feature is currently disabled.',
+      flag: 'mealTimeMode'
+    });
+  }
+
+  try {
+    const {
+      mode = 'lunch',
+      availableMinutes = 45,
+      leaveAt = null,
+      origin,
+      destination = 'same-as-origin',
+      transport = 'car',
+      diningStyle = 'dine_in',
+      bufferPreference = 'Balanced',
+      filters = {},
+      tasteProfile = null
+    } = req.body;
+
+    // Validate transport mode
+    if (transport === 'public_transport') {
+      // In Dhaka, Routes API does not reliably return scheduled transit GTFS data for local buses
+      return res.status(400).json({
+        error: "Public transport times aren't available here. We suggest rickshaw or CNG auto.",
+        suggestedTransport: ['rickshaw', 'cng']
+      });
+    }
+
+    // Input validations
+    const validModes = ['breakfast', 'lunch', 'snacks', 'dinner'];
+    if (mode && !validModes.includes(mode.toLowerCase())) {
+      return res.status(400).json({ error: `Invalid mode. Must be one of: ${validModes.join(', ')}` });
+    }
+
+    const availNum = Number(availableMinutes);
+    if (isNaN(availNum) || availNum < 15 || availNum > 360) {
+      return res.status(400).json({ error: 'availableMinutes must be a number between 15 and 360' });
+    }
+
+    const validBuffers = ['Balanced', 'Safe', 'Flexible'];
+    if (bufferPreference && !validBuffers.includes(bufferPreference)) {
+      return res.status(400).json({ error: `bufferPreference must be one of: ${validBuffers.join(', ')}` });
+    }
+
+    // Resolve origin
+    let originCoords = { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1' };
+    if (origin) {
+      if (typeof origin === 'object' && origin.lat && origin.lng) {
+        originCoords = { lat: Number(origin.lat), lng: Number(origin.lng), name: origin.name || 'Custom Origin' };
+      } else if (typeof origin === 'string' && PRESET_LOCATIONS[origin]) {
+        originCoords = PRESET_LOCATIONS[origin];
+      }
+    }
+
+    const searchResult = await searchMealTime({
+      mode: mode.toLowerCase(),
+      availableMinutes: availNum,
+      leaveAt,
+      origin: originCoords,
+      destination,
+      transport,
+      diningStyle,
+      bufferPreference,
+      filters,
+      tasteProfile
+    });
+
+    res.json(searchResult);
+  } catch (err) {
+    logger.error({ err }, 'Error in /meal-time/search');
+    res.status(500).json({ error: err.message || 'Internal error in meal-time recommendation engine' });
+  }
+});
+
+/**
+ * POST /api/meal-time/feedback (or /api/v1/meal-time/feedback)
+ * Anonymous meal-time completion feedback for tuning wait & eat benchmarks
+ */
+router.post('/meal-time/feedback', (req, res) => {
+  try {
+    const { mode, venueType, plannedMinutes, actualMinutes, wasLate, rating } = req.body;
+
+    if (!mode || typeof actualMinutes !== 'number') {
+      return res.status(400).json({ error: 'mode and actualMinutes are required' });
+    }
+
+    const record = {
+      timestamp: new Date().toISOString(),
+      mode,
+      venueType: venueType || 'quick-service',
+      plannedMinutes: Number(plannedMinutes) || null,
+      actualMinutes: Number(actualMinutes),
+      wasLate: Boolean(wasLate),
+      rating: Number(rating) || null
+    };
+
+    const feedbackFile = path.resolve('server', 'data', 'mealtime-feedback.jsonl');
+    fs.mkdirSync(path.dirname(feedbackFile), { recursive: true });
+    fs.appendFileSync(feedbackFile, JSON.stringify(record) + '\n', 'utf8');
+
+    res.json({ success: true, message: 'Meal-time feedback recorded successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to record meal-time feedback' });
   }
 });
 

@@ -173,3 +173,31 @@ export async function recordTasteSignal(type, restaurant, context = {}) {
     console.warn('Failed to update taste profile on server:', err);
   }
 }
+
+/**
+ * Execute Meal-Time Mode recommendations search
+ */
+export async function searchMealTimeApi(params) {
+  const res = await fetch('/api/v1/meal-time/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || `Meal-time search failed (${res.status})`);
+  }
+  return res.json();
+}
+
+/**
+ * Submit anonymous trip completion feedback for Meal-Time Mode
+ */
+export async function sendMealTimeFeedbackApi(feedback) {
+  const res = await fetch('/api/v1/meal-time/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(feedback)
+  });
+  return res.ok;
+}

@@ -1,10 +1,9 @@
-// Safe config reader supporting both Expo runtime and Node/Jest/Vitest environments
 let extraConfig = {};
 try {
   // eslint-disable-next-line global-require
-  const Constants = (await import('expo-constants')).default;
-  extraConfig = Constants?.expoConfig?.extra || {};
-} catch (e) {
+  const Constants = require('expo-constants');
+  extraConfig = (Constants?.default || Constants)?.expoConfig?.extra || {};
+} catch {
   // In pure Node/test environments where native Expo modules aren't linked
 }
 
@@ -169,6 +168,20 @@ class MobileApiClient {
       return `${this.baseUrl}/api/places/photo?name=mock_placeholder&maxWidth=${maxWidth}`;
     }
     return `${this.baseUrl}/api/places/photo?name=${encodeURIComponent(photoName)}&maxWidth=${maxWidth}`;
+  }
+
+  async searchMealTime(params) {
+    return this.request('/api/v1/meal-time/search', {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  }
+
+  async sendMealTimeFeedback(feedback) {
+    return this.request('/api/v1/meal-time/feedback', {
+      method: 'POST',
+      body: JSON.stringify(feedback)
+    });
   }
 }
 

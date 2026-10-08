@@ -5,6 +5,7 @@ import { mapController } from './map.js';
 import { ui } from './ui.js';
 import { initMoodUI } from './mood-ui.js';
 import { initTasteUI } from './taste-ui.js';
+import { initMealTimeUI } from './mealtime-ui.js';
 
 async function initApp() {
   const wakeupBanner = document.getElementById('serverWakeupBanner');
@@ -52,6 +53,17 @@ async function initApp() {
     ui.initDidYouGoPrompt();
     initFeedbackCard();
     initPwaInstall();
+    initModeTabs();
+    initMealTimeUI({
+      containerId: 'mealTimeControlPanel',
+      resultsContainerId: 'resultsContainer',
+      resultsHeadingId: 'resultsHeading',
+      resultsCountTagId: 'resultsCountTag',
+      originGetter: () => state.currentLocation,
+      onCandidateSelected: (candidate) => {
+        mapController.highlightMarker(candidate.placeId);
+      }
+    });
 
     // 5. Run Initial Search
     await executeSearch();
@@ -464,6 +476,31 @@ function initPwaInstall() {
       });
     });
   }
+}
+
+function initModeTabs() {
+  const tabStd = document.getElementById('tabStandardMode');
+  const tabMeal = document.getElementById('tabMealTimeMode');
+  const panelStd = document.getElementById('standardSearchPanel');
+  const panelMeal = document.getElementById('mealTimeControlPanel');
+
+  tabStd?.addEventListener('click', () => {
+    tabStd.classList.add('active');
+    tabStd.setAttribute('aria-selected', 'true');
+    tabMeal?.classList.remove('active');
+    tabMeal?.setAttribute('aria-selected', 'false');
+    panelStd?.classList.remove('hidden');
+    panelMeal?.classList.add('hidden');
+  });
+
+  tabMeal?.addEventListener('click', () => {
+    tabMeal.classList.add('active');
+    tabMeal.setAttribute('aria-selected', 'true');
+    tabStd?.classList.remove('active');
+    tabStd?.setAttribute('aria-selected', 'false');
+    panelStd?.classList.add('hidden');
+    panelMeal?.classList.remove('hidden');
+  });
 }
 
 document.addEventListener('DOMContentLoaded', initApp);

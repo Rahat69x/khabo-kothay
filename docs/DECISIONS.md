@@ -89,3 +89,44 @@
 - **Hierarchy Distinction**: Administrative hierarchy (Division → District → City Corporation → Ward / Thana) is strictly decoupled from local geographic perception and common address usage (Broad Area → Sub-area → Sector / Block / Road / Landmark). Wards do not strictly equal neighborhoods, and police stations do not define dining zones.
 - **Subdivision Policy**: Verified subdivisions (e.g. Uttara Sectors 1-18, Mirpur 1-14, Gulshan 1-2, Badda zones, Old Dhaka mohallas) are indexed with distinct geographic centers and bounding features while preserving parent area relationships.
 - **Safety and Anti-Fabrication**: Any unverified administrative or coordinate details are flagged as UNCERTAIN or approximate local boundaries based on physical geography (rivers, rail tracks, canals, arterial roads). Center coordinates do not represent polygon boundaries.
+
+### 17. Meal-Time Mode Architecture, Feasibility Hard Gate & Assumptions
+- **Product Proposition**: A time-aware recommendation system, not a restaurant filter. The user's available time is the TOTAL round-trip time from departure to return (or arrival at final destination), never just dining time.
+- **Core Feasibility Formula**:
+  - `Total required time = outbound travel + waiting/ordering + eating + return travel + safety buffer`.
+  - `Spare time = available time - total required time`.
+  - Feasible only if `spare time >= 0` AND the restaurant is open at expected arrival through finish time (`arrival + wait + eat`) plus a 30-minute last-order margin before closing.
+  - Feasibility is a hard gate: high rating, popularity, or proximity can NEVER override feasibility.
+- **Status Classification**:
+  - `SAFE`: `spare time >= 3` minutes.
+  - `TIGHT`: `0 <= spare time < 3` minutes (e.g. 45 min total on 45 min available).
+  - `NOT_RECOMMENDED`: `spare time < 0` minutes (excluded from results, except in Flexible slightly-over section).
+  - Statuses are ALWAYS rendered with an icon AND text label, never color alone.
+- **Safety Buffer Preferences**:
+  - `Balanced` (default): 1.0x baseline buffer (`max(minBuffer, 10% of trip)`) + vehicle and traffic extras (car +3 parking, ride-share +4 pickup/+1 drop-off, motorcycle +1, bicycle +1, moderate traffic +1, heavy traffic +3).
+  - `Safe`: 1.5x multiplier on buffer.
+  - `Flexible`: 0.5x multiplier on buffer (minimum 2 minutes). Flexible also exposes places exceeding time by up to 5 minutes in a separate, collapsed section "Slightly over your time (+N min)" with warning.
+- **Independent Legs & Predicted Return Traffic**:
+  - Outbound (origin -> restaurant) and Return (restaurant -> destination) legs are calculated independently without assuming symmetry.
+  - Return leg departure time is set to `leaveTime + outbound + wait + eat` and explicitly labeled "predicted traffic".
+  - Time zone is strictly enforced as `Asia/Dhaka` across UTC/midnight crossovers.
+- **Dhaka Public Transport Policy**:
+  - Google Routes API does not reliably return scheduled transit GTFS in Dhaka. Public transport requests return a 400 error advising that public transport times aren't available in Dhaka and recommending Rickshaw or CNG.
+- **Device-Only Saved Places**:
+  - Office, Home, and University coordinates are stored strictly on the local device (`localStorage` / `AsyncStorage`), never logged, sent to analytics, or persisted server-side.
+- **Cost Control Pipeline**:
+  - 1. Search candidates with minimal field mask.
+  - 2. Prune by geometry straight-line distance limit: `maxOneWayMinutes * fastestPlausibleSpeed`.
+  - 3. Single Routes matrix outbound and return capped at 20 candidates.
+  - 4. Apply time and opening feasibility gates.
+  - 5. Fetch detailed field mask (`servesBreakfast`, `servesLunch`, `servesDinner`, `takeout`, `dineIn`) only for top 10.
+- **Opening & Service Verification**:
+  - Explicit `servesLunch = false` (or mode equivalent) eliminates the place.
+  - Missing meal service or hours flags the place as `Meal service unverified` or `Hours unverified` rather than guessing or silently omitting.
+  - Crowding/rush is based on time-of-day heuristics (+3m peak lunch, +5m peak dinner) and clearly labeled as estimated.
+- **No-Result Experience**:
+  - Never display generic "No restaurants found".
+  - Shows "No restaurants safely fit your X-minute break." with computed alternatives (Takeaway, Quicker venues, Add 15 min, Different transport) with real counts and shortest time needed for any restaurant.
+- **Feature Flag**:
+  - Enclosed behind `mealTimeMode` flag (controlled via `FEATURE_MEAL_TIME_MODE`).
+

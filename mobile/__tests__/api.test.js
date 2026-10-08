@@ -14,4 +14,9 @@ describe('Mobile API Client Configuration', () => {
     expect(url).toContain('/api/places/photo?name=');
     expect(url).toContain('maxWidth=500');
   });
+
+  it('exposes meal-time search and feedback methods', () => {
+    expect(typeof apiClient.searchMealTime).toBe('function');
+    expect(typeof apiClient.sendMealTimeFeedback).toBe('function');
+  });
 });

@@ -21,6 +21,41 @@ Spot C: 3.1 km • 16 min • ৳৳৳ • 4.7★ (low traffic)      ➔ ⭐ Wi
 
 ---
 
+## ⏱️ Meal-Time Mode ("খাওয়ার সময় মোড")
+
+**"Tell us how much time you have. We'll find food you can actually reach, eat, and get back from before your time runs out."**
+
+Meal-Time Mode is a time-aware recommendation engine that treats feasibility as a **hard constraint** — popularity or ratings can never override your clock.
+
+### Core Feasibility Gate
+$$\text{Total Required Time} = T_{\text{outbound}} + T_{\text{wait}} + T_{\text{eat}} + T_{\text{return}} + T_{\text{buffer}}$$
+$$\text{Spare Time} = T_{\text{available}} - \text{Total Required Time}$$
+
+A restaurant is feasible **only if** $\text{Spare Time} \ge 0$ **AND** the venue is open at expected arrival through finish time plus a 30-minute kitchen last-order margin.
+
+- **Status Badges**:
+  - `SAFE`: Spare time $\ge 3$ minutes.
+  - `TIGHT`: $0 \le \text{Spare time} < 3$ minutes (e.g. 45 min total on 45 min break).
+  - `NOT_RECOMMENDED`: Spare time $< 0$ (excluded, except in Flexible slightly-over section).
+- **Four Modes** (`config/mealtime.json`):
+  - **Breakfast**: 30 min default. Quick-service, bakeries, cafes. Preselected before 10:30 AM.
+  - **Lunch**: 45 min default. Office-friendly, +3 min peak wait (12:30–14:00). Preselected 11:30–15:00.
+  - **Evening Snacks**: 30 min default. Cha, street food, bakeries. Preselected 16:00–19:00.
+  - **Dinner**: 90 min default. Full meals, +5 min peak wait (20:00–21:30). Preselected after 19:00.
+- **Safety Buffer Preferences**:
+  - **Balanced (1.0x)**: Standard baseline + traffic/parking/pickup extras.
+  - **Safe (1.5x)**: Extra caution margin for tight appointments.
+  - **Flexible (0.5x, min 2m)**: Shows places slightly over by $\le 5$ min in a collapsed section.
+- **Independent Return Leg & Predicted Traffic**:
+  - Independent calculation for outbound (origin to restaurant) and return (restaurant to destination).
+  - Departure time for return leg is set to $\text{leaveTime} + T_{\text{outbound}} + T_{\text{wait}} + T_{\text{eat}}$ and labeled *"predicted traffic"*.
+- **Privacy Guarantee**:
+  - Saved personal places (Office, Home, University) are stored **device-only** in localStorage / AsyncStorage. They are never logged or sent to analytics.
+- **Feature Flag**:
+  - Controlled by `FEATURE_MEAL_TIME_MODE=true` (defaults to enabled).
+
+---
+
 ## 🛠️ Technology Stack
 
 - **Backend**: Node.js 18+, Express, ES modules, dotenv, helmet, cors, express-rate-limit.

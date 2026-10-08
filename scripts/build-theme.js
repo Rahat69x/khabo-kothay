@@ -202,13 +202,16 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn), .brand-title:lang(bn) {
         primaryPressed: t.primaryPressed,
         onPrimary: t.onPrimary,
         primaryTint: t.primaryTint,
-        primaryGlow: isDark ? 'rgba(139, 144, 240, 0.25)' : 'rgba(59, 63, 168, 0.2)',
+        primaryGlow: isDark ? 'rgba(249, 115, 22, 0.25)' : 'rgba(249, 115, 22, 0.2)',
 
         accent: t.accent,
         accentHover: t.accentHover,
         accentPressed: t.accentPressed,
         onAccent: t.onAccent,
         accentStrong: t.accentStrong,
+        secondary: t.accent,
+        pressed: t.primaryPressed,
+        tint: t.primaryTint,
 
         background: t.bg,
         bg: t.bg,
@@ -218,6 +221,7 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn), .brand-title:lang(bn) {
         text: t.ink,
         ink: t.ink,
         textMuted: t.muted,
+        mutedText: t.muted,
         textSubtle: t.muted,
         muted: t.muted,
         border: t.line,
@@ -253,6 +257,10 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn), .brand-title:lang(bn) {
         badgeVerifiedText: t.success
       },
       fonts: {
+        regular: { fontFamily: 'Inter-Regular', fontWeight: 'normal' },
+        medium: { fontFamily: 'Inter-SemiBold', fontWeight: '500' },
+        bold: { fontFamily: 'PlusJakartaSans-Bold', fontWeight: 'bold' },
+        heavy: { fontFamily: 'PlusJakartaSans-Bold', fontWeight: '800' },
         heading: 'PlusJakartaSans-Bold',
         body: 'Inter-Regular',
         bodySemiBold: 'Inter-SemiBold',

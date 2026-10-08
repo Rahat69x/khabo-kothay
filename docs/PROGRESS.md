@@ -117,3 +117,32 @@
 ### Complete Dhaka Location Database
 - Comprehensive geographic coverage research covering Level 1 (DNCC & DSCC) and Level 2 (Greater Dhaka / RAJUK DAP).
 - Built 118 verified canonical location records in `server/data/dhaka-locations.json` with 24 required attributes.
+
+### Meal-Time Mode Implementation Deliverables
+- **Config**:
+  - `config/mealtime.json`: 4 meal modes (Breakfast 30m, Lunch 45m, Evening Snacks 30m, Dinner 90m), mode x venue-type duration matrix, peak-hour additions (+3m lunch, +5m dinner), buffer multipliers (Safe 1.5x, Balanced 1.0x, Flexible 0.5x), transport speeds, and weights strictly summing to 1.00 per mode.
+  - `config/meal-keywords.json`: Places API (New) verified types and Dhaka local food keywords (`paratha`, `halwa-ruti`, `singara`, `fuchka`, `chotpoti`, `jhalmuri`, `cha`, `bakarkhani`).
+- **Backend Service & Routing**:
+  - `server/services/mealtime.js`: Time-feasibility engine (`Total = outbound + wait + eat + return + buffer`), `spare = available - total`. Feasibility as hard gate. Two-leg independent routing with predicted return traffic at `leaveTime + outbound + wait + eat`. Opening check in `Asia/Dhaka` timezone with 30m kitchen last-order margin and midnight crossing. Geometry pruning for Google API cost control. Computed alternatives engine for relaxations with real counts.
+  - `server/routes/api.js`: Mounted `POST /api/v1/meal-time/search` (and `/api/meal-time/search`) with validation, rate limiting, and public transport rejection. Mounted `POST /api/v1/meal-time/feedback`.
+  - Feature flag `mealTimeMode` in `server/config/featureFlags.js` (`process.env.FEATURE_MEAL_TIME_MODE !== 'false'`).
+- **Web App (`/public`)**:
+  - Mode tab switcher in `public/index.html` toggling Standard Recommender and Meal-Time Mode.
+  - `public/js/mealtime-ui.js`: Interactive flow (Mode, Duration, Return destination, Transport, Dining style, Buffer preference, Leave At). Segmented time bar with SVG icons, status chips (`SAFE`, `TIGHT`), "Back by" time, flags, explain sheet, flexible slightly-over collapsible section, computed alternatives, and trip feedback.
+  - `public/css/style.css`: Theme token styling without raw hex colors.
+- **Mobile Expo Android App (`/mobile`)**:
+  - Segmented mode switcher in `mobile/src/features/home/HomeScreen.js`.
+  - `mobile/src/features/home/MealTimeView.js`: Full mobile Meal-Time Mode flow, time chips (15, 30, 45, 60, 90, Custom), device-only saved places (Office, Home, University) with prompt, transport chips with Dhaka transit rejection notice, segmented time bar with icon glyphs, status badges, plain-language reasons, flags, explain modal sheet, flexible slightly-over collapsible section, and feedback form.
+  - `mobile/src/services/storage.js`: Device-only storage for saved personal places.
+  - `mobile/src/api/client.js`: Methods for `searchMealTime` and `sendMealTimeFeedback`.
+- **Scripts**:
+  - `scripts/tune-mealtime.js`: Feedback processor computing median durations per `(mode, venueType)` when $\ge 5$ records exist, outputting to `config/mealtime.suggested.json`.
+  - `scripts/mealtime-demo.js`: Executable demo printing 45-minute Gulshan lunch results.
+- **i18n**:
+  - English (`en.js`) and Bangla (`bn.js`) updated with complete `mealTime` strings; verified 140 / 140 keys with 100% parity.
+- **Quality & Verification**:
+  - Unit tests in `server/tests/mealtime.test.js` (13 tests) and integration tests in `server/tests/mealtime-api.test.js` (6 tests).
+  - Mobile tests in `mobile/__tests__/api.test.js` passing.
+  - Zero raw hex colors verified via `scripts/check-no-raw-colors.js`.
+  - 100% WCAG contrast passing via `scripts/check-contrast.js`.
+

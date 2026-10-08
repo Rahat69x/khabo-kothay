@@ -482,10 +482,96 @@ export const MOCK_RESTAURANTS = [
     photos: [{ name: "places/trio_place_C/photos/0", authorAttributions: [{ displayName: "Test C" }] }],
     nationalPhoneNumber: "+880 1700-000003",
     websiteUri: "https://example.com/test-c"
+  },
+
+  // --- Gulshan 1 & Banani Quick Lunch Options (Meal-Time Mode) ---
+  {
+    id: "mock_lunch_g1_quick",
+    displayName: "Gulshan Quick Deli & Bento",
+    formattedAddress: "Road 134, Gulshan 1, Dhaka 1212",
+    location: { latitude: 23.7795, longitude: 90.4175 },
+    rating: 4.6,
+    userRatingCount: 420,
+    priceLevel: 2,
+    servesBreakfast: true,
+    servesLunch: true,
+    servesDinner: true,
+    takeout: true,
+    dineIn: true,
+    currentOpeningHours: { openNow: true },
+    regularOpeningHours: {
+      openNow: true,
+      weekdayDescriptions: ["Everyday: 10:30 AM – 10:30 PM"],
+      closingTime: "22:30"
+    },
+    primaryType: "quick-service",
+    cuisine: "Bangladeshi",
+    mockDistanceMeters: 450,
+    mockDurationSeconds: 360, // 6 min
+    mockStaticDurationSeconds: 300,
+    photos: [{ name: "places/mock_lunch_g1_quick/photos/0", authorAttributions: [{ displayName: "Gulshan Quick Deli" }] }],
+    nationalPhoneNumber: "+880 1711-998877",
+    websiteUri: "https://example.com/gulshan-quick-deli"
+  },
+  {
+    id: "mock_lunch_banani_cafe",
+    displayName: "Brew & Bite Bistro Banani",
+    formattedAddress: "Road 11, Block C, Banani, Dhaka 1213",
+    location: { latitude: 23.7935, longitude: 90.4045 },
+    rating: 4.7,
+    userRatingCount: 580,
+    priceLevel: 2,
+    servesBreakfast: true,
+    servesLunch: true,
+    servesDinner: true,
+    takeout: true,
+    dineIn: true,
+    currentOpeningHours: { openNow: true },
+    regularOpeningHours: {
+      openNow: true,
+      weekdayDescriptions: ["Everyday: 09:00 AM – 11:00 PM"],
+      closingTime: "23:00"
+    },
+    primaryType: "cafe",
+    cuisine: "Cafe",
+    mockDistanceMeters: 500,
+    mockDurationSeconds: 380, // ~6 min
+    mockStaticDurationSeconds: 320,
+    photos: [{ name: "places/mock_lunch_banani_cafe/photos/0", authorAttributions: [{ displayName: "Brew & Bite Bistro" }] }],
+    nationalPhoneNumber: "+880 1711-887766",
+    websiteUri: "https://example.com/brew-bite-banani"
+  },
+  {
+    id: "mock_lunch_g1_fast",
+    displayName: "Express Paratha & Kebab Hub",
+    formattedAddress: "Gulshan 1 DIT Market, Dhaka 1212",
+    location: { latitude: 23.7788, longitude: 90.4172 },
+    rating: 4.5,
+    userRatingCount: 310,
+    priceLevel: 1,
+    servesBreakfast: true,
+    servesLunch: true,
+    servesDinner: true,
+    takeout: true,
+    dineIn: true,
+    currentOpeningHours: { openNow: true },
+    regularOpeningHours: {
+      openNow: true,
+      weekdayDescriptions: ["Everyday: 07:00 AM – 11:30 PM"],
+      closingTime: "23:30"
+    },
+    primaryType: "quick-service",
+    cuisine: "Kabab",
+    mockDistanceMeters: 300,
+    mockDurationSeconds: 300, // 5 min
+    mockStaticDurationSeconds: 250,
+    photos: [{ name: "places/mock_lunch_g1_fast/photos/0", authorAttributions: [{ displayName: "Express Paratha Hub" }] }],
+    nationalPhoneNumber: "+880 1711-776655",
+    websiteUri: "https://example.com/express-paratha-hub"
   }
 ];
 
-export function getMockCandidates(cuisine, budget = null) {
+export function getMockCandidates(cuisine, budget = null, origin = null) {
   let list = [...MOCK_RESTAURANTS];
   if (cuisine && cuisine !== "All") {
     list = list.filter(r => r.cuisine.toLowerCase() === cuisine.toLowerCase());
@@ -496,5 +582,12 @@ export function getMockCandidates(cuisine, budget = null) {
       list = list.filter(r => r.priceLevel === null || r.priceLevel <= budgetNum + 1);
     }
   }
-  return list.slice(0, 20);
+  if (origin && origin.lat && origin.lng) {
+    list.sort((a, b) => {
+      const distA = Math.hypot(a.location.latitude - origin.lat, a.location.longitude - origin.lng);
+      const distB = Math.hypot(b.location.latitude - origin.lat, b.location.longitude - origin.lng);
+      return distA - distB;
+    });
+  }
+  return list.slice(0, 25);
 }

@@ -1,0 +1,297 @@
+{
+  "modes": {
+    "breakfast": {
+      "id": "breakfast",
+      "label": "Breakfast",
+      "labelBn": "সকালের নাস্তা",
+      "defaultTimeMinutes": 30,
+      "timeWindow": {
+        "startHour": 6,
+        "endHour": 10.5
+      },
+      "venueTypes": [
+        "breakfast_restaurant",
+        "bakery",
+        "cafe",
+        "coffee_shop",
+        "fast_food_restaurant",
+        "meal_takeaway",
+        "quick-service"
+      ],
+      "typicalWait": {
+        "min": 3,
+        "max": 4
+      },
+      "typicalEat": {
+        "min": 12,
+        "max": 15
+      },
+      "peakHours": {
+        "startHour": 8,
+        "endHour": 9.5,
+        "extraWaitMinutes": 1
+      },
+      "defaultPriority": "Fastest",
+      "weights": {
+        "spare": 0.2,
+        "speed": 0.2,
+        "traffic": 0.1,
+        "openMargin": 0.1,
+        "route": 0.15,
+        "pref": 0.1,
+        "budget": 0.05,
+        "rating": 0.1
+      }
+    },
+    "lunch": {
+      "id": "lunch",
+      "label": "Lunch",
+      "labelBn": "দুপুরের খাবার",
+      "defaultTimeMinutes": 45,
+      "timeWindow": {
+        "startHour": 11.5,
+        "endHour": 15
+      },
+      "venueTypes": [
+        "quick-service",
+        "casual dining",
+        "restaurant",
+        "fast_food_restaurant"
+      ],
+      "typicalWait": {
+        "min": 4,
+        "max": 5
+      },
+      "typicalEat": {
+        "min": 18,
+        "max": 20
+      },
+      "peakHours": {
+        "startHour": 12.5,
+        "endHour": 14,
+        "extraWaitMinutes": 3
+      },
+      "defaultPriority": "Fastest",
+      "weights": {
+        "spare": 0.22,
+        "speed": 0.18,
+        "traffic": 0.1,
+        "openMargin": 0.05,
+        "route": 0.1,
+        "pref": 0.12,
+        "budget": 0.08,
+        "rating": 0.15
+      }
+    },
+    "snacks": {
+      "id": "snacks",
+      "label": "Evening Snacks",
+      "labelBn": "সন্ধ্যার নাস্তা",
+      "defaultTimeMinutes": 30,
+      "timeWindow": {
+        "startHour": 16,
+        "endHour": 19
+      },
+      "venueTypes": [
+        "street food",
+        "cafe",
+        "fast_food_restaurant",
+        "bakery",
+        "tea_shop",
+        "dessert",
+        "quick-service"
+      ],
+      "typicalWait": {
+        "min": 3,
+        "max": 3
+      },
+      "typicalEat": {
+        "min": 10,
+        "max": 10
+      },
+      "peakHours": {
+        "startHour": 17,
+        "endHour": 18.5,
+        "extraWaitMinutes": 1
+      },
+      "defaultPriority": "Quick",
+      "weights": {
+        "spare": 0.15,
+        "speed": 0.2,
+        "traffic": 0.1,
+        "openMargin": 0.15,
+        "route": 0.1,
+        "pref": 0.15,
+        "budget": 0.05,
+        "rating": 0.1
+      }
+    },
+    "dinner": {
+      "id": "dinner",
+      "label": "Dinner",
+      "labelBn": "রাতের খাবার",
+      "defaultTimeMinutes": 90,
+      "timeWindow": {
+        "startHour": 19,
+        "endHour": 23.5
+      },
+      "venueTypes": [
+        "casual dining",
+        "fine dining",
+        "restaurant",
+        "kabab",
+        "biriyani"
+      ],
+      "typicalWait": {
+        "min": 8,
+        "max": 10
+      },
+      "typicalEat": {
+        "min": 35,
+        "max": 50
+      },
+      "peakHours": {
+        "startHour": 20,
+        "endHour": 21.5,
+        "extraWaitMinutes": 5
+      },
+      "defaultPriority": "Quality",
+      "weights": {
+        "spare": 0.1,
+        "speed": 0.05,
+        "traffic": 0.08,
+        "openMargin": 0.07,
+        "route": 0.05,
+        "pref": 0.25,
+        "budget": 0.1,
+        "rating": 0.3
+      }
+    }
+  },
+  "venueTypeMatrix": {
+    "quick-service": {
+      "waitMinutes": 4,
+      "eatMinutes": 15,
+      "label": "Quick Service"
+    },
+    "cafe": {
+      "waitMinutes": 5,
+      "eatMinutes": 18,
+      "label": "Cafe"
+    },
+    "bakery": {
+      "waitMinutes": 2,
+      "eatMinutes": 10,
+      "label": "Bakery"
+    },
+    "street food": {
+      "waitMinutes": 3,
+      "eatMinutes": 10,
+      "label": "Street Food"
+    },
+    "casual dining": {
+      "waitMinutes": 10,
+      "eatMinutes": 30,
+      "label": "Casual Dining"
+    },
+    "fine dining": {
+      "waitMinutes": 15,
+      "eatMinutes": 45,
+      "label": "Fine Dining"
+    },
+    "takeaway": {
+      "waitMinutes": 4,
+      "eatMinutes": 0,
+      "label": "Takeaway"
+    }
+  },
+  "buffer": {
+    "minBufferMinutes": 3,
+    "basePercentage": 0.1,
+    "multipliers": {
+      "Balanced": 1,
+      "Safe": 1.5,
+      "Flexible": 0.5
+    },
+    "flexibleMinMinutes": 2,
+    "flexibleMaxOverMinutes": 5,
+    "extras": {
+      "heavyTrafficMinutes": 3,
+      "moderateTrafficMinutes": 1,
+      "carMinutes": 3,
+      "rideSharePickupMinutes": 4,
+      "rideShareDropoffMinutes": 1,
+      "motorcycleMinutes": 1,
+      "bicycleLockingMinutes": 1,
+      "walkingMinutes": 0
+    }
+  },
+  "thresholds": {
+    "safeMinSpareMinutes": 3,
+    "tightMinSpareMinutes": 0,
+    "lastOrderMarginMinutes": 30,
+    "unknownHoursPolicy": "include_flagged"
+  },
+  "transportModes": {
+    "walk": {
+      "label": "Walking",
+      "speedKmh": 4.5,
+      "routesMode": "WALK",
+      "hasApi": true
+    },
+    "bicycle": {
+      "label": "Bicycle",
+      "speedKmh": 12,
+      "routesMode": "BICYCLE",
+      "hasApi": false
+    },
+    "motorcycle": {
+      "label": "Motorcycle",
+      "speedKmh": 22,
+      "routesMode": "TWO_WHEELER",
+      "hasApi": false
+    },
+    "car": {
+      "label": "Personal Car",
+      "speedKmh": 18,
+      "routesMode": "DRIVE",
+      "hasApi": true
+    },
+    "ride-share": {
+      "label": "Ride-Share",
+      "speedKmh": 18,
+      "routesMode": "DRIVE",
+      "hasApi": true,
+      "pickupWait": 4
+    },
+    "rickshaw": {
+      "label": "Rickshaw",
+      "speedKmh": 10,
+      "routesMode": null,
+      "hasApi": false
+    },
+    "cng": {
+      "label": "CNG Auto",
+      "speedKmh": 16,
+      "routesMode": null,
+      "hasApi": false
+    },
+    "public_transport": {
+      "label": "Public Bus / Metro",
+      "speedKmh": 12,
+      "routesMode": "TRANSIT",
+      "hasApi": false
+    }
+  },
+  "suggestedAdjustments": {
+    "lunch::quick-service": {
+      "mode": "lunch",
+      "venueType": "quick-service",
+      "sampleSize": 5,
+      "medianTotalMinutes": 43,
+      "lateRatePercent": 20,
+      "suggestedWaitMinutes": 11,
+      "suggestedEatMinutes": 32
+    }
+  }
+}

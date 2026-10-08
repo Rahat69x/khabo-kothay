@@ -47,41 +47,15 @@
 
 ## 2. Android APK Build Status
 
-- **Status**: **NOT RUN** (User is not logged into an Expo / EAS account on this workstation)
-- **EAS Authentication Check**: `npx -y eas-cli whoami` returned `Not logged in`.
-
-### Exact Commands to Generate the Standalone Preview APK:
-```bash
-# 1. Navigate to the mobile directory
-cd mobile
-
-# 2. Log in to your Expo account
-npx eas-cli login
-
-# 3. If you haven't linked your EAS project yet, run:
-npx eas-cli project:init
-
-# 4. Trigger the preview APK cloud build:
-npx eas-cli build -p android --profile preview --non-interactive
-```
-
-### Downloading & Verifying the APK:
-1. When EAS finishes, it outputs a download URL for `khabo-kothay.apk`.
-2. Download the generated `.apk` file into the `/release` folder:
-   ```bash
-   mkdir -p release
-   curl -L "<EAS_ARTIFACT_DOWNLOAD_URL>" -o release/khabo-kothay-1.1.0.apk
-   ```
-3. Compute and record the SHA-256 checksum:
-   - **PowerShell (Windows)**:
-     ```powershell
-     Get-FileHash -Algorithm SHA256 release\khabo-kothay-1.1.0.apk
-     ```
-   - **Linux / macOS**:
-     ```bash
-     sha256sum release/khabo-kothay-1.1.0.apk
-     ```
-4. *Important*: EAS build download URLs expire under Expo's retention policy after 30 days. Always archive the downloaded APK in `/release/` or your company's storage bucket.
+- **Status**: **BUILT & VERIFIED** (Expo EAS Cloud Preview Build)
+- **EAS Account**: `rahat69x`
+- **Build ID**: `14b082a9-4a66-4153-9a97-4f444fc75320`
+- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/14b082a9-4a66-4153-9a97-4f444fc75320
+- **Direct Download URL**: https://expo.dev/artifacts/eas/9YHpoJ41TD5XiGwSpiqcKes3wA20ZxHFuI1YXSx6hz0.apk
+- **Expiration Date**: 2026-10-22T19:26:23.861Z
+- **Local Artifact**: `release/khabo-kothay-1.1.0.apk`
+- **File Size**: 61.05 MB (64,017,867 bytes)
+- **SHA-256 Checksum**: `A21DDA4879DCE4CA0DCB8CED023F977841FBE34C29E26AC459FF3FD3E041BA8B`
 
 ---
 

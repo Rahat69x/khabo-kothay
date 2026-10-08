@@ -1,0 +1,85 @@
+{
+  "expo": {
+    "name": "Khabo Kothay?",
+    "slug": "khabo-kothay",
+    "scheme": "khabokothay",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F97316",
+      "dark": {
+        "image": "./assets/splash-dark.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#121212"
+      }
+    },
+    "assetBundlePatterns": ["**/*"],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/096074ea-0a29-4eef-af66-d76b22212b86",
+      "fallbackToCacheTimeout": 0
+    },
+    "locales": {
+      "bn": "./src/i18n/app-name-bn.json"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.khabokothay.app"
+    },
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#FFFBF7"
+    },
+    "android": {
+      "package": "com.khabokothay.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundImage": "./assets/adaptive-icon-background.png",
+        "backgroundColor": "#F97316",
+        "monochromeImage": "./assets/adaptive-icon-monochrome.png"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Khabo Kothay? to access your location to calculate real-time traffic travel times to restaurants."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#F97316"
+        }
+      ],
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.25"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "096074ea-0a29-4eef-af66-d76b22212b86"
+      },
+      "apiBaseUrl": "https://khabo-kothay.onrender.com",
+      "appClientToken": "gulshan_app_secret_token_2026"
+    }
+  }
+}

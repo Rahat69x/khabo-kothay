@@ -8,3 +8,5 @@ build/
 .expo-shared/
 coverage/
 scripts/output/
+*.apk
+release/

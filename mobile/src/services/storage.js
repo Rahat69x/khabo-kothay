@@ -8,7 +8,9 @@ const STORAGE_KEYS = {
   TASTE_LEARNING_ENABLED: 'gulshan_mobile_learning_enabled',
   TASTE_LOG: 'gulshan_mobile_taste_log',
   ONBOARDING_COMPLETED: 'gulshan_mobile_onboarded',
-  CACHED_RESULTS: 'gulshan_mobile_cached_results'
+  CACHED_RESULTS: 'gulshan_mobile_cached_results',
+  SAVED_PLACES: 'gulshan_mobile_saved_places',
+  PROMPTED_PLACES: 'gulshan_mobile_prompted_places'
 };
 
 class MobileStorage {
@@ -170,6 +172,29 @@ class MobileStorage {
       ...data,
       cachedAt: Date.now()
     });
+  }
+
+  // --- Device-only Saved Places (Office, Home, University) ---
+  // Stored only on device, never sent to analytics, never logged
+  async getSavedPlaces() {
+    return (await this.getItem(STORAGE_KEYS.SAVED_PLACES)) || {};
+  }
+
+  async saveSavedPlace(key, place) {
+    const places = await this.getSavedPlaces();
+    places[key] = place;
+    await this.setItem(STORAGE_KEYS.SAVED_PLACES, places);
+  }
+
+  async hasPromptedForPlace(key) {
+    const prompted = (await this.getItem(STORAGE_KEYS.PROMPTED_PLACES)) || {};
+    return Boolean(prompted[key]);
+  }
+
+  async setPromptedForPlace(key) {
+    const prompted = (await this.getItem(STORAGE_KEYS.PROMPTED_PLACES)) || {};
+    prompted[key] = true;
+    await this.setItem(STORAGE_KEYS.PROMPTED_PLACES, prompted);
   }
 
   async exportAllData() {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useColorScheme, Text, Platform } from 'react-native';
@@ -29,7 +29,8 @@ function BottomTabs({ theme, onThemeChange }) {
     <Tab.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.card },
-        headerTintColor: theme.colors.text,
+        headerTintColor: theme.colors.primary,
+        headerTitleStyle: { fontWeight: '800', color: theme.colors.text },
         tabBarStyle: {
           backgroundColor: theme.colors.card,
           borderTopColor: theme.colors.border,
@@ -136,17 +137,28 @@ export default function App() {
     }
   }, [activeTheme.colors.background]);
 
-  const navTheme = useMemo(() => ({
-    dark: activeTheme.isDark,
-    colors: {
-      primary: activeTheme.colors.primary,
-      background: activeTheme.colors.background,
-      card: activeTheme.colors.card,
-      text: activeTheme.colors.text,
-      border: activeTheme.colors.border,
-      notification: activeTheme.colors.accent
-    }
-  }), [activeTheme]);
+  const navTheme = useMemo(() => {
+    const baseNavTheme = activeTheme.isDark ? DarkTheme : DefaultTheme;
+    return {
+      ...baseNavTheme,
+      dark: activeTheme.isDark,
+      colors: {
+        ...baseNavTheme.colors,
+        primary: activeTheme.colors.primary,
+        background: activeTheme.colors.background,
+        card: activeTheme.colors.card,
+        text: activeTheme.colors.text,
+        border: activeTheme.colors.border,
+        notification: activeTheme.colors.accent || activeTheme.colors.primary
+      },
+      fonts: baseNavTheme.fonts || activeTheme.fonts || {
+        regular: { fontFamily: 'System', fontWeight: '400' },
+        medium: { fontFamily: 'System', fontWeight: '500' },
+        bold: { fontFamily: 'System', fontWeight: '700' },
+        heavy: { fontFamily: 'System', fontWeight: '800' }
+      }
+    };
+  }, [activeTheme]);
 
   const handleThemeChange = async (mode) => {
     setThemeMode(mode);
@@ -168,8 +180,8 @@ export default function App() {
           initialRouteName={isOnboarded ? 'MainTabs' : 'Onboarding'}
           screenOptions={{
             headerStyle: { backgroundColor: activeTheme.colors.card },
-            headerTintColor: activeTheme.colors.text,
-            headerTitleStyle: { fontWeight: '800' }
+            headerTintColor: activeTheme.colors.primary,
+            headerTitleStyle: { fontWeight: '800', color: activeTheme.colors.text }
           }}
         >
           <Stack.Screen name="Onboarding" options={{ headerShown: false }}>

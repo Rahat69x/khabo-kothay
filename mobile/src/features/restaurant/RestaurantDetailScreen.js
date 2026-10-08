@@ -148,7 +148,7 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
         <View style={styles.extraActions}>
           {details.websiteUri && (
             <TouchableOpacity style={styles.textBtn} onPress={handleWebsite}>
-              <Text style={{ color: theme.colors.secondary, fontWeight: '700' }}>🌐 {t('restaurant.website')}</Text>
+              <Text style={{ color: theme.colors.primary, fontWeight: '700' }}>🌐 {t('restaurant.website')}</Text>
             </TouchableOpacity>
           )}
 
@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
   reasonCard: {
     flexDirection: 'row',
     gap: 8,
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
     padding: 14,
     borderRadius: 14,
     marginBottom: 20

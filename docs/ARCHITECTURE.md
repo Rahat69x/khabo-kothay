@@ -163,3 +163,47 @@ flowchart TD
 - Updates via stochastic feedback loop with learning rate $\eta = 0.05$.
 - Produces plain-language explanation notes and provides an instant reset endpoint.
 
+---
+
+## Meal-Time Mode Architecture
+
+```mermaid
+flowchart TD
+    ClientReq[POST /api/v1/meal-time/search] --> CostPrune[Geometry Pruning: maxOneWayMinutes * maxSpeed]
+    CostPrune --> MatrixOutbound[Outbound Route Matrix: Origin -> Candidates]
+    MatrixOutbound --> MatrixReturn[Return Route Matrix: Candidates -> Destination with Predicted Departure]
+    MatrixReturn --> TimeGate[Feasibility Gate: Spare Time >= 0?]
+    TimeGate -->|No| AltEngine[Relaxation Suggestions Engine: Takeaway, +15m, Quicker Venues]
+    TimeGate -->|Yes| OpenGate[Opening Check: Arrival through Finish + 30m Last Order]
+    OpenGate --> DetailMask[Fetch Serves Meal & Dine-In/Takeout Mask for Top 10]
+    DetailMask --> Ranker[Bayesian Rating + Mode Specific Weights]
+    Ranker --> Response[Feasible Results + Segmented Time Bars + Explanations]
+```
+
+### Core Architecture Components (`server/services/mealtime.js`)
+1. **Time Breakdown Calculator**:
+   - Computes $T_{\text{outbound}}$, $T_{\text{wait}}$, $T_{\text{eat}}$, $T_{\text{return}}$, and $T_{\text{buffer}}$.
+   - $T_{\text{buffer}} = \max(\text{minBuffer}, \% \text{trip}) \times \text{multiplier} + \text{extras}$ (traffic extras + vehicle parking/pickup extras).
+   - Takeaway mode sets $T_{\text{eat}} = 0$ at venue ("eat after return").
+2. **Two-Leg Independent Routing**:
+   - Outbound leg from origin at `leaveAt` (or now).
+   - Return leg to destination calculated at `leaveAt + outbound + wait + eat`, labeled "predicted traffic".
+   - Detour calculation compares `outbound + return` with direct origin-to-destination time.
+3. **Opening & Service Feasibility Gate**:
+   - Validates venue is open at expected arrival time in `Asia/Dhaka`.
+   - Ensures venue remains open through finish time plus 30-minute kitchen last-order buffer.
+   - Respects 24-hour schedules and midnight-crossing operating hours.
+   - Eliminates places where `servesLunch = false` (or mode equivalent); flags unverified hours/service without dropping.
+4. **Cost Control Pipeline**:
+   - Minimal field mask on candidate search.
+   - Straight-line geometric bounding prune before route matrix.
+   - Two batched Routes API matrices capped at 20 candidates.
+   - Detailed field mask only for top 10 ranked candidates.
+5. **Computed Alternatives Engine**:
+   - When 0 places fit safely, re-runs engine with isolated relaxations: takeaway dining, quicker venue types, adding 15 minutes, or switching transport.
+   - Returns real counts and shortest feasible break time.
+6. **Anonymous Tuning Feedback Loop (`scripts/tune-mealtime.js`)**:
+   - Processes user feedback on actual total trip duration.
+   - Recommends updated wait and eat durations per `(mode, venueType)` when $\ge 5$ records exist, outputting to `config/mealtime.suggested.json`.
+
+
