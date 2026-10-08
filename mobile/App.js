@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useColorScheme, Text, Platform } from 'react-native';
+import { useFonts } from 'expo-font';
 
 import { lightTheme, darkTheme } from './src/config/theme.js';
 import { mobileStorage } from './src/services/storage.js';
@@ -100,6 +101,15 @@ export default function App() {
   const [localeTick, setLocaleTick] = useState(0);
   const [isOnboarded, setIsOnboarded] = useState(null);
 
+  // Load custom fonts using expo-font
+  const [fontsLoaded, fontError] = useFonts({
+    'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
+    'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
+    'PlusJakartaSans-Bold': require('./assets/fonts/PlusJakartaSans-Bold.ttf'),
+    'NotoSansBengali-Regular': require('./assets/fonts/NotoSansBengali-Regular.ttf'),
+    'NotoSansBengali-Bold': require('./assets/fonts/NotoSansBengali-Bold.ttf')
+  });
+
   useEffect(() => {
     initApp();
     const unsubLocale = subscribeLocale(() => {
@@ -138,12 +148,32 @@ export default function App() {
   }, [activeTheme.colors.background]);
 
   const navTheme = useMemo(() => {
-    const baseNavTheme = activeTheme.isDark ? DarkTheme : DefaultTheme;
+    const isDark = Boolean(activeTheme.isDark);
+    const baseNavTheme = isDark ? DarkTheme : DefaultTheme;
+
+    // React Navigation 7 standard font stack fallback:
+    // Guarantees regular, medium, bold, heavy are defined objects
+    const defaultFontFamily = fontsLoaded
+      ? 'Inter-Regular'
+      : (Platform.OS === 'android' ? 'sans-serif' : 'System');
+    const boldFontFamily = fontsLoaded
+      ? 'PlusJakartaSans-Bold'
+      : (Platform.OS === 'android' ? 'sans-serif' : 'System');
+    const mediumFontFamily = fontsLoaded
+      ? 'Inter-SemiBold'
+      : (Platform.OS === 'android' ? 'sans-serif-medium' : 'System');
+
+    const defaultFonts = {
+      regular: { fontFamily: defaultFontFamily, fontWeight: 'normal' },
+      medium: { fontFamily: mediumFontFamily, fontWeight: '500' },
+      bold: { fontFamily: boldFontFamily, fontWeight: 'bold' },
+      heavy: { fontFamily: boldFontFamily, fontWeight: '800' }
+    };
+
     return {
-      ...baseNavTheme,
-      dark: activeTheme.isDark,
+      dark: isDark,
       colors: {
-        ...baseNavTheme.colors,
+        ...(baseNavTheme?.colors || {}),
         primary: activeTheme.colors.primary,
         background: activeTheme.colors.background,
         card: activeTheme.colors.card,
@@ -151,22 +181,26 @@ export default function App() {
         border: activeTheme.colors.border,
         notification: activeTheme.colors.accent || activeTheme.colors.primary
       },
-      fonts: baseNavTheme.fonts || activeTheme.fonts || {
-        regular: { fontFamily: 'System', fontWeight: '400' },
-        medium: { fontFamily: 'System', fontWeight: '500' },
-        bold: { fontFamily: 'System', fontWeight: '700' },
-        heavy: { fontFamily: 'System', fontWeight: '800' }
+      fonts: {
+        ...defaultFonts,
+        ...(baseNavTheme?.fonts || {}),
+        ...(activeTheme?.fonts || {}),
+        regular: (activeTheme?.fonts?.regular) || defaultFonts.regular,
+        medium: (activeTheme?.fonts?.medium) || defaultFonts.medium,
+        bold: (activeTheme?.fonts?.bold) || defaultFonts.bold,
+        heavy: (activeTheme?.fonts?.heavy) || defaultFonts.heavy
       }
     };
-  }, [activeTheme]);
+  }, [activeTheme, fontsLoaded]);
 
   const handleThemeChange = async (mode) => {
     setThemeMode(mode);
     await mobileStorage.savePreferences({ themeMode: mode });
   };
 
-  if (isOnboarded === null) {
-    return null; // Brief splash load
+  // Keep splash active until storage preferences resolve and fonts load (or error)
+  if (isOnboarded === null || (!fontsLoaded && !fontError)) {
+    return null;
   }
 
   return (
@@ -175,52 +209,54 @@ export default function App() {
         style={activeTheme.isDark ? 'light' : 'dark'}
         backgroundColor={activeTheme.colors.card}
       />
-      <NavigationContainer theme={navTheme}>
-        <Stack.Navigator
-          initialRouteName={isOnboarded ? 'MainTabs' : 'Onboarding'}
-          screenOptions={{
-            headerStyle: { backgroundColor: activeTheme.colors.card },
-            headerTintColor: activeTheme.colors.primary,
-            headerTitleStyle: { fontWeight: '800', color: activeTheme.colors.text }
-          }}
-        >
-          <Stack.Screen name="Onboarding" options={{ headerShown: false }}>
-            {(props) => <OnboardingScreen {...props} theme={activeTheme} />}
-          </Stack.Screen>
-
-          <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
-            {(props) => <BottomTabs {...props} theme={activeTheme} onThemeChange={handleThemeChange} />}
-          </Stack.Screen>
-
-          <Stack.Screen
-            name="Results"
-            options={{ title: 'Ranked Restaurants' }}
+      <ThemeProvider value={navTheme}>
+        <NavigationContainer theme={navTheme}>
+          <Stack.Navigator
+            initialRouteName={isOnboarded ? 'MainTabs' : 'Onboarding'}
+            screenOptions={{
+              headerStyle: { backgroundColor: activeTheme.colors.card },
+              headerTintColor: activeTheme.colors.primary,
+              headerTitleStyle: { fontWeight: '800', color: activeTheme.colors.text }
+            }}
           >
-            {(props) => <ResultsScreen {...props} theme={activeTheme} />}
-          </Stack.Screen>
+            <Stack.Screen name="Onboarding" options={{ headerShown: false }}>
+              {(props) => <OnboardingScreen {...props} theme={activeTheme} />}
+            </Stack.Screen>
 
-          <Stack.Screen
-            name="RestaurantDetail"
-            options={{ title: 'Restaurant Details' }}
-          >
-            {(props) => <RestaurantDetailScreen {...props} theme={activeTheme} />}
-          </Stack.Screen>
+            <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
+              {(props) => <BottomTabs {...props} theme={activeTheme} onThemeChange={handleThemeChange} />}
+            </Stack.Screen>
 
-          <Stack.Screen
-            name="CompareOptions"
-            options={{ title: 'Compare Routes & Transport' }}
-          >
-            {(props) => <CompareOptionsScreen {...props} theme={activeTheme} />}
-          </Stack.Screen>
+            <Stack.Screen
+              name="Results"
+              options={{ title: 'Ranked Restaurants' }}
+            >
+              {(props) => <ResultsScreen {...props} theme={activeTheme} />}
+            </Stack.Screen>
 
-          <Stack.Screen
-            name="History"
-            options={{ title: 'Search History' }}
-          >
-            {(props) => <HistoryScreen {...props} theme={activeTheme} />}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen
+              name="RestaurantDetail"
+              options={{ title: 'Restaurant Details' }}
+            >
+              {(props) => <RestaurantDetailScreen {...props} theme={activeTheme} />}
+            </Stack.Screen>
+
+            <Stack.Screen
+              name="CompareOptions"
+              options={{ title: 'Compare Routes & Transport' }}
+            >
+              {(props) => <CompareOptionsScreen {...props} theme={activeTheme} />}
+            </Stack.Screen>
+
+            <Stack.Screen
+              name="History"
+              options={{ title: 'Search History' }}
+            >
+              {(props) => <HistoryScreen {...props} theme={activeTheme} />}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
