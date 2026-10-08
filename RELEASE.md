@@ -49,13 +49,13 @@
 
 - **Status**: **BUILT & VERIFIED** (Expo EAS Cloud Preview Build)
 - **EAS Account**: `rahat69x`
-- **Build ID**: `14b082a9-4a66-4153-9a97-4f444fc75320`
-- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/14b082a9-4a66-4153-9a97-4f444fc75320
-- **Direct Download URL**: https://expo.dev/artifacts/eas/9YHpoJ41TD5XiGwSpiqcKes3wA20ZxHFuI1YXSx6hz0.apk
-- **Expiration Date**: 2026-10-22T19:26:23.861Z
+- **Build ID**: `fb9c9af9-2477-4d5d-b07b-1fdd1a2a6dea`
+- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/fb9c9af9-2477-4d5d-b07b-1fdd1a2a6dea
+- **Direct Download URL**: https://expo.dev/artifacts/eas/xFR4UEo4dw9MrCdCf-7uNy7hlCRYnf6Nh9iUQHhfCgM.apk
+- **Expiration Date**: 2026-10-22T20:19:27.781Z
 - **Local Artifact**: `release/khabo-kothay-1.1.0.apk`
-- **File Size**: 61.05 MB (64,017,867 bytes)
-- **SHA-256 Checksum**: `A21DDA4879DCE4CA0DCB8CED023F977841FBE34C29E26AC459FF3FD3E041BA8B`
+- **File Size**: 61.06 MB (64,024,956 bytes)
+- **SHA-256 Checksum**: `40238FEF2107530877B65E76B7444E4F5A3C2F93CC7DF0A6E69AFFF319F62C3C`
 
 ---
 
