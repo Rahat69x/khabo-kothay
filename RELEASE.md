@@ -49,13 +49,11 @@
 
 - **Status**: **BUILT & VERIFIED** (Expo EAS Cloud Preview Build)
 - **EAS Account**: `rahat69x`
-- **Build ID**: `fb9c9af9-2477-4d5d-b07b-1fdd1a2a6dea`
-- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/fb9c9af9-2477-4d5d-b07b-1fdd1a2a6dea
-- **Direct Download URL**: https://expo.dev/artifacts/eas/xFR4UEo4dw9MrCdCf-7uNy7hlCRYnf6Nh9iUQHhfCgM.apk
-- **Expiration Date**: 2026-10-22T20:19:27.781Z
-- **Local Artifact**: `release/khabo-kothay-1.1.0.apk`
-- **File Size**: 61.06 MB (64,024,956 bytes)
-- **SHA-256 Checksum**: `40238FEF2107530877B65E76B7444E4F5A3C2F93CC7DF0A6E69AFFF319F62C3C`
+- **Build ID**: `6f1c0f91-8011-4bea-a61e-543920fe6fd5`
+- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/6f1c0f91-8011-4bea-a61e-543920fe6fd5
+- **Direct Download URL**: https://expo.dev/artifacts/eas/VIA-_8HvfmRAKwBoLU0-dCa9ZrPrwxBkNa7Z0nKmooY.apk
+- **Expiration Date**: 2026-10-22T21:13:25.609Z
+- **Git Commit**: `99f9a87d4e0da9696e1a7832260f18167bd34baf` ("fix(mobile): load custom fonts with useFonts and ensure robust React Navigation theme font mapping")
 
 ---
 
