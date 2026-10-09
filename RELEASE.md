@@ -49,11 +49,11 @@
 
 - **Status**: **BUILT & VERIFIED** (Expo EAS Cloud Preview Build)
 - **EAS Account**: `rahat69x`
-- **Build ID**: `c9ede65c-fe09-43a4-be82-ac387fe55b43`
-- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/c9ede65c-fe09-43a4-be82-ac387fe55b43
-- **Direct Download URL**: https://expo.dev/artifacts/eas/rMFmb0HujmN7GZRhsSETyb-_3oUNFExoTB3NduEaOwU.apk
-- **Expiration Date**: 2026-10-23T06:53:09.985Z
-- **Git Commit**: `f82e27f7fc8b2483523326e2690e5d5ac376d96b` ("fix(mobile): implement offline-first local recommendation engine, meal-time solver, and fix 404 error")
+- **Build ID**: `6faf38e5-49b1-4bb2-99b3-fc2ce71ea517`
+- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/6faf38e5-49b1-4bb2-99b3-fc2ce71ea517
+- **Direct Download URL**: https://expo.dev/artifacts/eas/QtvV9D_Ro_CCMd0PLeRKGi89ZzLbL-5q_UeXspdiNLo.apk
+- **Expiration Date**: 2026-10-24T16:18:29.000Z
+- **Updates Channel**: `preview` (Update ID: `01a12165-9837-762e-b67d-62e969d4fef9`)
 
 ---
 

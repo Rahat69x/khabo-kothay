@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Linking } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import { getCurrentOrFallbackLocation } from '../../services/location.js';
 import { apiClient } from '../../api/client.js';
+import { localEngine } from '../../services/localEngine.js';
 import { darkMapStyle } from '../../config/mapStyleDark.js';
 
 const { width, height } = Dimensions.get('window');
 
 export default function MapTabScreen({ navigation, theme }) {
+  const mapRef = useRef(null);
   const [location, setLocation] = useState({ lat: 23.7925, lng: 90.4150, name: 'Gulshan' });
   const [restaurants, setRestaurants] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const [statusBanner, setStatusBanner] = useState(null);
 
   useEffect(() => {
     loadMapData();
@@ -19,6 +22,15 @@ export default function MapTabScreen({ navigation, theme }) {
   const loadMapData = async () => {
     const loc = await getCurrentOrFallbackLocation();
     setLocation(loc);
+
+    if (loc.permissionDenied) {
+      setStatusBanner('GPS permission denied. Viewing Dhaka preset location.');
+    } else if (loc.servicesDisabled) {
+      setStatusBanner('Device location services off. Viewing Dhaka preset location.');
+    } else {
+      setStatusBanner(null);
+    }
+
     try {
       const data = await apiClient.getRecommendations({
         lat: loc.lat,
@@ -26,19 +38,57 @@ export default function MapTabScreen({ navigation, theme }) {
         cuisine: 'All',
         priority: 'Best Overall'
       });
-      setRestaurants(data.results || []);
-      if (data.results?.length > 0) {
-        setSelectedPlace(data.results[0]);
+      const results = data.results || [];
+      if (results.length > 0) {
+        setRestaurants(results);
+        setSelectedPlace(results[0]);
+        return;
       }
     } catch (e) {
-      console.warn('Map data load error:', e);
+      console.warn('Map data network load error, falling back to localEngine:', e);
     }
+
+    // Reliable offline / fallback recommendation engine
+    try {
+      const localData = await localEngine.getLocalRecommendations({
+        lat: loc.lat,
+        lng: loc.lng,
+        cuisine: 'All',
+        priority: 'Best Overall'
+      });
+      const localResults = localData.results || [];
+      setRestaurants(localResults);
+      if (localResults.length > 0) {
+        setSelectedPlace(localResults[0]);
+      }
+    } catch (localErr) {
+      console.warn('Local engine error on map tab:', localErr);
+    }
+  };
+
+  const handleRecenter = () => {
+    if (mapRef.current && location) {
+      mapRef.current.animateToRegion({
+        latitude: location.lat,
+        longitude: location.lng,
+        latitudeDelta: 0.03,
+        longitudeDelta: 0.03
+      }, 500);
+    }
+  };
+
+  const openNavigationDirections = (restaurant) => {
+    if (!restaurant?.location) return;
+    const origin = `${location.lat},${location.lng}`;
+    const destination = `${restaurant.location.latitude},${restaurant.location.longitude}`;
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
+    Linking.openURL(url).catch(err => console.warn('Could not open maps navigation:', err));
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <MapView
-        provider={PROVIDER_GOOGLE}
+        ref={mapRef}
         style={styles.map}
         customMapStyle={theme.isDark ? darkMapStyle : []}
         initialRegion={{
@@ -52,6 +102,7 @@ export default function MapTabScreen({ navigation, theme }) {
         <Marker
           coordinate={{ latitude: location.lat, longitude: location.lng }}
           title="You are here"
+          description={location.name || 'Current Spot'}
           pinColor={theme.colors.primary}
         />
 
@@ -71,6 +122,24 @@ export default function MapTabScreen({ navigation, theme }) {
         ))}
       </MapView>
 
+      {/* Non-blocking GPS Status Banner if needed */}
+      {statusBanner && (
+        <View style={[styles.statusBanner, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+          <Text style={[styles.statusBannerText, { color: theme.colors.textMuted }]}>
+            ℹ️ {statusBanner}
+          </Text>
+        </View>
+      )}
+
+      {/* Floating Recenter GPS Button */}
+      <TouchableOpacity
+        style={[styles.recenterBtn, { backgroundColor: theme.colors.card, borderColor: theme.colors.border, shadowColor: theme.colors.scrim }]}
+        onPress={handleRecenter}
+        accessibilityLabel="Recenter map to my location"
+      >
+        <Text style={{ fontSize: 18 }}>📍</Text>
+      </TouchableOpacity>
+
       {/* Selected Card Popup at Bottom */}
       {selectedPlace && (
         <View style={[styles.calloutCard, { backgroundColor: theme.colors.card, borderColor: theme.colors.border, shadowColor: theme.colors.scrim }]}>
@@ -79,18 +148,24 @@ export default function MapTabScreen({ navigation, theme }) {
               {selectedPlace.displayName}
             </Text>
             <Text style={[styles.calloutRating, { color: theme.colors.primary }]}>
-              {selectedPlace.rating}★ ({selectedPlace.userRatingCount})
+              {selectedPlace.rating}★ ({selectedPlace.userRatingCount || 100}+)
             </Text>
           </View>
           <Text style={[styles.calloutReason, { color: theme.colors.textMuted }]} numberOfLines={2}>
-            {selectedPlace.reason}
+            {selectedPlace.cuisine} • 🚗 {Math.round(selectedPlace.durationSeconds / 60)} min • ৳{selectedPlace.estimatedCostPerPersonBdt || selectedPlace.menu?.estimatedCostPerPerson?.amount || 500}/person
           </Text>
           <View style={styles.calloutActions}>
+            <TouchableOpacity
+              style={[styles.directionsBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt }]}
+              onPress={() => openNavigationDirections(selectedPlace)}
+            >
+              <Text style={[styles.directionsBtnText, { color: theme.colors.text }]}>🧭 Directions</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.calloutBtn, { backgroundColor: theme.colors.primary }]}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: selectedPlace, location })}
             >
-              <Text style={[styles.calloutBtnText, { color: theme.colors.onPrimary }]}>View Restaurant →</Text>
+              <Text style={[styles.calloutBtnText, { color: theme.colors.onPrimary }]}>View Details →</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -102,6 +177,33 @@ export default function MapTabScreen({ navigation, theme }) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { width, height },
+  statusBanner: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    right: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    elevation: 4
+  },
+  statusBannerText: { fontSize: 12, fontWeight: '600', textAlign: 'center' },
+  recenterBtn: {
+    position: 'absolute',
+    top: 70,
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4
+  },
   calloutCard: {
     position: 'absolute',
     bottom: 24,
@@ -119,7 +221,9 @@ const styles = StyleSheet.create({
   calloutTitle: { fontSize: 16, fontWeight: '800', flex: 1 },
   calloutRating: { fontSize: 14, fontWeight: '800' },
   calloutReason: { fontSize: 12, lineHeight: 16, marginBottom: 12 },
-  calloutActions: { flexDirection: 'row', justifyContent: 'flex-end' },
+  calloutActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8 },
+  directionsBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1 },
+  directionsBtnText: { fontWeight: '700', fontSize: 12 },
   calloutBtn: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 10 },
   calloutBtnText: { fontWeight: '800', fontSize: 13 }
 });

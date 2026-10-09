@@ -9,12 +9,18 @@ export function initFilterUI() {
   const resetBtn = document.getElementById('resetAllFiltersBtn');
   const activeContainer = document.getElementById('activeFiltersContainer');
 
-  const slider = document.getElementById('priceRangeSlider');
+  const minSlider = document.getElementById('priceMinSlider');
+  const maxSlider = document.getElementById('priceMaxSlider');
+  const sliderFill = document.getElementById('dualSliderFill');
   const minInput = document.getElementById('priceMinInput');
   const maxInput = document.getElementById('priceMaxInput');
   const presetChips = document.querySelectorAll('.price-preset-chip');
+  const topBudgetChips = document.querySelectorAll('.budget-chip');
   const checkboxes = document.querySelectorAll('.filter-checkbox');
   const collapsibleSections = document.querySelectorAll('.collapsible-section');
+
+  const SLIDER_MAX = 5000;
+  const SLIDER_MIN = 0;
 
   // 1. Collapsible Section headers
   collapsibleSections.forEach(section => {
@@ -33,64 +39,135 @@ export function initFilterUI() {
     });
   });
 
-  // 2. Mobile toggle
+  // 2. Mobile sidebar toggle
   toggleBtn?.addEventListener('click', () => {
     sidebar?.classList.toggle('mobile-open');
   });
 
-  // 3. Price slider & numeric inputs
-  let priceDebounce = null;
-  function triggerPriceUpdate() {
-    clearTimeout(priceDebounce);
-    priceDebounce = setTimeout(() => {
-      let min = parseInt(minInput?.value, 10);
-      let max = parseInt(maxInput?.value, 10);
-      if (isNaN(min) || min < 0) min = 0;
-      if (isNaN(max) || max < min) max = Math.max(min, 3000);
-
-      // Check preset active status
-      presetChips.forEach(chip => {
-        const cMin = Number(chip.dataset.min);
-        const cMax = Number(chip.dataset.max);
-        if (min === cMin && max === cMax) {
-          chip.classList.add('active');
-        } else {
-          chip.classList.remove('active');
-        }
-      });
-
-      state.setFacetFilters({ priceMin: min, priceMax: max });
-    }, 120);
+  // 3. Dual slider track fill update
+  function updateSliderFill(minVal, maxVal) {
+    if (!sliderFill) return;
+    const leftPercent = Math.max(0, Math.min(100, (minVal / SLIDER_MAX) * 100));
+    const rightPercent = Math.max(0, Math.min(100, 100 - (maxVal / SLIDER_MAX) * 100));
+    sliderFill.style.left = `${leftPercent}%`;
+    sliderFill.style.right = `${rightPercent}%`;
   }
 
-  slider?.addEventListener('input', () => {
-    if (maxInput) maxInput.value = slider.value;
-    triggerPriceUpdate();
+  // Helper to synchronize active budget chips based on min & max
+  function syncBudgetChips(minVal, maxVal) {
+    let matchedTier = null;
+    if (minVal === 0 && maxVal === 400) matchedTier = 1;
+    else if (minVal === 400 && maxVal === 1000) matchedTier = 2;
+    else if (minVal === 1000 && maxVal === 2000) matchedTier = 3;
+    else if (minVal === 2000 && maxVal === 5000) matchedTier = 4;
+
+    presetChips.forEach(chip => {
+      const cMin = Number(chip.dataset.min);
+      const cMax = Number(chip.dataset.max);
+      if (minVal === cMin && maxVal === cMax) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+
+    topBudgetChips.forEach(chip => {
+      const bTier = Number(chip.dataset.budget);
+      if (matchedTier && bTier === matchedTier) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+  }
+
+  let priceDebounce = null;
+  function triggerPriceUpdate(minVal, maxVal, fromSlider = false) {
+    if (!fromSlider) {
+      if (minSlider) minSlider.value = minVal;
+      if (maxSlider) maxSlider.value = maxVal;
+    }
+    if (minInput && minInput.value !== String(minVal)) minInput.value = minVal;
+    if (maxInput && maxInput.value !== String(maxVal)) maxInput.value = maxVal;
+
+    updateSliderFill(minVal, maxVal);
+    syncBudgetChips(minVal, maxVal);
+
+    clearTimeout(priceDebounce);
+    priceDebounce = setTimeout(() => {
+      state.setFacetFilters({ priceMin: minVal, priceMax: maxVal });
+    }, 80);
+  }
+
+  // Dual Slider Event Listeners
+  minSlider?.addEventListener('input', () => {
+    let minVal = parseInt(minSlider.value, 10) || 0;
+    let maxVal = parseInt(maxSlider?.value, 10) || SLIDER_MAX;
+    if (minVal > maxVal) {
+      minVal = maxVal;
+      minSlider.value = minVal;
+    }
+    triggerPriceUpdate(minVal, maxVal, true);
   });
 
-  minInput?.addEventListener('input', () => {
-    triggerPriceUpdate();
+  maxSlider?.addEventListener('input', () => {
+    let minVal = parseInt(minSlider?.value, 10) || 0;
+    let maxVal = parseInt(maxSlider.value, 10) || SLIDER_MAX;
+    if (maxVal < minVal) {
+      maxVal = minVal;
+      maxSlider.value = maxVal;
+    }
+    triggerPriceUpdate(minVal, maxVal, true);
   });
 
-  maxInput?.addEventListener('input', () => {
-    if (slider) slider.value = Math.min(3000, parseInt(maxInput.value, 10) || 3000);
-    triggerPriceUpdate();
+  // Numeric Inputs Event Listeners
+  minInput?.addEventListener('change', () => {
+    let minVal = parseInt(minInput.value, 10);
+    if (isNaN(minVal) || minVal < 0) minVal = 0;
+    if (minVal > SLIDER_MAX) minVal = SLIDER_MAX;
+    let maxVal = parseInt(maxInput?.value, 10) || SLIDER_MAX;
+    if (minVal > maxVal) maxVal = minVal;
+    triggerPriceUpdate(minVal, maxVal, false);
   });
 
-  // Quick preset chips
+  maxInput?.addEventListener('change', () => {
+    let maxVal = parseInt(maxInput.value, 10);
+    if (isNaN(maxVal) || maxVal < 0) maxVal = SLIDER_MAX;
+    if (maxVal > SLIDER_MAX) maxVal = SLIDER_MAX;
+    let minVal = parseInt(minInput?.value, 10) || 0;
+    if (maxVal < minVal) minVal = maxVal;
+    triggerPriceUpdate(minVal, maxVal, false);
+  });
+
+  // Sidebar Preset Chips (৳ ≤400, ৳৳ 400–1k, ৳৳৳ 1k–2k, ৳৳৳৳ 2k+)
   presetChips.forEach(chip => {
     chip.addEventListener('click', () => {
       const min = Number(chip.dataset.min);
       const max = Number(chip.dataset.max);
-      if (minInput) minInput.value = min;
-      if (maxInput) maxInput.value = max;
-      if (slider) slider.value = Math.min(3000, max);
-
-      presetChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      state.setFacetFilters({ priceMin: min, priceMax: max });
+      triggerPriceUpdate(min, max, false);
     });
   });
+
+  // Top Budget Chips Synchronization (৳, ৳৳, ৳৳৳, ৳৳৳৳)
+  topBudgetChips.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tier = parseInt(btn.dataset.budget, 10);
+      let min = 0;
+      let max = 5000;
+      if (tier === 1) { min = 0; max = 400; }
+      else if (tier === 2) { min = 400; max = 1000; }
+      else if (tier === 3) { min = 1000; max = 2000; }
+      else if (tier === 4) { min = 2000; max = 5000; }
+
+      triggerPriceUpdate(min, max, false);
+    });
+  });
+
+  // Initial Slider Track Fill
+  const initialMin = parseInt(minSlider?.value || '0', 10);
+  const initialMax = parseInt(maxSlider?.value || '3000', 10);
+  updateSliderFill(initialMin, initialMax);
+  syncBudgetChips(initialMin, initialMax);
 
   // 4. Checkboxes change listener
   checkboxes.forEach(cb => {
@@ -130,10 +207,9 @@ export function initFilterUI() {
 
   function resetAllFilters() {
     checkboxes.forEach(cb => { cb.checked = false; });
-    if (minInput) minInput.value = 0;
-    if (maxInput) maxInput.value = 3000;
-    if (slider) slider.value = 3000;
+    triggerPriceUpdate(0, 5000, false);
     presetChips.forEach(c => c.classList.remove('active'));
+    topBudgetChips.forEach(c => c.classList.remove('active'));
     state.resetFacetFilters();
   }
 
@@ -143,7 +219,7 @@ export function initFilterUI() {
     const f = state.facetFilters;
 
     const badges = [];
-    const isPriceCustom = (f.priceMin > 0 || f.priceMax < 3000);
+    const isPriceCustom = (f.priceMin > 0 || f.priceMax < 5000);
     if (isPriceCustom) {
       badges.push({
         type: 'price',
@@ -217,11 +293,8 @@ export function initFilterUI() {
         const val = badgeEl.dataset.val;
 
         if (type === 'price') {
-          if (minInput) minInput.value = 0;
-          if (maxInput) maxInput.value = 3000;
-          if (slider) slider.value = 3000;
-          presetChips.forEach(c => c.classList.remove('active'));
-          state.setFacetFilters({ priceMin: 0, priceMax: 3000 });
+          triggerPriceUpdate(0, 5000, false);
+          state.setFacetFilters({ priceMin: 0, priceMax: 5000 });
         } else {
           // Uncheck corresponding checkbox
           const matchCb = Array.from(checkboxes).find(cb => cb.dataset.group === type && cb.value === val);

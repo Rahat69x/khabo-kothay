@@ -109,11 +109,12 @@ function initLocationControls(presets = {}) {
   if (gpsBtn) {
     gpsBtn.addEventListener('click', () => {
       if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser. Please select an area manually.');
+        if (status) status.innerHTML = '⚠️ Geolocation not supported by your browser. Please choose an area from the dropdown.';
         return;
       }
       gpsBtn.disabled = true;
       gpsBtn.innerHTML = '<span>⏳</span> Locating...';
+      if (status) status.textContent = 'Acquiring GPS fix in Dhaka...';
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -122,24 +123,24 @@ function initLocationControls(presets = {}) {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
           state.setLocation(lat, lng, 'Current GPS Spot');
-          if (status) status.textContent = `Starting from: GPS (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+          if (status) status.textContent = `📍 Starting from: GPS (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
           executeSearch();
         },
         (err) => {
           gpsBtn.disabled = false;
           gpsBtn.innerHTML = '<span>📡</span> Use Current GPS';
-          console.warn('Geolocation denied or failed, allowing manual Dhaka area selection.', err);
-          let reasonMsg = 'GPS permission was denied or unavailable.';
-          if (err.code === 1) reasonMsg = 'GPS permission denied. Please select your neighborhood in Dhaka from the dropdown.';
-          else if (err.code === 2) reasonMsg = 'Location unavailable or GPS turned off. Pick an area in Dhaka from the dropdown.';
-          else if (err.code === 3) reasonMsg = 'GPS timed out. Pick an area in Dhaka from the dropdown.';
-          
-          alert(reasonMsg);
+          console.warn('Geolocation denied or failed, using Dhaka preset location.', err);
+          let reasonMsg = 'GPS unavailable. Selected default Dhaka area: Notun Bazar';
+          if (err.code === 1) reasonMsg = 'GPS permission denied. Using selected area from dropdown.';
+          else if (err.code === 2) reasonMsg = 'Position unavailable. Using selected area from dropdown.';
+          else if (err.code === 3) reasonMsg = 'GPS timed out. Using selected area from dropdown.';
+
+          if (status) status.textContent = `ℹ️ ${reasonMsg}`;
           if (select) {
             select.focus();
           }
         },
-        { timeout: 10000, enableHighAccuracy: true }
+        { timeout: 8000, enableHighAccuracy: true, maximumAge: 30000 }
       );
     });
   }
@@ -403,7 +404,8 @@ async function executeSearch(options = {}) {
       openNowOnly: state.openNowOnly,
       distanceRadiusMeters: state.distanceRadius,
       surpriseMe: Boolean(options.surpriseMe),
-      foodProfile
+      foodProfile,
+      filters: state.facetFilters
     };
 
     const data = await fetchRecommendations(payload);

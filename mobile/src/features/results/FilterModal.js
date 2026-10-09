@@ -66,7 +66,7 @@ export default function FilterModal({
 }) {
   const [localFilters, setLocalFilters] = useState(filters);
   const [minText, setMinText] = useState(String(filters.priceMin || 0));
-  const [maxText, setMaxText] = useState(String(filters.priceMax || 3000));
+  const [maxText, setMaxText] = useState(String(filters.priceMax || 5000));
 
   const [collapsed, setCollapsed] = useState({
     availability: false,
@@ -81,7 +81,7 @@ export default function FilterModal({
     if (visible) {
       setLocalFilters(filters);
       setMinText(String(filters.priceMin || 0));
-      setMaxText(String(filters.priceMax || 3000));
+      setMaxText(String(filters.priceMax || 5000));
     }
   }, [visible, filters]);
 
@@ -117,8 +117,8 @@ export default function FilterModal({
       setMinText(String(next));
       setLocalFilters(prev => ({ ...prev, priceMin: next }));
     } else {
-      const current = parseInt(maxText, 10) || 3000;
-      const next = Math.max(100, current + delta);
+      const current = parseInt(maxText, 10) || 5000;
+      const next = Math.max(100, Math.min(5000, current + delta));
       setMaxText(String(next));
       setLocalFilters(prev => ({ ...prev, priceMax: next }));
     }
@@ -142,7 +142,7 @@ export default function FilterModal({
 
   const handleApply = () => {
     const finalMin = parseInt(minText, 10) || 0;
-    const finalMax = parseInt(maxText, 10) || 3000;
+    const finalMax = parseInt(maxText, 10) || 5000;
     onApplyFilters({
       ...localFilters,
       priceMin: finalMin,
@@ -153,10 +153,10 @@ export default function FilterModal({
 
   const handleReset = () => {
     setMinText('0');
-    setMaxText('3000');
+    setMaxText('5000');
     const emptyFilters = {
       priceMin: 0,
-      priceMax: 3000,
+      priceMax: 5000,
       availability: [],
       cuisines: [],
       restaurantTypes: [],
@@ -211,24 +211,24 @@ export default function FilterModal({
               Filters by verified item prices on menu & estimated cost
             </Text>
 
-            {/* Quick Presets */}
+            {/* Quick Presets matching 4 Budget Tiers */}
             <View style={styles.presetRow}>
               <TouchableOpacity
                 style={[
                   styles.presetChip,
                   { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt },
-                  isPresetActive(0, 500) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
+                  isPresetActive(0, 400) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
-                onPress={() => applyPreset(0, 500)}
+                onPress={() => applyPreset(0, 400)}
               >
                 <Text
                   style={[
                     styles.presetChipText,
                     { color: theme.colors.text },
-                    isPresetActive(0, 500) && { color: theme.colors.primary, fontWeight: '800' }
+                    isPresetActive(0, 400) && { color: theme.colors.primary, fontWeight: '800' }
                   ]}
                 >
-                  ≤ ৳500
+                  ৳ ≤400
                 </Text>
               </TouchableOpacity>
 
@@ -236,18 +236,18 @@ export default function FilterModal({
                 style={[
                   styles.presetChip,
                   { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt },
-                  isPresetActive(500, 1200) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
+                  isPresetActive(400, 1000) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
-                onPress={() => applyPreset(500, 1200)}
+                onPress={() => applyPreset(400, 1000)}
               >
                 <Text
                   style={[
                     styles.presetChipText,
                     { color: theme.colors.text },
-                    isPresetActive(500, 1200) && { color: theme.colors.primary, fontWeight: '800' }
+                    isPresetActive(400, 1000) && { color: theme.colors.primary, fontWeight: '800' }
                   ]}
                 >
-                  ৳500–1.2k
+                  ৳৳ 400–1k
                 </Text>
               </TouchableOpacity>
 
@@ -255,18 +255,37 @@ export default function FilterModal({
                 style={[
                   styles.presetChip,
                   { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt },
-                  isPresetActive(1200, 3500) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
+                  isPresetActive(1000, 2000) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
-                onPress={() => applyPreset(1200, 3500)}
+                onPress={() => applyPreset(1000, 2000)}
               >
                 <Text
                   style={[
                     styles.presetChipText,
                     { color: theme.colors.text },
-                    isPresetActive(1200, 3500) && { color: theme.colors.primary, fontWeight: '800' }
+                    isPresetActive(1000, 2000) && { color: theme.colors.primary, fontWeight: '800' }
                   ]}
                 >
-                  ৳1.2k+
+                  ৳৳৳ 1k–2k
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.presetChip,
+                  { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt },
+                  isPresetActive(2000, 5000) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
+                ]}
+                onPress={() => applyPreset(2000, 5000)}
+              >
+                <Text
+                  style={[
+                    styles.presetChipText,
+                    { color: theme.colors.text },
+                    isPresetActive(2000, 5000) && { color: theme.colors.primary, fontWeight: '800' }
+                  ]}
+                >
+                  ৳৳৳৳ 2k+
                 </Text>
               </TouchableOpacity>
             </View>

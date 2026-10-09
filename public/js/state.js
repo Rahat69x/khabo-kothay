@@ -17,7 +17,7 @@ class AppState {
     this.rawResults = [];
     this.facetFilters = {
       priceMin: 0,
-      priceMax: 3000,
+      priceMax: 5000,
       availability: [],
       cuisines: [],
       restaurantTypes: [],
@@ -80,6 +80,15 @@ class AppState {
   setBudget(budget) {
     this.budget = budget;
     appStorage.savePreferences({ budget });
+    let min = 0;
+    let max = 5000;
+    if (budget === 1) { min = 0; max = 400; }
+    else if (budget === 2) { min = 400; max = 1000; }
+    else if (budget === 3) { min = 1000; max = 2000; }
+    else if (budget === 4) { min = 2000; max = 5000; }
+    this.facetFilters.priceMin = min;
+    this.facetFilters.priceMax = max;
+    this.results = this.getFilteredResults();
     this.notify('budget');
   }
 
@@ -100,7 +109,7 @@ class AppState {
   resetFacetFilters() {
     this.facetFilters = {
       priceMin: 0,
-      priceMax: 3000,
+      priceMax: 5000,
       availability: [],
       cuisines: [],
       restaurantTypes: [],
@@ -125,12 +134,10 @@ class AppState {
       if (r.menu?.items && r.menu.items.length > 0) {
         const itemPrices = r.menu.items.map(i => i.price).filter(Number.isFinite);
         if (itemPrices.length > 0) {
-          const minItemPrice = Math.min(...itemPrices);
-          const maxItemPrice = Math.max(...itemPrices);
           const costPerPerson = r.menu?.estimatedCostPerPerson?.amount || r.estimatedCostPerPersonBdt;
           if (costPerPerson && costPerPerson >= min && costPerPerson <= max) {
             matchesPrice = true;
-          } else if (minItemPrice <= max && maxItemPrice >= min) {
+          } else if (itemPrices.some(p => p >= min && p <= max)) {
             matchesPrice = true;
           }
         }
@@ -145,10 +152,10 @@ class AppState {
       // Check price level fallback
       if (!matchesPrice && (!r.menu?.items || r.menu.items.length === 0)) {
         const tierMap = {
-          1: { min: 50, max: 400 },
-          2: { min: 250, max: 950 },
-          3: { min: 700, max: 2000 },
-          4: { min: 1500, max: 6000 }
+          1: { min: 0, max: 400 },
+          2: { min: 400, max: 1000 },
+          3: { min: 1000, max: 2000 },
+          4: { min: 2000, max: 5000 }
         };
         const tier = tierMap[r.priceLevel || 2] || { min: 0, max: 5000 };
         if (tier.min <= max && tier.max >= min) {

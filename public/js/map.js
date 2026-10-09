@@ -1,7 +1,8 @@
 /**
  * Interactive Map Controller
- * Supports Google Maps JavaScript API with fallback interactive vector map
- * Themed to brand tokens: Indigo and saffron in light and dark mode
+ * Supports Leaflet (OpenStreetMap & CartoDB tiles) and Google Maps JavaScript API
+ * Fallback interactive vector schematic if neither is available.
+ * Zero raw hex colors: strictly adheres to brand design tokens.
  */
 
 function getBrandColor(propName, fallback = 'currentColor') {
@@ -14,13 +15,18 @@ function getBrandColor(propName, fallback = 'currentColor') {
 
 class MapController {
   constructor() {
+    this.container = null;
     this.mapInstance = null;
+    this.tileLayer = null;
     this.userMarker = null;
     this.restaurantMarkers = [];
     this.routePolyline = null;
     this.isGoogleMapsLoaded = false;
+    this.isLeaflet = false;
     this.activeId = null;
     this.darkMapStyles = null;
+    this.onMarkerClick = null;
+    this.cachedUserLocation = null;
   }
 
   async init(containerId, googleApiKey) {
@@ -32,14 +38,16 @@ class MapController {
         await this.loadGoogleMapsScript(googleApiKey);
         this.isGoogleMapsLoaded = true;
       } catch (err) {
-        console.warn('Google Maps JS API failed to load, falling back to mock interactive canvas map.', err);
+        console.warn('Google Maps JS API unavailable, attempting Leaflet.', err);
       }
-    } else if (typeof window.google !== 'undefined') {
+    } else if (typeof window.google !== 'undefined' && window.google.maps) {
       this.isGoogleMapsLoaded = true;
     }
 
     if (this.isGoogleMapsLoaded && window.google?.maps) {
       await this.initGoogleMap();
+    } else if (typeof window.L !== 'undefined') {
+      this.initLeafletMap();
     } else {
       this.initMockMap();
     }
@@ -73,8 +81,7 @@ class MapController {
 
   async initGoogleMap() {
     const center = { lat: 23.7925, lng: 90.4150 }; // Gulshan 2
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
-      (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const isDark = this.isDarkModeActive();
 
     let styles = [];
     if (isDark) {
@@ -90,16 +97,68 @@ class MapController {
     });
   }
 
-  async applyTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+  initLeafletMap() {
+    try {
+      this.isLeaflet = true;
+      // In case container already had a Leaflet instance
+      if (this.mapInstance && this.mapInstance.remove) {
+        this.mapInstance.remove();
+      }
+
+      const defaultCenter = [23.7925, 90.4150]; // Gulshan 2
+      this.mapInstance = L.map(this.container, {
+        center: defaultCenter,
+        zoom: 14,
+        zoomControl: true,
+        scrollWheelZoom: true
+      });
+
+      this.updateLeafletTiles();
+    } catch (err) {
+      console.warn('Leaflet initialization failed, falling back to mock map.', err);
+      this.isLeaflet = false;
+      this.initMockMap();
+    }
+  }
+
+  isDarkModeActive() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ||
       (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    if (this.mapInstance && typeof google !== 'undefined' && google.maps) {
+  }
+
+  updateLeafletTiles() {
+    if (!this.isLeaflet || !this.mapInstance) return;
+
+    if (this.tileLayer) {
+      this.mapInstance.removeLayer(this.tileLayer);
+    }
+
+    const isDark = this.isDarkModeActive();
+    const tileUrl = isDark
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+    const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+    this.tileLayer = L.tileLayer(tileUrl, {
+      subdomains: 'abcd',
+      maxZoom: 19,
+      attribution
+    }).addTo(this.mapInstance);
+  }
+
+  async applyTheme() {
+    const isDark = this.isDarkModeActive();
+    if (this.isGoogleMapsLoaded && this.mapInstance && typeof google !== 'undefined' && google.maps) {
       const styles = isDark ? await this.loadDarkMapStyle() : [];
       this.mapInstance.setOptions({ styles });
+    } else if (this.isLeaflet && this.mapInstance) {
+      this.updateLeafletTiles();
     }
   }
 
   initMockMap() {
+    if (!this.container) return;
     this.container.innerHTML = `
       <div class="mock-map-view" id="mockMapCanvas">
         <div class="map-overlay-badge">
@@ -112,11 +171,113 @@ class MapController {
   }
 
   update(userLocation, restaurants, onMarkerClick) {
+    this.cachedUserLocation = userLocation;
     this.onMarkerClick = onMarkerClick;
+
     if (this.isGoogleMapsLoaded && this.mapInstance) {
       this.updateGoogleMap(userLocation, restaurants);
+    } else if (this.isLeaflet && this.mapInstance) {
+      this.updateLeafletMap(userLocation, restaurants);
     } else {
       this.updateMockMap(userLocation, restaurants);
+    }
+  }
+
+  updateLeafletMap(userLocation, restaurants) {
+    // Clear user marker
+    if (this.userMarker) {
+      this.mapInstance.removeLayer(this.userMarker);
+      this.userMarker = null;
+    }
+    // Clear restaurant markers
+    for (const m of this.restaurantMarkers) {
+      if (m.marker) this.mapInstance.removeLayer(m.marker);
+    }
+    this.restaurantMarkers = [];
+    // Clear polyline
+    if (this.routePolyline) {
+      this.mapInstance.removeLayer(this.routePolyline);
+      this.routePolyline = null;
+    }
+
+    const bounds = L.latLngBounds();
+
+    // 1. User Location Marker
+    if (userLocation && Number.isFinite(userLocation.lat) && Number.isFinite(userLocation.lng)) {
+      const uLatLng = [userLocation.lat, userLocation.lng];
+      bounds.extend(uLatLng);
+
+      const userIcon = L.divIcon({
+        className: 'leaflet-user-marker-wrap',
+        html: `
+          <div class="leaflet-user-marker" title="Your Location: ${userLocation.name || 'Current'}">
+            <div class="pulse-ring"></div>
+            <div class="user-dot"></div>
+          </div>
+        `,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+
+      this.userMarker = L.marker(uLatLng, { icon: userIcon, zIndexOffset: 500 }).addTo(this.mapInstance);
+      this.userMarker.bindTooltip(`📍 You are here (${userLocation.name || 'Starting Point'})`, {
+        direction: 'top',
+        offset: [0, -10]
+      });
+    }
+
+    // 2. Restaurant Markers
+    restaurants.forEach((r, idx) => {
+      if (!r.location || !Number.isFinite(r.location.latitude) || !Number.isFinite(r.location.longitude)) return;
+      const rLatLng = [r.location.latitude, r.location.longitude];
+      bounds.extend(rLatLng);
+
+      const placeIcon = L.divIcon({
+        className: 'leaflet-place-marker-wrap',
+        html: `
+          <div class="leaflet-place-marker ${r.id === this.activeId ? 'active' : ''}" id="leaflet-pin-${r.id}">
+            <span class="pin-number">${idx + 1}</span>
+          </div>
+        `,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+
+      const marker = L.marker(rLatLng, { icon: placeIcon }).addTo(this.mapInstance);
+
+      // Popup Content
+      const directionsUrl = this.getGoogleMapsDirectionsUrl(userLocation, r);
+      const costAmount = r.estimatedCostPerPersonBdt || r.menu?.estimatedCostPerPerson?.amount;
+      const costStr = costAmount ? `৳${costAmount}/person` : '৳'.repeat(r.priceLevel || 2);
+      const durationMins = r.durationSeconds ? Math.round(r.durationSeconds / 60) : 10;
+      const distKm = r.distanceMeters ? (r.distanceMeters / 1000).toFixed(1) : '1.0';
+
+      const popupHtml = `
+        <div class="map-popup-card">
+          <h4 class="map-popup-title">${idx + 1}. ${r.displayName}</h4>
+          <div class="map-popup-meta">${r.cuisine} • ⭐ ${r.rating || 4.2} (${r.userRatingCount || 100}+ reviews)</div>
+          <div class="map-popup-cost">${costStr} • 🚗 ${durationMins} min (${distKm} km)</div>
+          <div class="map-popup-actions">
+            <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer" class="map-popup-btn primary">
+              🧭 Directions
+            </a>
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(popupHtml, { maxWidth: 260, offset: [0, -10] });
+
+      marker.on('click', () => {
+        if (this.onMarkerClick) this.onMarkerClick(r);
+        this.highlightRestaurant(userLocation, r);
+      });
+
+      this.restaurantMarkers.push({ id: r.id, marker, restaurant: r });
+    });
+
+    // 3. Fit bounds
+    if (bounds.isValid()) {
+      this.mapInstance.fitBounds(bounds, { padding: [36, 36], maxZoom: 16 });
     }
   }
 
@@ -131,7 +292,7 @@ class MapController {
     const onPrimaryColor = getBrandColor('--color-on-primary', 'white');
     const surfaceColor = getBrandColor('--color-surface', 'white');
 
-    // User Marker: primary dot with a white ring
+    // User Marker
     const userLatLng = { lat: userLocation.lat, lng: userLocation.lng };
     bounds.extend(userLatLng);
     this.userMarker = new google.maps.Marker({
@@ -148,7 +309,7 @@ class MapController {
       }
     });
 
-    // Restaurant Markers: primary with onPrimary numbers
+    // Restaurant Markers
     restaurants.forEach((r, idx) => {
       const pos = { lat: r.location.latitude, lng: r.location.longitude };
       bounds.extend(pos);
@@ -207,8 +368,8 @@ class MapController {
     const toY = (lat) => Math.max(40, Math.min(560, (1 - (lat - minLat) / (maxLat - minLat)) * 520 + 40));
 
     // User pin
-    const uX = toX(userLocation.lng);
-    const uY = toY(userLocation.lat);
+    const uX = toX(userLocation.lat ? userLocation.lng : 90.415);
+    const uY = toY(userLocation.lat ? userLocation.lat : 23.792);
 
     const userPin = document.createElement('div');
     userPin.className = 'map-user-pin user-marker';
@@ -244,14 +405,46 @@ class MapController {
   }
 
   highlightRestaurant(userLocation, restaurant) {
+    if (!restaurant) return;
     this.activeId = restaurant.id;
-    const primaryColor = getBrandColor('--color-primary', 'indigo');
+    const primaryColor = getBrandColor('--color-primary', 'orange');
 
-    if (this.isGoogleMapsLoaded && this.mapInstance) {
+    if (this.isLeaflet && this.mapInstance) {
+      const pos = [restaurant.location.latitude, restaurant.location.longitude];
+
+      // Update active pin visual
+      document.querySelectorAll('.leaflet-place-marker').forEach(el => el.classList.remove('active'));
+      const activePin = document.getElementById(`leaflet-pin-${restaurant.id}`);
+      if (activePin) activePin.classList.add('active');
+
+      // Draw route polyline from user position to restaurant
+      if (this.routePolyline) {
+        this.mapInstance.removeLayer(this.routePolyline);
+      }
+      if (userLocation && Number.isFinite(userLocation.lat) && Number.isFinite(userLocation.lng)) {
+        this.routePolyline = L.polyline(
+          [[userLocation.lat, userLocation.lng], pos],
+          {
+            color: primaryColor,
+            weight: 5,
+            opacity: 0.9,
+            dashArray: '8, 6',
+            lineCap: 'round'
+          }
+        ).addTo(this.mapInstance);
+      }
+
+      // Open marker popup
+      const targetM = this.restaurantMarkers.find(m => m.id === restaurant.id);
+      if (targetM && targetM.marker) {
+        targetM.marker.openPopup();
+      }
+
+      this.mapInstance.panTo(pos, { animate: true });
+    } else if (this.isGoogleMapsLoaded && this.mapInstance) {
       const pos = { lat: restaurant.location.latitude, lng: restaurant.location.longitude };
       this.mapInstance.panTo(pos);
 
-      // Recommended route is a thick primary line
       if (this.routePolyline) this.routePolyline.setMap(null);
       this.routePolyline = new google.maps.Polyline({
         path: [
@@ -270,7 +463,7 @@ class MapController {
       if (activePin) activePin.classList.add('active');
 
       const routeGroup = document.getElementById('mockRouteLines');
-      if (routeGroup) {
+      if (routeGroup && userLocation) {
         const minLat = 23.770, maxLat = 23.810;
         const minLng = 90.395, maxLng = 90.435;
         const toX = (lng) => Math.max(40, Math.min(760, ((lng - minLng) / (maxLng - minLng)) * 720 + 40));
@@ -288,8 +481,18 @@ class MapController {
     }
   }
 
+  highlightMarker(placeId) {
+    const target = this.restaurantMarkers.find(m => m.id === placeId);
+    if (target && this.cachedUserLocation) {
+      this.highlightRestaurant(this.cachedUserLocation, target.restaurant);
+    }
+  }
+
   getGoogleMapsDirectionsUrl(userLocation, restaurant) {
-    const origin = `${userLocation.lat},${userLocation.lng}`;
+    if (!restaurant?.location) return '#';
+    const origin = (userLocation && userLocation.lat && userLocation.lng)
+      ? `${userLocation.lat},${userLocation.lng}`
+      : '23.7925,90.4150';
     const destination = `${restaurant.location.latitude},${restaurant.location.longitude}`;
     return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
   }

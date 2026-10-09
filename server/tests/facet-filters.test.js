@@ -162,4 +162,23 @@ describe('Price Range & Faceted Filtering (Reference Layout)', () => {
       expect(minItem).toBeLessThanOrEqual(700);
     });
   });
+
+  it('correctly filters according to 4 synchronized BDT budget categories', () => {
+    // Tier 1: 0 - 400 BDT
+    const tier1 = rankRestaurants({
+      candidates: sampleCandidates,
+      filters: { priceMin: 0, priceMax: 400 }
+    });
+    expect(tier1.map(r => r.id)).toContain('budget_cafe');
+    expect(tier1.map(r => r.id)).toContain('biryani_spot');
+    expect(tier1.map(r => r.id)).not.toContain('fine_dining_spot');
+
+    // Tier 4: 2000 - 5000 BDT
+    const tier4 = rankRestaurants({
+      candidates: sampleCandidates,
+      filters: { priceMin: 2000, priceMax: 5000 }
+    });
+    expect(tier4.map(r => r.id)).toContain('fine_dining_spot');
+    expect(tier4.map(r => r.id)).not.toContain('budget_cafe');
+  });
 });

@@ -51,12 +51,12 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
     logger.warn('Global monthly budget killswitch active; returning cached/mock places.');
     const cachedItem = await globalCache.get(cacheKey);
     if (cachedItem) return cachedItem;
-    return getMockCandidates(cuisine, budget);
+    return getMockCandidates(cuisine, budget, { lat: Number(lat), lng: Number(lng) });
   }
 
   const fetcher = async () => {
     if (isMock) {
-      return getMockCandidates(cuisine, budget);
+      return getMockCandidates(cuisine, budget, { lat: Number(lat), lng: Number(lng) });
     }
 
   try {
@@ -86,7 +86,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
 
     if (!response.ok) {
       console.warn(`Places API responded with status ${response.status}. Falling back to mock data.`);
-      const mockFallback = getMockCandidates(cuisine, budget);
+      const mockFallback = getMockCandidates(cuisine, budget, { lat: Number(lat), lng: Number(lng) });
       return mockFallback;
     }
 

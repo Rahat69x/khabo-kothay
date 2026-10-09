@@ -48,12 +48,17 @@ app.use(
           "https://maps.googleapis.com",
           "https://maps.gstatic.com",
           "https://*.googleusercontent.com",
-          "https://*.openstreetmap.org"
+          "https://*.openstreetmap.org",
+          "https://*.tile.openstreetmap.org",
+          "https://*.basemaps.cartocdn.com",
+          "https://unpkg.com"
         ],
         connectSrc: [
           "'self'",
           "https://maps.googleapis.com",
-          "https://api.open-meteo.com"
+          "https://api.open-meteo.com",
+          "https://*.tile.openstreetmap.org",
+          "https://*.basemaps.cartocdn.com"
         ]
       }
     },

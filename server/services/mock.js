@@ -23,7 +23,10 @@ export function getMockCandidates(cuisine, budget = null, origin = null) {
   if (budget) {
     const budgetNum = parseInt(budget, 10);
     if (!isNaN(budgetNum)) {
-      list = list.filter(r => r.priceLevel === null || r.priceLevel <= budgetNum + 1);
+      const budgetFiltered = list.filter(r => r.priceLevel === null || r.priceLevel <= budgetNum + 1);
+      if (budgetFiltered.length > 0) {
+        list = budgetFiltered;
+      }
     }
   }
   if (origin && origin.lat && origin.lng) {

@@ -1772,80 +1772,99 @@ body {
   margin-bottom: 10px;
 }
 
-.price-slider-wrap {
+/* Dual-Handle Price Range Slider (Reference Layout) */
+.dual-slider-wrap {
   position: relative;
-  margin: 10px 0 14px 0;
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  margin: 8px 0 14px 0;
 }
 
-.price-slider {
-  -webkit-appearance: none;
-  appearance: none;
+.dual-slider-track-bg {
+  position: absolute;
   width: 100%;
   height: 6px;
   border-radius: 999px;
   background: var(--color-line);
-  outline: none;
-  accent-color: var(--color-primary);
-  cursor: pointer;
 }
 
-.price-slider::-webkit-slider-thumb {
+.dual-slider-track-fill {
+  position: absolute;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  left: 0%;
+  right: 40%;
+  pointer-events: none;
+  transition: left 0.05s ease, right 0.05s ease;
+}
+
+.dual-range-input {
+  position: absolute;
+  width: 100%;
+  height: 32px;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+  pointer-events: none;
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  border: 2px solid var(--color-surface);
-  box-shadow: 0 0 6px var(--primary-glow);
-  cursor: pointer;
-  transition: transform 0.15s ease;
+  outline: none;
 }
 
-.price-slider::-webkit-slider-thumb:hover {
+.dual-range-input::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 3.5px solid var(--color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.dual-range-input::-webkit-slider-thumb:hover {
   transform: scale(1.15);
+}
+
+.dual-range-input::-moz-range-thumb {
+  pointer-events: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 3.5px solid var(--color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
 }
 
 .price-inputs-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .price-input-box {
   flex: 1;
-}
-
-.price-input-label {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-
-.input-currency-wrap {
-  display: flex;
-  align-items: center;
   background: var(--color-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 4px 8px;
-  transition: border-color 0.2s ease;
+  padding: 5px 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.input-currency-wrap:focus-within {
+.price-input-box:focus-within {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px var(--primary-glow);
-}
-
-.currency-symbol {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--color-muted);
-  margin-right: 4px;
 }
 
 .price-number-input {
@@ -1853,15 +1872,10 @@ body {
   border: none;
   background: transparent;
   color: var(--color-ink);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   outline: none;
-}
-
-.price-sep {
-  color: var(--color-muted);
-  font-weight: 700;
-  padding-top: 14px;
+  text-align: center;
 }
 
 .price-quick-presets {
@@ -2036,4 +2050,203 @@ body {
   text-decoration: underline;
   margin-left: auto;
 }
+
+/* ==========================================================================
+   Interactive Area Map Styles (Leaflet & OpenStreetMap)
+   ========================================================================== */
+.map-column {
+  position: relative;
+}
+
+.sticky-map-wrapper {
+  position: sticky;
+  top: 80px;
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-header h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.map-sub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.map-viewport {
+  width: 100%;
+  height: 480px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--color-surface-alt);
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 1023px) {
+  .map-viewport {
+    height: 350px;
+  }
+}
+
+/* Leaflet Container & Markers */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  font-family: inherit;
+  background: var(--color-surface-alt);
+}
+
+.leaflet-user-marker {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+
+.leaflet-user-marker .user-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2.5px solid var(--color-surface);
+  box-shadow: 0 0 8px var(--primary-glow);
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.leaflet-user-marker .pulse-ring {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary-tint);
+  top: -3px;
+  left: -3px;
+  animation: pulseUserRing 2s infinite ease-out;
+}
+
+@keyframes pulseUserRing {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.leaflet-place-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2.5px solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.leaflet-place-marker:hover,
+.leaflet-place-marker.active {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-surface);
+  transform: scale(1.22);
+  z-index: 1000 !important;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--color-surface) !important;
+  color: var(--color-ink) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-card) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 4px !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--color-surface) !important;
+}
+
+.map-popup-card {
+  padding: 6px;
+  min-width: 190px;
+  max-width: 240px;
+}
+
+.map-popup-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: var(--color-ink);
+  line-height: 1.25;
+}
+
+.map-popup-meta {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+}
+
+.map-popup-cost {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+.map-popup-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.map-popup-btn {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+  transition: all 0.15s ease;
+}
+
+.map-popup-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.map-popup-btn.primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+}
+
 
