@@ -13,9 +13,10 @@ const scanDirs = [
   path.join(rootDir, 'public', 'css')
 ];
 
-// Exclude auto-generated files
+// Exclude auto-generated and theme configuration files
 const excludedFiles = [
   path.normalize(path.join(rootDir, 'mobile', 'src', 'config', 'theme.generated.js')),
+  path.normalize(path.join(rootDir, 'mobile', 'src', 'config', 'theme.js')),
   path.normalize(path.join(rootDir, 'public', 'css', 'theme.css'))
 ];
 

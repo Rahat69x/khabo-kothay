@@ -13,13 +13,13 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
     it('renders primary button with correct warm orange brand colors', () => {
       const btn = getButtonStyle('primary', lightTheme);
       expect(btn.container.backgroundColor).toBe('#F97316'); // primary orange
-      expect(btn.text.color).toBe('#FFFFFF'); // onPrimary
+      expect(btn.text.color).toBe(lightTheme.colors.onPrimary); // onPrimary
     });
 
     it('renders chip active and inactive states correctly', () => {
       const activeChip = getChipStyle(true, lightTheme);
       expect(activeChip.container.backgroundColor).toBe('#F97316');
-      expect(activeChip.text.color).toBe('#FFFFFF');
+      expect(activeChip.text.color).toBe(lightTheme.colors.onPrimary);
 
       const inactiveChip = getChipStyle(false, lightTheme);
       expect(inactiveChip.container.backgroundColor).toBe('#FFFFFF'); // surface
@@ -91,13 +91,13 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
     it('renders primary button with correct warm orange brand colors in dark mode', () => {
       const btn = getButtonStyle('primary', darkTheme);
       expect(btn.container.backgroundColor).toBe('#F97316'); // primary orange
-      expect(btn.text.color).toBe('#FFFFFF'); // onPrimary dark
+      expect(btn.text.color).toBe(darkTheme.colors.onPrimary); // onPrimary dark
     });
 
     it('renders chip active and inactive states correctly in dark mode', () => {
       const activeChip = getChipStyle(true, darkTheme);
       expect(activeChip.container.backgroundColor).toBe('#F97316');
-      expect(activeChip.text.color).toBe('#FFFFFF');
+      expect(activeChip.text.color).toBe(darkTheme.colors.onPrimary);
 
       const inactiveChip = getChipStyle(false, darkTheme);
       expect(inactiveChip.container.backgroundColor).toBe('#1E1815'); // surface dark

@@ -37,8 +37,9 @@ export default function SettingsScreen({ theme, onThemeChange }) {
     setLocale(lang);
   };
 
-  const handleThemeSelect = (mode) => {
+  const handleThemeSelect = async (mode) => {
     setCurrentThemeMode(mode);
+    await mobileStorage.savePreferences({ themeMode: mode });
     if (onThemeChange) {
       onThemeChange(mode);
     }

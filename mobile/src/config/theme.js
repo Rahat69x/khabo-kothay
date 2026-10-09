@@ -18,26 +18,26 @@ export const darkColors = darkTheme.colors;
  */
 export const colorTokens = {
   light: {
-    primary: '#F97316',
-    pressed: '#EA580C',
-    tint: '#FFEDD5',
-    background: '#FFFBF7',
-    surface: '#FFFFFF',
-    text: '#1C1917',
-    mutedText: '#78716C',
-    border: '#E7E5E4',
-    onPrimary: '#FFFFFF'
+    primary: tokens.light.primary,
+    pressed: tokens.light.primaryPressed,
+    tint: tokens.light.primaryTint,
+    background: tokens.light.bg,
+    surface: tokens.light.surface,
+    text: tokens.light.ink,
+    mutedText: tokens.light.muted,
+    border: tokens.light.line,
+    onPrimary: tokens.light.onPrimary
   },
   dark: {
-    primary: '#F97316',
-    pressed: '#EA580C',
-    tint: '#431407',
-    background: '#121212',
-    surface: '#1E1815',
-    text: '#FAFAF9',
-    mutedText: '#A8A29E',
-    border: 'rgba(250, 250, 249, 0.12)',
-    onPrimary: '#FFFFFF'
+    primary: tokens.dark.primary,
+    pressed: tokens.dark.primaryPressed,
+    tint: tokens.dark.primaryTint,
+    background: tokens.dark.bg,
+    surface: tokens.dark.surface,
+    text: tokens.dark.ink,
+    mutedText: tokens.dark.muted,
+    border: tokens.dark.line,
+    onPrimary: tokens.dark.onPrimary
   }
 };
 
