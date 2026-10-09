@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { apiClient } from '../../api/client.js';
 import { mobileStorage } from '../../services/storage.js';
+import { getLocalMealTime } from '../../services/localEngine.js';
 import { t } from '../../i18n/index.js';
 
 const MODES = [
@@ -207,7 +208,22 @@ export default function MealTimeView({ theme, location, navigation }) {
 
       setSearchResponse(res);
     } catch (err) {
-      Alert.alert(t('common.error'), err.message || 'Meal-Time search failed');
+      console.warn('Backend searchMealTime unavailable, falling back to local engine:', err);
+      try {
+        const localRes = getLocalMealTime({
+          mode: selectedMode,
+          availableMinutes: availableMins,
+          origin: { lat: location.lat, lng: location.lng, name: location.name },
+          destination: destPayload,
+          transport: activeTransport,
+          diningStyle: activeDining,
+          bufferPreference: bufferPref
+        });
+        setSearchResponse(localRes);
+      } catch (fallbackErr) {
+        console.error('Local meal-time fallback failed:', fallbackErr);
+        Alert.alert(t('common.error'), 'Meal-Time search could not complete');
+      }
     } finally {
       setLoading(false);
     }
@@ -261,6 +277,7 @@ export default function MealTimeView({ theme, location, navigation }) {
   };
 
   const renderSegmentedBar = (tb, availableMinutes) => {
+    if (!tb) return null;
     return (
       <View style={styles.segmentedBarContainer}>
         <View style={[styles.segmentedBar, { backgroundColor: theme.colors.surfaceAlt, borderColor: theme.colors.border }]}>
@@ -341,7 +358,7 @@ export default function MealTimeView({ theme, location, navigation }) {
             🏁 <Text style={{ fontWeight: '800' }}>Back by: {c.backByTime}</Text>
           </Text>
           <Text style={[styles.timeMetaItem, { color: theme.colors.textMuted }]}>
-            🕒 {c.openCheck.closesAt ? `Open until ${c.openCheck.closesAt}` : 'Hours unverified'}
+            🕒 {c.openCheck?.closesAt ? `Open until ${c.openCheck.closesAt}` : 'Hours unverified'}
           </Text>
         </View>
 

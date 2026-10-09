@@ -12,6 +12,7 @@ import {
 import { apiClient } from '../../api/client.js';
 import { mobileStorage } from '../../services/storage.js';
 import { getCurrentOrFallbackLocation, PRESET_LOCATIONS } from '../../services/location.js';
+import { getLocalRecommendations } from '../../services/localEngine.js';
 import { t } from '../../i18n/index.js';
 import MealTimeView from './MealTimeView.js';
 
@@ -174,7 +175,27 @@ export default function HomeScreen({ navigation, theme }) {
           setLastUpdated(cached.cachedAt);
           setIsCachedData(true);
         } else {
-          Alert.alert(t('common.error'), err.message || 'Unable to connect to server');
+          try {
+            const fallback = getLocalRecommendations({
+              lat: loc.lat,
+              lng: loc.lng,
+              cuisine,
+              priority,
+              budget,
+              mood,
+              surpriseMe,
+              timeBudgetMinutes: timeBudget,
+              companion,
+              preferences: Object.keys(activePrefs || {}).length > 0 ? activePrefs : null
+            });
+            setResults(fallback.results || []);
+            setTopPicks(fallback.topPicks || null);
+            setLastUpdated(Date.now());
+            setIsCachedData(true);
+          } catch (localErr) {
+            console.error('Local engine recommendation fallback failed:', localErr);
+            Alert.alert(t('common.error'), 'Could not load restaurant recommendations');
+          }
         }
         break;
       }
@@ -208,6 +229,32 @@ export default function HomeScreen({ navigation, theme }) {
   const getUpdatedMinutesAgo = () => {
     if (!lastUpdated) return 0;
     return Math.max(0, Math.round((Date.now() - lastUpdated) / 60000));
+  };
+
+  const handlePickLocation = () => {
+    Alert.alert(
+      'Choose Location',
+      'Select a Dhaka location or use live GPS:',
+      [
+        {
+          text: '📡 Current GPS Location',
+          onPress: async () => {
+            const loc = await getCurrentOrFallbackLocation();
+            setLocation(loc);
+            loadRecommendations(loc);
+          }
+        },
+        ...Object.keys(PRESET_LOCATIONS).map((name) => ({
+          text: `📍 ${name}`,
+          onPress: () => {
+            const loc = PRESET_LOCATIONS[name];
+            setLocation(loc);
+            loadRecommendations(loc);
+          }
+        })),
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
   };
 
   return (
@@ -286,10 +333,16 @@ export default function HomeScreen({ navigation, theme }) {
 
       {/* Location Selector Bar */}
       <View style={[styles.locationCard, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-        <View style={styles.locationInfo}>
+        <TouchableOpacity
+          style={styles.locationInfo}
+          onPress={handlePickLocation}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Change location"
+        >
           <Text style={[styles.locPrompt, { color: theme.colors.textMuted }]}>{t('home.locationPrompt')}</Text>
-          <Text style={[styles.locName, { color: theme.colors.text }]}>📍 {location.name}</Text>
-        </View>
+          <Text style={[styles.locName, { color: theme.colors.text }]}>📍 {location.name} ▾</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.gpsBtn, { backgroundColor: theme.colors.surface }]}
           onPress={async () => {

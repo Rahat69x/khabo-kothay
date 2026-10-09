@@ -24,7 +24,8 @@ export default {
     updatedAgo: '%{mins} মিনিট আগে আপডেট হয়েছে',
     offlineBanner: '%{mins} মিনিট আগের সংরক্ষিত ফলাফল দেখানো হচ্ছে',
     rainBanner: '🌧️ গুলশানে বৃষ্টি হচ্ছে: হাঁটার চেয়ে রিকশা বা গাড়ি সুবিধাজনক।',
-    standardMode: 'স্ট্যান্ডার্ড'
+    standardMode: 'স্ট্যান্ডার্ড',
+    viewRankedList: 'র‌্যাংক করা তালিকা দেখুন'
   },
   picks: {
     bestMatch: 'সেরা মিল',

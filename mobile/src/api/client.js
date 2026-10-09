@@ -1,3 +1,11 @@
+import {
+  getLocalRecommendations,
+  getLocalMealTime,
+  getLocalWeather,
+  getLocalRouteComparison
+} from '../services/localEngine.js';
+import { EMBEDDED_RESTAURANTS } from '../data/embedded-restaurants.js';
+
 let extraConfig = {};
 try {
   // eslint-disable-next-line global-require
@@ -14,6 +22,7 @@ class MobileApiClient {
   constructor(baseUrl = API_BASE_URL, token = APP_TOKEN) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.token = token;
+    this.isOfflineMode = false;
   }
 
   getHeaders() {
@@ -25,24 +34,42 @@ class MobileApiClient {
     };
   }
 
-  async request(endpoint, options = {}) {
+  async request(endpoint, options = {}, timeoutMs = 4500) {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = { ...this.getHeaders(), ...(options.headers || {}) };
 
-    const res = await fetch(url, { ...options, headers });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `HTTP error ${res.status}`);
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+
+    try {
+      const res = await fetch(url, { ...options, headers, signal: controller?.signal });
+      if (timer) clearTimeout(timer);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP error ${res.status}`);
+      }
+      return await res.json();
+    } catch (err) {
+      if (timer) clearTimeout(timer);
+      throw err;
     }
-    return res.json();
   }
 
   async getConfig() {
-    return this.request('/api/config');
+    try {
+      return await this.request('/api/config', {}, 2500);
+    } catch {
+      return { ok: true, app: 'Khabo Kothay?', offline: true };
+    }
   }
 
   async getWeather(lat, lng) {
-    return this.request(`/api/context/weather?lat=${lat}&lng=${lng}`);
+    try {
+      return await this.request(`/api/context/weather?lat=${lat}&lng=${lng}`, {}, 2500);
+    } catch {
+      return getLocalWeather();
+    }
   }
 
   async getRecommendations({
@@ -59,75 +86,111 @@ class MobileApiClient {
     companion = null,
     preferences = null
   }) {
-    return this.request('/api/recommend', {
-      method: 'POST',
-      body: JSON.stringify({
-        lat,
-        lng,
-        cuisine,
-        priority,
-        budget,
-        mood,
-        tasteProfile,
-        weatherContext,
-        surpriseMe,
-        timeBudgetMinutes,
-        companion,
-        preferences
-      })
-    });
+    const payload = {
+      lat,
+      lng,
+      cuisine,
+      priority,
+      budget,
+      mood,
+      tasteProfile,
+      weatherContext,
+      surpriseMe,
+      timeBudgetMinutes,
+      companion,
+      preferences
+    };
+
+    // If already in confirmed offline mode, serve immediately from local engine
+    if (this.isOfflineMode) {
+      return getLocalRecommendations(payload);
+    }
+
+    try {
+      const data = await this.request('/api/recommend', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }, 4000);
+
+      if (data && Array.isArray(data.results) && data.results.length > 0) {
+        return data;
+      }
+      return getLocalRecommendations(payload);
+    } catch (err) {
+      console.warn('Backend /api/recommend unavailable, using embedded local engine:', err.message);
+      this.isOfflineMode = true;
+      return getLocalRecommendations(payload);
+    }
   }
 
   async getBanditWeights() {
-    return this.request('/api/bandit/weights');
+    try {
+      return await this.request('/api/bandit/weights', {}, 2500);
+    } catch {
+      return { weights: { rating: 0.4, distance: 0.25, time: 0.2, budget: 0.15 } };
+    }
   }
 
   async resetBanditWeights() {
-    return this.request('/api/bandit/reset', { method: 'POST' });
+    try {
+      return await this.request('/api/bandit/reset', { method: 'POST' }, 2500);
+    } catch {
+      return { ok: true };
+    }
   }
 
   async toggleBandit(enabled) {
-    return this.request('/api/bandit/toggle', {
-      method: 'POST',
-      body: JSON.stringify({ enabled })
-    });
+    try {
+      return await this.request('/api/bandit/toggle', {
+        method: 'POST',
+        body: JSON.stringify({ enabled })
+      }, 2500);
+    } catch {
+      return { ok: true, enabled };
+    }
   }
 
   async compareRoutes(origin, destination) {
-    return this.request('/api/routes/compare', {
-      method: 'POST',
-      body: JSON.stringify({ origin, destination })
-    });
+    try {
+      return await this.request('/api/routes/compare', {
+        method: 'POST',
+        body: JSON.stringify({ origin, destination })
+      }, 3500);
+    } catch {
+      return getLocalRouteComparison(origin, destination);
+    }
   }
 
   async getPlaceDetails(placeId) {
-    return this.request(`/api/places/${placeId}/details`);
+    try {
+      return await this.request(`/api/places/${placeId}/details`, {}, 3000);
+    } catch {
+      const found = EMBEDDED_RESTAURANTS.find(r => r.id === placeId);
+      return found || { id: placeId, displayName: 'Restaurant Details' };
+    }
   }
 
   async postTasteEvent(currentProfile, event, candidatePool = null) {
-    return this.request('/api/taste/event', {
-      method: 'POST',
-      body: JSON.stringify({ currentProfile, event, candidatePool })
-    });
+    try {
+      return await this.request('/api/taste/event', {
+        method: 'POST',
+        body: JSON.stringify({ currentProfile, event, candidatePool })
+      }, 2500);
+    } catch {
+      return { ok: true, updatedProfile: currentProfile };
+    }
   }
 
-  async pingWarmUp(onStatusChange = null, maxWaitMs = 60000) {
+  async pingWarmUp(onStatusChange = null, maxWaitMs = 5000) {
     const startTime = Date.now();
-    let delay = 1500;
+    let delay = 1000;
     let attempt = 1;
 
     while (Date.now() - startTime < maxWaitMs) {
       try {
-        if (onStatusChange && attempt > 1) {
-          onStatusChange({
-            status: 'waking',
-            message: 'Waking up the server... Please hold on while the free instance boots up.',
-            attempt,
-            elapsedSeconds: Math.round((Date.now() - startTime) / 1000)
-          });
-        }
         const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-        const timer = controller ? setTimeout(() => controller.abort(), 6000) : null;
+        const timer = controller ? setTimeout(() => controller.abort(), 2000) : null;
+
         const res = await fetch(`${this.baseUrl}/api/health`, {
           signal: controller?.signal,
           headers: {
@@ -136,17 +199,53 @@ class MobileApiClient {
           }
         });
         if (timer) clearTimeout(timer);
+
         if (res.ok) {
           const data = await res.json().catch(() => ({}));
           if (data && data.ok) {
+            this.isOfflineMode = false;
             if (onStatusChange) {
               onStatusChange({ status: 'ready', app: data.app, version: data.version });
             }
             return { ok: true, app: data.app, attempts: attempt };
           }
+        } else {
+          // Any non-200 (404 Not Found, 502 Bad Gateway, 503 No Server) -> immediately activate local engine
+          this.isOfflineMode = true;
+          if (onStatusChange) {
+            onStatusChange({
+              status: 'ready',
+              app: 'Khabo Kothay?',
+              isLocalFallback: true,
+              message: 'Local Engine Active'
+            });
+          }
+          return { ok: true, app: 'Khabo Kothay? (Local Engine)', isLocal: true };
         }
-      } catch (e) {
-        // network error, timeout, or server asleep
+      } catch {
+        // network error or timeout
+        if (attempt >= 2) {
+          // Don't keep user waiting if server is completely unreachable
+          this.isOfflineMode = true;
+          if (onStatusChange) {
+            onStatusChange({
+              status: 'ready',
+              app: 'Khabo Kothay?',
+              isLocalFallback: true,
+              message: 'Local Engine Active'
+            });
+          }
+          return { ok: true, app: 'Khabo Kothay? (Local Engine)', isLocal: true };
+        }
+      }
+
+      if (onStatusChange && attempt === 1) {
+        onStatusChange({
+          status: 'waking',
+          message: 'Connecting...',
+          attempt,
+          elapsedSeconds: Math.round((Date.now() - startTime) / 1000)
+        });
       }
 
       attempt++;
@@ -154,13 +253,19 @@ class MobileApiClient {
         break;
       }
       await new Promise(r => setTimeout(r, delay));
-      delay = Math.min(delay * 1.5, 8000);
+      delay = Math.min(delay * 1.5, 2500);
     }
 
+    this.isOfflineMode = true;
     if (onStatusChange) {
-      onStatusChange({ status: 'timeout', message: 'Server wake up timed out. Operating in offline mode.' });
+      onStatusChange({
+        status: 'ready',
+        app: 'Khabo Kothay?',
+        isLocalFallback: true,
+        message: 'Local Engine Active'
+      });
     }
-    return { ok: false, error: 'Warmup timeout' };
+    return { ok: true, app: 'Khabo Kothay? (Local Engine)', isLocal: true };
   }
 
   getPhotoUrl(photoName, maxWidth = 600) {
@@ -171,19 +276,39 @@ class MobileApiClient {
   }
 
   async searchMealTime(params) {
-    return this.request('/api/v1/meal-time/search', {
-      method: 'POST',
-      body: JSON.stringify(params)
-    });
+    if (this.isOfflineMode) {
+      return getLocalMealTime(params);
+    }
+
+    try {
+      const data = await this.request('/api/v1/meal-time/search', {
+        method: 'POST',
+        body: JSON.stringify(params)
+      }, 4000);
+
+      if (data && Array.isArray(data.results)) {
+        return data;
+      }
+      return getLocalMealTime(params);
+    } catch (err) {
+      console.warn('Backend /api/v1/meal-time/search unavailable, using local engine:', err.message);
+      this.isOfflineMode = true;
+      return getLocalMealTime(params);
+    }
   }
 
   async sendMealTimeFeedback(feedback) {
-    return this.request('/api/v1/meal-time/feedback', {
-      method: 'POST',
-      body: JSON.stringify(feedback)
-    });
+    try {
+      return await this.request('/api/v1/meal-time/feedback', {
+        method: 'POST',
+        body: JSON.stringify(feedback)
+      }, 2500);
+    } catch {
+      return { ok: true, recordedLocally: true };
+    }
   }
 }
 
 export const apiClient = new MobileApiClient();
 export default apiClient;
+
