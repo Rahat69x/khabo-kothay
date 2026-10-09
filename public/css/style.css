@@ -511,7 +511,7 @@ body {
 
 @media (min-width: 1024px) {
   .results-map-grid {
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 280px 1.15fr 0.85fr;
   }
 }
 
@@ -1622,3 +1622,418 @@ body {
   gap: 0.75rem;
   margin-top: 0.5rem;
 }
+
+/* Opening Status & Price Badges (Phase 1 & 2) */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.status-open {
+  background: var(--color-success-tint);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.status-closing {
+  background: var(--color-warning-tint);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.status-closed {
+  background: var(--color-danger-tint);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.status-unknown {
+  background: var(--color-surface-alt);
+  color: var(--color-muted);
+  border: 1px solid var(--color-line);
+}
+
+.compare-table th, .compare-table td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+
+.compare-table tbody tr:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.03));
+}
+
+/* ==========================================================================
+   Price Range & Filter Options Sidebar Panel (Star Tech Reference Layout)
+   ========================================================================== */
+
+.filter-sidebar {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  align-self: flex-start;
+  transition: all 0.25s ease;
+}
+
+@media (max-width: 1023px) {
+  .filter-sidebar {
+    display: none;
+    margin-bottom: 20px;
+  }
+  .filter-sidebar.mobile-open {
+    display: block;
+    animation: fadeInDown 0.25s ease;
+  }
+}
+
+.mobile-filter-btn {
+  display: none;
+  font-weight: 700;
+  padding: 4px 10px;
+}
+
+@media (max-width: 1023px) {
+  .mobile-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.badge-count {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  line-height: 1.3;
+}
+
+.filter-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+.filter-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-header-icon {
+  font-size: 1.1rem;
+}
+
+.filter-main-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.filter-reset-link {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.filter-reset-link:hover {
+  background: var(--color-danger-tint);
+}
+
+.filter-section {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+}
+
+.filter-section-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-bottom: 10px;
+}
+
+.price-slider-wrap {
+  position: relative;
+  margin: 10px 0 14px 0;
+}
+
+.price-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-line);
+  outline: none;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 6px var(--primary-glow);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.price-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.price-inputs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.price-input-box {
+  flex: 1;
+}
+
+.price-input-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.input-currency-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  transition: border-color 0.2s ease;
+}
+
+.input-currency-wrap:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.currency-symbol {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  margin-right: 4px;
+}
+
+.price-number-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.price-sep {
+  color: var(--color-muted);
+  font-weight: 700;
+  padding-top: 14px;
+}
+
+.price-quick-presets {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.price-preset-chip {
+  flex: 1;
+  padding: 4px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.price-preset-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+.price-preset-chip.active {
+  background: var(--color-primary-tint);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+/* Collapsible Filter Section */
+.filter-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--color-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.section-heading-text {
+  flex: 1;
+}
+
+.collapse-chevron {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  transition: transform 0.2s ease;
+  margin-left: 8px;
+}
+
+.collapsible-section.collapsed .collapse-chevron {
+  transform: rotate(180deg);
+}
+
+.collapsible-section.collapsed .filter-section-content {
+  display: none;
+}
+
+.filter-section-content {
+  margin-top: 6px;
+  padding-bottom: 2px;
+}
+
+.scrollable-filter-list {
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.scrollable-filter-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollable-filter-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.filter-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 2px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.filter-checkbox-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.filter-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkbox-label-text {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.3;
+}
+
+/* Active Selected Filters Bar */
+.active-filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  background: var(--bg-surface-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.active-filters-heading {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+.active-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--color-primary-tint);
+  color: var(--color-primary-hover);
+  border: 1px solid var(--color-primary);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.active-filter-badge:hover {
+  opacity: 0.85;
+}
+
+.active-filter-remove {
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.clear-all-filters-btn {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 2px 6px;
+  text-decoration: underline;
+  margin-left: auto;
+}
+

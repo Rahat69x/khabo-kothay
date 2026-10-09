@@ -6,8 +6,8 @@
   <title>Khabo Kothay? – Food Finder (খাবো কোথায়?)</title>
   <meta name="description" content="Discover where to actually eat right now in Gulshan, Banani, Baridhara, and Notun Bazar with traffic-aware travel times, transport costs, and AI personalization.">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F6F6FB">
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#11122B">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFBF7">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121212">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="alternate icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -56,6 +56,12 @@
         <button id="openFavoritesBtn" class="btn btn-secondary header-btn" aria-label="Open saved restaurants">
           <span>❤️</span> Saved
         </button>
+        <button id="openSideBySideBtn" class="btn btn-secondary header-btn" aria-label="Compare restaurants side by side">
+          <span>⚖️</span> Compare
+        </button>
+        <button id="openProfileBtn" class="btn btn-secondary header-btn" aria-label="Open personal food profile">
+          <span>🥗</span> Profile
+        </button>
         <button id="openHistoryBtn" class="btn btn-secondary header-btn" aria-label="Open search history">
           <span>📜</span> History
         </button>
@@ -93,12 +99,17 @@
             <span>📡</span> Use Current GPS
           </button>
           <div class="select-wrapper">
-            <select id="locationSelect" class="form-select" aria-label="Select starting spot in Gulshan area">
+            <select id="locationSelect" class="form-select" aria-label="Select starting spot in Dhaka">
               <option value="Notun Bazar" selected>Notun Bazar Bus Stand</option>
               <option value="Gulshan 1">Gulshan 1 Circle</option>
               <option value="Gulshan 2">Gulshan 2 Circle</option>
               <option value="Banani">Banani Road 11</option>
               <option value="Baridhara">Baridhara Diplomatic Zone</option>
+              <option value="Dhanmondi">Dhanmondi Road 27</option>
+              <option value="Uttara">Uttara Sector 3</option>
+              <option value="Bashundhara R/A">Bashundhara R/A Gate</option>
+              <option value="Mirpur">Mirpur 10 Circle</option>
+              <option value="Bailey Road">Bailey Road</option>
             </select>
           </div>
         </div>
@@ -146,6 +157,24 @@
             <button type="button" class="chip priority-chip" data-priority="Best Rated">⭐ Best Rated</button>
             <button type="button" class="chip priority-chip" data-priority="Best Value">💎 Best Value</button>
             <button type="button" class="chip priority-chip" data-priority="Personalized">🧬 Personalized</button>
+          </div>
+        </div>
+
+        <!-- Distance Radius & Operating Hours Filters (Phase 1 Smart Nearby Finder) -->
+        <div class="control-group">
+          <label class="control-label">📍 Distance Radius & Operating Hours</label>
+          <div class="filter-flex-row" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;">
+            <div id="radiusChipsContainer" class="chips-scroll-row" style="flex: 1; min-width: 240px;">
+              <button type="button" class="chip radius-chip active" data-radius="all">Any Distance</button>
+              <button type="button" class="chip radius-chip" data-radius="1000">≤ 1 km</button>
+              <button type="button" class="chip radius-chip" data-radius="2000">≤ 2 km</button>
+              <button type="button" class="chip radius-chip" data-radius="5000">≤ 5 km</button>
+              <button type="button" class="chip radius-chip" data-radius="10000">≤ 10 km</button>
+            </div>
+            <label class="toggle-control-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="openNowFilterToggle" style="width: 18px; height: 18px; accent-color: var(--primary);" />
+              <span style="font-weight: 700; font-size: 0.9rem;">🕒 Open Now Only</span>
+            </label>
           </div>
         </div>
 
@@ -199,12 +228,262 @@
 
     <!-- Results & Interactive Map Section -->
     <section class="results-map-grid">
+      <!-- Price Range and Filter Options Sidebar Panel (Adapted from Reference Layout) -->
+      <aside id="filterOptionsSidebar" class="filter-sidebar card-glass" aria-label="Price range and filter options">
+        <div class="filter-panel-header">
+          <div class="filter-title-wrap">
+            <span class="filter-header-icon" aria-hidden="true">⚙️</span>
+            <h3 class="filter-main-title">Filters</h3>
+          </div>
+          <button type="button" id="resetAllFiltersBtn" class="filter-reset-link" title="Reset all filters to default">
+            🔄 Reset
+          </button>
+        </div>
+
+        <!-- 1. Price Range Panel (Slider + Min/Max Inputs) -->
+        <div class="filter-section price-range-section">
+          <div class="filter-section-title">Price Range (BDT)</div>
+          <div class="price-slider-wrap">
+            <input type="range" id="priceRangeSlider" class="price-slider" min="0" max="3000" step="50" value="3000" aria-label="Price upper limit slider" />
+          </div>
+          <div class="price-inputs-row">
+            <div class="price-input-box">
+              <label for="priceMinInput" class="price-input-label">Min</label>
+              <div class="input-currency-wrap">
+                <span class="currency-symbol">৳</span>
+                <input type="number" id="priceMinInput" class="price-number-input" placeholder="0" min="0" max="5000" step="50" value="0" />
+              </div>
+            </div>
+            <span class="price-sep" aria-hidden="true">–</span>
+            <div class="price-input-box">
+              <label for="priceMaxInput" class="price-input-label">Max</label>
+              <div class="input-currency-wrap">
+                <span class="currency-symbol">৳</span>
+                <input type="number" id="priceMaxInput" class="price-number-input" placeholder="3000" min="0" max="6000" step="50" value="3000" />
+              </div>
+            </div>
+          </div>
+          <div class="price-quick-presets">
+            <button type="button" class="price-preset-chip" data-min="0" data-max="500">≤ ৳500</button>
+            <button type="button" class="price-preset-chip" data-min="500" data-max="1200">৳500–1.2k</button>
+            <button type="button" class="price-preset-chip" data-min="1200" data-max="3500">৳1.2k+</button>
+          </div>
+        </div>
+
+        <!-- 2. Availability (Collapsible) -->
+        <div class="filter-section collapsible-section open" data-section="availability">
+          <button type="button" class="filter-section-header" aria-expanded="true">
+            <span class="section-heading-text">Availability</span>
+            <span class="collapse-chevron" aria-hidden="true">▲</span>
+          </button>
+          <div class="filter-section-content">
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="availability" value="open_now" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Open Now</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="availability" value="closing_soon" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Closing Soon (within 60m)</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="availability" value="open_late" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Open Late (past 11:30 PM)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. Cuisine (Collapsible, Scrollable Checklist) -->
+        <div class="filter-section collapsible-section open" data-section="cuisine">
+          <button type="button" class="filter-section-header" aria-expanded="true">
+            <span class="section-heading-text">Cuisine</span>
+            <span class="collapse-chevron" aria-hidden="true">▲</span>
+          </button>
+          <div class="filter-section-content scrollable-filter-list">
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Biriyani" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Biriyani</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Kabab" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Kabab</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Cafe" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Cafe</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Coffee" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Coffee</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Burger" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Burger</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Japanese" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Japanese</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Bangladeshi" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Bangladeshi</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Indian" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Indian</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Chinese" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Chinese</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Fast Food" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Fast Food</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="cuisine" value="Dessert" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Dessert</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. Restaurant Type (Collapsible) -->
+        <div class="filter-section collapsible-section open" data-section="type">
+          <button type="button" class="filter-section-header" aria-expanded="true">
+            <span class="section-heading-text">Restaurant Type</span>
+            <span class="collapse-chevron" aria-hidden="true">▲</span>
+          </button>
+          <div class="filter-section-content">
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="restaurantType" value="Dine-in" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Dine-in</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="restaurantType" value="Casual Dining" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Casual Dining</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="restaurantType" value="Fine Dining" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Fine Dining</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="restaurantType" value="Cafe / Bakery" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Cafe / Bakery</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="restaurantType" value="Fast Food / Takeaway" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Fast Food / Takeaway</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="restaurantType" value="Buffet" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Buffet</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 5. Dietary Preferences (Collapsible) -->
+        <div class="filter-section collapsible-section open" data-section="dietary">
+          <button type="button" class="filter-section-header" aria-expanded="true">
+            <span class="section-heading-text">Dietary Preferences</span>
+            <span class="collapse-chevron" aria-hidden="true">▲</span>
+          </button>
+          <div class="filter-section-content">
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="dietary" value="halal" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Halal</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="dietary" value="vegetarian" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Vegetarian Options</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="dietary" value="vegan" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Vegan Options</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="dietary" value="no_beef" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">No Beef</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 6. Features & Amenities (Collapsible) -->
+        <div class="filter-section collapsible-section open" data-section="features">
+          <button type="button" class="filter-section-header" aria-expanded="true">
+            <span class="section-heading-text">Features</span>
+            <span class="collapse-chevron" aria-hidden="true">▲</span>
+          </button>
+          <div class="filter-section-content">
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="features" value="Air Conditioned (AC)" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Air Conditioned (AC)</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="features" value="Free WiFi" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Free WiFi</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="features" value="Parking Available" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Parking Available</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="features" value="Outdoor / Rooftop Seating" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Outdoor / Rooftop Seating</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="features" value="Card / bKash Payment" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Card / bKash Payment</span>
+            </label>
+            <label class="filter-checkbox-item">
+              <input type="checkbox" class="filter-checkbox" data-group="features" value="Family Friendly" />
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label-text">Family Friendly</span>
+            </label>
+          </div>
+        </div>
+      </aside>
+
       <!-- Ranked Restaurant Cards -->
       <div class="results-column">
         <div class="results-header-bar">
-          <h2 id="resultsHeading">Recommended Restaurants</h2>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2 id="resultsHeading">Recommended Restaurants</h2>
+            <button type="button" id="toggleFilterSidebarBtn" class="btn btn-outline btn-sm mobile-filter-btn" aria-label="Toggle Filter Options">
+              ⚙️ Filters <span id="activeFilterCountBadge" class="badge-count hidden">0</span>
+            </button>
+          </div>
           <span id="resultsCountTag" class="count-tag">Showing matches</span>
         </div>
+        <!-- Active Selected Filters Bar with Clear Action -->
+        <div id="activeFiltersContainer" class="active-filters-bar hidden" aria-label="Active filter tags"></div>
         <div id="resultsContainer" class="cards-list"></div>
       </div>
 
@@ -279,6 +558,89 @@
         <button id="closeHistoryModalBtn" class="close-modal-btn">✕</button>
       </div>
       <div id="historyList" class="modal-body history-content"></div>
+    </div>
+  </div>
+
+  <!-- Traceable Menu & Price Modal (Phase 2) -->
+  <div id="menuModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3 id="menuModalTitle">🍽️ Verified Restaurant Menu</h3>
+        <button id="closeMenuModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div id="menuModalContent" class="modal-body menu-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Side-by-Side Comparison Modal (Phase 2) -->
+  <div id="sideBySideModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3>⚖️ Compare Restaurants Side-by-Side</h3>
+        <button id="closeSideBySideModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="compare-selectors-box" style="margin-bottom: 16px;">
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Compare 2 to 3 restaurants side by side across distance, open status, price range, cost per person, cuisines, and verified menu sources:</p>
+          <div id="compareSelectorsContainer" class="compare-dropdowns-grid" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          <div class="compare-budget-filter" style="margin-top: 12px; display: flex; align-items: center; gap: 12px;">
+            <label style="font-weight: 700; font-size: 0.85rem;">Max Budget Filter:</label>
+            <input type="range" id="compareBudgetSlider" min="200" max="2500" step="50" value="2500" style="flex: 1; accent-color: var(--primary);" />
+            <span id="compareBudgetValue" style="font-weight: 800; color: var(--primary);">≤ 2500 BDT</span>
+          </div>
+        </div>
+        <div id="sideBySideTableContainer" class="compare-table-wrapper" style="overflow-x: auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Food Profile Preferences Modal (Phase 3) -->
+  <div id="profileModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-md">
+      <div class="modal-header">
+        <h3>🥗 Personal Food Profile</h3>
+        <button id="closeProfileModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div class="modal-body profile-modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <h4 style="margin-bottom: 6px;">🍴 Preferred Cuisines</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Select cuisines you prefer to rank first in recommendations:</p>
+          <div id="profileCuisinesList" class="chips-scroll-row" style="flex-wrap: wrap;"></div>
+        </div>
+
+        <div>
+          <h4 style="margin-bottom: 6px;">💰 Target Budget Range (BDT per person)</h4>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px;">Min: <input type="number" id="profileBudgetMin" class="form-input" style="width: 90px;" min="50" max="3000" step="50" value="200" /> ৳</label>
+            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px;">Max: <input type="number" id="profileBudgetMax" class="form-input" style="width: 90px;" min="100" max="10000" step="50" value="1200" /> ৳</label>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="margin-bottom: 6px;">🌱 Dietary Preferences</h4>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; cursor: pointer;"><input type="checkbox" id="profileDietHalal" style="accent-color: var(--primary);" /> <span>🕌 Halal</span></label>
+            <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; cursor: pointer;"><input type="checkbox" id="profileDietVeg" style="accent-color: var(--primary);" /> <span>🥗 Vegetarian</span></label>
+            <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; cursor: pointer;"><input type="checkbox" id="profileDietVegan" style="accent-color: var(--primary);" /> <span>🥑 Vegan</span></label>
+            <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; cursor: pointer;"><input type="checkbox" id="profileDietNoBeef" style="accent-color: var(--primary);" /> <span>🥩 No Beef</span></label>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="margin-bottom: 6px;">🚫 Disliked Foods / Ingredients</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Avoid restaurants featuring these items:</p>
+          <div id="dislikedTagsContainer" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;"></div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="addDislikedInput" class="form-input" style="flex: 1;" placeholder="e.g. Mushrooms, Bitter, Extra Spicy..." maxlength="30" />
+            <button type="button" id="addDislikedBtn" class="btn btn-secondary btn-sm">+ Add</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+          <button type="button" id="resetProfileBtn" class="btn btn-outline btn-sm" style="color: var(--danger); border-color: var(--danger);">Reset to Default</button>
+          <button type="button" id="saveProfileBtn" class="btn btn-primary">Save Profile</button>
+        </div>
+      </div>
     </div>
   </div>
 

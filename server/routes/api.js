@@ -184,7 +184,11 @@ router.post('/recommend', async (req, res, next) => {
       surpriseMe = false,
       timeBudgetMinutes = null,
       companion = null,
-      preferences = null
+      preferences = null,
+      openNowOnly = false,
+      distanceRadiusMeters = null,
+      foodProfile = null,
+      filters = null
     } = req.body;
 
     if (lat === undefined || lng === undefined) {
@@ -274,7 +278,11 @@ router.post('/recommend', async (req, res, next) => {
       timeBudgetMinutes,
       companion,
       preferences,
-      banditProfile
+      banditProfile,
+      openNowOnly: Boolean(openNowOnly),
+      distanceRadiusMeters: distanceRadiusMeters ? Number(distanceRadiusMeters) : null,
+      foodProfile,
+      filters
     });
 
     // 6. Assemble "For you right now" Top 3 picks

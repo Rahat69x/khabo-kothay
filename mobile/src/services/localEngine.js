@@ -101,6 +101,96 @@ function calculateDhakaTransport(distanceMeters, durationSeconds, trafficLevel) 
 /**
  * Local Recommendation Engine mirroring full server ranking logic.
  */
+export function getDhakaOpeningStatus(regularOpeningHours) {
+  if (!regularOpeningHours || (!regularOpeningHours.openTime && !regularOpeningHours.closingTime)) {
+    return {
+      status: 'Hours unknown',
+      label: 'Hours unknown',
+      isOpen: null,
+      isClosingSoon: false,
+      minutesUntilClose: null
+    };
+  }
+
+  try {
+    const dhakaParts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Dhaka',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false
+    }).formatToParts(new Date());
+
+    const curHour = parseInt(dhakaParts.find(p => p.type === 'hour')?.value || '0', 10);
+    const curMin = parseInt(dhakaParts.find(p => p.type === 'minute')?.value || '0', 10);
+    const curTotalMin = curHour * 60 + curMin;
+
+    const [openH, openM] = (regularOpeningHours.openTime || '11:00').split(':').map(Number);
+    const [closeH, closeM] = (regularOpeningHours.closingTime || '23:00').split(':').map(Number);
+
+    const openTotalMin = openH * 60 + openM;
+    let closeTotalMin = closeH * 60 + closeM;
+
+    const closesAfterMidnight = closeTotalMin < openTotalMin;
+    let isOpen = false;
+    let minutesUntilClose = null;
+
+    if (closesAfterMidnight) {
+      if (curTotalMin >= openTotalMin) {
+        isOpen = true;
+        minutesUntilClose = (closeTotalMin + 1440) - curTotalMin;
+      } else if (curTotalMin < closeTotalMin) {
+        isOpen = true;
+        minutesUntilClose = closeTotalMin - curTotalMin;
+      } else {
+        isOpen = false;
+      }
+    } else {
+      if (curTotalMin >= openTotalMin && curTotalMin < closeTotalMin) {
+        isOpen = true;
+        minutesUntilClose = closeTotalMin - curTotalMin;
+      } else {
+        isOpen = false;
+      }
+    }
+
+    if (!isOpen) {
+      return {
+        status: 'Closed',
+        label: 'Closed',
+        isOpen: false,
+        isClosingSoon: false,
+        minutesUntilClose: 0
+      };
+    }
+
+    if (minutesUntilClose !== null && minutesUntilClose <= 60) {
+      return {
+        status: 'Closing soon',
+        label: `Closing soon (${minutesUntilClose} min)`,
+        isOpen: true,
+        isClosingSoon: true,
+        minutesUntilClose
+      };
+    }
+
+    return {
+      status: 'Open now',
+      label: 'Open now',
+      isOpen: true,
+      isClosingSoon: false,
+      minutesUntilClose
+    };
+  } catch {
+    return {
+      status: 'Hours unknown',
+      label: 'Hours unknown',
+      isOpen: null,
+      isClosingSoon: false,
+      minutesUntilClose: null
+    };
+  }
+}
+
 export function getLocalRecommendations({
   lat = 23.7975,
   lng = 90.4234,
@@ -113,9 +203,18 @@ export function getLocalRecommendations({
   surpriseMe = false,
   timeBudgetMinutes = null,
   companion = null,
-  preferences = null
+  preferences = null,
+  openNowOnly = false,
+  distanceRadiusMeters = null,
+  foodProfile = null,
+  filters = null
 }) {
   let pool = [...EMBEDDED_RESTAURANTS];
+
+  // Open Now Filter
+  if (openNowOnly) {
+    pool = pool.filter(r => getDhakaOpeningStatus(r.regularOpeningHours).isOpen === true);
+  }
 
   // 1. Filter: Cuisine
   if (cuisine && cuisine !== 'All') {
@@ -125,13 +224,14 @@ export function getLocalRecommendations({
     }
   }
 
-  // 2. Filter: Preferences (halal, vegetarian, no_beef)
-  if (preferences) {
-    if (preferences.halal) {
+  // 2. Filter: Preferences (halal, vegetarian, no_beef) or Food Profile dietary
+  const effectiveDietary = preferences || foodProfile?.dietary;
+  if (effectiveDietary) {
+    if (effectiveDietary.halal) {
       const filtered = pool.filter(r => r.halal !== false);
       if (filtered.length > 0) pool = filtered;
     }
-    if (preferences.vegetarian) {
+    if (effectiveDietary.vegetarian) {
       const filtered = pool.filter(r => r.vegetarian === true);
       if (filtered.length > 0) {
         pool = filtered;
@@ -141,9 +241,84 @@ export function getLocalRecommendations({
         if (anyVeg.length > 0) pool = anyVeg;
       }
     }
-    if (preferences.no_beef) {
+    if (effectiveDietary.no_beef) {
       const filtered = pool.filter(r => r.no_beef === true);
       if (filtered.length > 0) pool = filtered;
+    }
+  }
+
+  // 2b. Price Range and Custom Facet Filters
+  if (filters) {
+    if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
+      const minP = Number.isFinite(Number(filters.priceMin)) ? Number(filters.priceMin) : 0;
+      const maxP = Number.isFinite(Number(filters.priceMax)) ? Number(filters.priceMax) : Infinity;
+
+      pool = pool.filter(c => {
+        if (c.menu?.items && c.menu.items.length > 0) {
+          const prices = c.menu.items.map(i => i.price).filter(Number.isFinite);
+          if (prices.length > 0) {
+            const minItemPrice = Math.min(...prices);
+            const maxItemPrice = Math.max(...prices);
+            const costPerPerson = c.menu?.estimatedCostPerPerson?.amount || c.estimatedCostPerPersonBdt;
+            if (costPerPerson && costPerPerson >= minP && costPerPerson <= maxP) return true;
+            if (minItemPrice <= maxP && maxItemPrice >= minP) return true;
+          }
+        }
+        const cost = c.estimatedCostPerPerson?.amount || c.estimatedCostPerPersonBdt;
+        if (cost) return cost >= minP && cost <= maxP;
+        const tierMap = {
+          1: { min: 50, max: 400 },
+          2: { min: 250, max: 950 },
+          3: { min: 700, max: 2000 },
+          4: { min: 1500, max: 6000 }
+        };
+        const tier = tierMap[c.priceLevel || 2] || { min: 0, max: 5000 };
+        return tier.min <= maxP && tier.max >= minP;
+      });
+    }
+
+    if (Array.isArray(filters.availability) && filters.availability.length > 0) {
+      pool = pool.filter(c => {
+        const op = getDhakaOpeningStatus(c.regularOpeningHours);
+        return filters.availability.some(av => {
+          if (av === 'open_now') return op.isOpen === true;
+          if (av === 'closing_soon') return op.isClosingSoon === true;
+          if (av === 'open_late') {
+            const closeTime = c.regularOpeningHours?.closingTime || '23:00';
+            const [cH] = closeTime.split(':').map(Number);
+            return cH >= 23 || (cH >= 0 && cH <= 4);
+          }
+          return false;
+        });
+      });
+    }
+
+    if (Array.isArray(filters.cuisines) && filters.cuisines.length > 0) {
+      pool = pool.filter(c => filters.cuisines.some(cuisine => cuisine.toLowerCase() === (c.cuisine || '').toLowerCase()));
+    }
+
+    if (Array.isArray(filters.restaurantTypes) && filters.restaurantTypes.length > 0) {
+      pool = pool.filter(c => {
+        const types = c.restaurantType || ['Dine-in', 'Casual Dining'];
+        return filters.restaurantTypes.some(t => types.includes(t));
+      });
+    }
+
+    if (Array.isArray(filters.dietary) && filters.dietary.length > 0) {
+      pool = pool.filter(c => {
+        if (filters.dietary.includes('halal') && c.halal === false) return false;
+        if (filters.dietary.includes('vegetarian') && !c.vegetarian) return false;
+        if (filters.dietary.includes('vegan') && !c.vegan) return false;
+        if (filters.dietary.includes('no_beef') && !c.no_beef) return false;
+        return true;
+      });
+    }
+
+    if (Array.isArray(filters.features) && filters.features.length > 0) {
+      pool = pool.filter(c => {
+        const feat = c.features || [];
+        return filters.features.every(f => feat.includes(f));
+      });
     }
   }
 
@@ -153,10 +328,15 @@ export function getLocalRecommendations({
   }
 
   // 3. Compute dynamic metrics relative to user's location
-  const enriched = pool.map(r => {
+  let enriched = pool.map(r => {
     const dist = calculateDistanceMeters(lat, lng, r.location.latitude, r.location.longitude);
+    if (distanceRadiusMeters && dist > Number(distanceRadiusMeters)) {
+      return null;
+    }
+
     const traffic = computeTrafficMetrics(dist, r.id);
     const transport = calculateDhakaTransport(dist, traffic.durationSeconds, traffic.trafficLevel);
+    const openStatus = getDhakaOpeningStatus(r.regularOpeningHours);
 
     // Score calculation (0 to 100)
     const ratingScore = ((r.rating - 3.5) / 1.5) * 40; // 0-40 pts
@@ -171,6 +351,23 @@ export function getLocalRecommendations({
       totalScore += (tasteProfile[r.cuisine] / 100) * 15;
     }
 
+    // Food profile boost (Phase 3)
+    let foodProfileMatchCuisine = false;
+    let foodProfileBudgetMatch = false;
+    if (foodProfile) {
+      if (Array.isArray(foodProfile.preferredCuisines) && foodProfile.preferredCuisines.some(c => c.toLowerCase() === r.cuisine.toLowerCase())) {
+        totalScore += 16;
+        foodProfileMatchCuisine = true;
+      }
+      if (foodProfile.budgetMax && r.estimatedCostPerPerson && r.estimatedCostPerPerson.maxBdt <= foodProfile.budgetMax) {
+        totalScore += 10;
+        foodProfileBudgetMatch = true;
+      }
+      if (Array.isArray(foodProfile.dislikedFoods) && foodProfile.dislikedFoods.some(d => r.cuisine.toLowerCase().includes(d.toLowerCase()))) {
+        totalScore -= 30;
+      }
+    }
+
     // Weather impact on walking
     if (weatherContext && weatherContext.isRaining && transport.cheapestFeasibleMode === 'walk') {
       totalScore -= 8;
@@ -179,7 +376,11 @@ export function getLocalRecommendations({
     // Generate Trade-off Reason
     const travelMins = Math.round(traffic.durationSeconds / 60);
     let reason = `${r.rating}★ rating • ${travelMins}m via ${transport.cheapestMode} (~৳${transport.cheapestEstimatedCostBdt})`;
-    if (traffic.trafficLevel === 'Low') {
+    if (foodProfileMatchCuisine && foodProfileBudgetMatch && foodProfile?.budgetMax) {
+      reason = `Matches your ${r.cuisine} + under ৳${foodProfile.budgetMax} preference • ${travelMins}m via ${transport.cheapestMode}`;
+    } else if (foodProfileMatchCuisine) {
+      reason = `Matches your preferred ${r.cuisine} cuisine • ${travelMins}m via ${transport.cheapestMode}`;
+    } else if (traffic.trafficLevel === 'Low') {
       reason += ' • Smooth traffic right now';
     } else if (traffic.trafficLevel === 'Heavy') {
       reason += ' • Heavy traffic in this corridor';
@@ -192,6 +393,9 @@ export function getLocalRecommendations({
       staticDurationSeconds: traffic.staticDurationSeconds,
       trafficLevel: traffic.trafficLevel,
       trafficRatio: traffic.trafficRatio,
+      travelMode: 'driving',
+      isRoutingVerified: true,
+      openStatus,
       transport,
       totalScore: Math.round(totalScore),
       score: Math.min(99, Math.max(65, Math.round(totalScore))),
@@ -211,7 +415,7 @@ export function getLocalRecommendations({
         cost: 85
       }
     };
-  });
+  }).filter(Boolean);
 
   // 4. Time Budget Filter (if specified)
   let results = enriched;

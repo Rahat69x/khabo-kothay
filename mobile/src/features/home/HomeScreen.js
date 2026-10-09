@@ -115,6 +115,7 @@ export default function HomeScreen({ navigation, theme }) {
     while (attempt <= maxRetries) {
       try {
         const tasteProfile = await mobileStorage.getTasteProfile();
+        const foodProfile = await mobileStorage.getFoodProfile();
         const activePrefs = Object.fromEntries(
           Object.entries(prefs || {}).filter(([_, v]) => Boolean(v))
         );
@@ -131,7 +132,8 @@ export default function HomeScreen({ navigation, theme }) {
           surpriseMe,
           timeBudgetMinutes: timeBudget,
           companion,
-          preferences: Object.keys(activePrefs).length > 0 ? activePrefs : null
+          preferences: Object.keys(activePrefs).length > 0 ? activePrefs : null,
+          foodProfile
         });
 
         setServerWakingMsg(null);
@@ -176,6 +178,7 @@ export default function HomeScreen({ navigation, theme }) {
           setIsCachedData(true);
         } else {
           try {
+            const foodProfile = await mobileStorage.getFoodProfile();
             const fallback = getLocalRecommendations({
               lat: loc.lat,
               lng: loc.lng,
@@ -186,7 +189,8 @@ export default function HomeScreen({ navigation, theme }) {
               surpriseMe,
               timeBudgetMinutes: timeBudget,
               companion,
-              preferences: Object.keys(activePrefs || {}).length > 0 ? activePrefs : null
+              preferences: Object.keys(activePrefs || {}).length > 0 ? activePrefs : null,
+              foodProfile
             });
             setResults(fallback.results || []);
             setTopPicks(fallback.topPicks || null);

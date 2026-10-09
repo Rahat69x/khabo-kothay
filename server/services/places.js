@@ -147,10 +147,10 @@ export async function getPlaceDetails(placeId, useMock = false) {
   const cached = globalCache.get(cacheKey);
   if (cached) return cached;
 
-  if (isMock || placeId.startsWith('mock_') || placeId.startsWith('trio_')) {
+  if (isMock || placeId.startsWith('mock_') || placeId.startsWith('trio_') || placeId.startsWith('dhaka_')) {
     const mockFound = MOCK_RESTAURANTS.find(r => r.id === placeId) || MOCK_RESTAURANTS[0];
     const detail = {
-      id: mockFound.id,
+      id: placeId.startsWith('mock_') || placeId.startsWith('trio_') ? placeId : mockFound.id,
       displayName: mockFound.displayName,
       formattedAddress: mockFound.formattedAddress,
       location: mockFound.location,
@@ -164,7 +164,15 @@ export async function getPlaceDetails(placeId, useMock = false) {
       websiteUri: mockFound.websiteUri || 'https://example.com/restaurant',
       primaryType: mockFound.primaryType,
       cuisine: mockFound.cuisine,
-      photos: mockFound.photos || []
+      photos: mockFound.photos || [],
+      menu: mockFound.menu || null,
+      halal: mockFound.halal ?? null,
+      vegetarian: mockFound.vegetarian ?? null,
+      no_beef: mockFound.no_beef ?? null,
+      servesLunch: mockFound.servesLunch ?? true,
+      servesDinner: mockFound.servesDinner ?? true,
+      takeout: mockFound.takeout ?? true,
+      dineIn: mockFound.dineIn ?? true
     };
     globalCache.set(cacheKey, detail, 1800);
     return detail;

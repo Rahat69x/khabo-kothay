@@ -9,7 +9,21 @@ const STORAGE_KEYS = {
   HISTORY: 'gulshan_finder_history',
   TASTE_PROFILE: 'gulshan_finder_taste_profile',
   TASTE_LEARNING_ENABLED: 'gulshan_finder_learning_enabled',
-  TASTE_LOG: 'gulshan_finder_taste_log'
+  TASTE_LOG: 'gulshan_finder_taste_log',
+  FOOD_PROFILE: 'gulshan_finder_food_profile'
+};
+
+const DEFAULT_FOOD_PROFILE = {
+  preferredCuisines: [],
+  budgetMin: 200,
+  budgetMax: 1200,
+  dietary: {
+    halal: false,
+    vegetarian: false,
+    vegan: false,
+    no_beef: false
+  },
+  dislikedFoods: []
 };
 
 class AppStorage {
@@ -167,12 +181,46 @@ class AppStorage {
     this.setItem(STORAGE_KEYS.TASTE_LOG, logs.slice(0, 100)); // keep last 100
   }
 
+  getFoodProfile() {
+    const p = this.getItem(STORAGE_KEYS.FOOD_PROFILE);
+    if (!p) return { ...DEFAULT_FOOD_PROFILE, dietary: { ...DEFAULT_FOOD_PROFILE.dietary } };
+    return {
+      preferredCuisines: Array.isArray(p.preferredCuisines) ? p.preferredCuisines : [],
+      budgetMin: Number.isFinite(p.budgetMin) ? p.budgetMin : 200,
+      budgetMax: Number.isFinite(p.budgetMax) ? p.budgetMax : 1200,
+      dietary: {
+        halal: Boolean(p.dietary?.halal),
+        vegetarian: Boolean(p.dietary?.vegetarian),
+        vegan: Boolean(p.dietary?.vegan),
+        no_beef: Boolean(p.dietary?.no_beef)
+      },
+      dislikedFoods: Array.isArray(p.dislikedFoods) ? p.dislikedFoods : []
+    };
+  }
+
+  saveFoodProfile(profile) {
+    const current = this.getFoodProfile();
+    const updated = {
+      ...current,
+      ...profile,
+      dietary: { ...current.dietary, ...(profile?.dietary || {}) }
+    };
+    this.setItem(STORAGE_KEYS.FOOD_PROFILE, updated);
+    return updated;
+  }
+
+  resetFoodProfile() {
+    this.setItem(STORAGE_KEYS.FOOD_PROFILE, { ...DEFAULT_FOOD_PROFILE, dietary: { ...DEFAULT_FOOD_PROFILE.dietary } });
+    return { ...DEFAULT_FOOD_PROFILE, dietary: { ...DEFAULT_FOOD_PROFILE.dietary } };
+  }
+
   exportAllData() {
     return {
       preferences: this.getPreferences(),
       favorites: this.getFavorites(),
       history: this.getHistory(),
       tasteProfile: this.getTasteProfile(),
+      foodProfile: this.getFoodProfile(),
       learningEnabled: this.isLearningEnabled(),
       exportedAt: new Date().toISOString()
     };

@@ -10,7 +10,7 @@ export async function pingWarmUp(onStatusChange = null, maxWaitMs = 60000) {
       if (onStatusChange && attempt > 1) {
         onStatusChange({
           status: 'waking',
-          message: 'Waking up the server... Please hold on while the free instance boots.',
+          message: 'Waking up the server, this can take up to a minute...',
           attempt,
           elapsedSeconds: Math.round((Date.now() - startTime) / 1000)
         });
@@ -87,7 +87,9 @@ export async function fetchRecommendations({
   priority,
   budget,
   mood,
-  surpriseMe
+  surpriseMe,
+  openNowOnly = false,
+  distanceRadiusMeters = null
 }) {
   const tasteProfile = appStorage.getTasteProfile();
 
@@ -99,7 +101,9 @@ export async function fetchRecommendations({
     budget,
     mood,
     tasteProfile,
-    surpriseMe
+    surpriseMe,
+    openNowOnly,
+    distanceRadiusMeters
   };
 
   const res = await fetchWithRetry('/api/recommend', {

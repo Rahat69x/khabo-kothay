@@ -10,6 +10,9 @@ export class UIController {
     this.compareModal = document.getElementById('compareModal');
     this.favModal = document.getElementById('favoritesModal');
     this.historyModal = document.getElementById('historyModal');
+    this.menuModal = document.getElementById('menuModal');
+    this.sideBySideModal = document.getElementById('sideBySideModal');
+    this.profileModal = document.getElementById('profileModal');
   }
 
   showLoading() {
@@ -99,9 +102,35 @@ export class UIController {
     });
   }
 
+  getOpeningStatusBadge(openStatus) {
+    if (!openStatus || !openStatus.status || openStatus.status === 'Hours unknown') {
+      return '<span class="status-chip status-unknown">⚪ Hours unknown</span>';
+    }
+    if (openStatus.status === 'Closing soon') {
+      const minText = openStatus.minutesUntilClose ? ` (${openStatus.minutesUntilClose} min)` : '';
+      return `<span class="status-chip status-closing">🟡 Closing soon${minText}</span>`;
+    }
+    if (openStatus.status === 'Open now' || openStatus.isOpen === true) {
+      return '<span class="status-chip status-open">🟢 Open now</span>';
+    }
+    return '<span class="status-chip status-closed">🔴 Closed</span>';
+  }
+
+  formatTravelDistance(r) {
+    const km = (r.distanceMeters / 1000).toFixed(1);
+    if (r.durationSeconds !== null && r.durationSeconds !== undefined) {
+      const mins = Math.max(1, Math.round(r.durationSeconds / 60));
+      return `🚗 Driving: ${mins} min • ${km} km`;
+    }
+    return `Travel time: Not available • ${km} km (approx. straight-line)`;
+  }
+
   renderMiniPick(item, badgeText, badgeClass, onSelect) {
-    const mins = Math.max(1, Math.round(item.durationSeconds / 60));
     const km = (item.distanceMeters / 1000).toFixed(1);
+    const timeText = item.durationSeconds !== null && item.durationSeconds !== undefined
+      ? `${Math.max(1, Math.round(item.durationSeconds / 60))} min (${km} km)`
+      : `${km} km (approx. straight-line)`;
+
     return `
       <div class="mini-pick ${badgeClass}" data-id="${item.id}">
         <span class="mini-badge">${badgeText}</span>
@@ -109,7 +138,7 @@ export class UIController {
         <div class="mini-meta">
           <span>${item.rating}★ (${item.userRatingCount})</span>
           <span>•</span>
-          <span>${mins} min (${km} km)</span>
+          <span>${timeText}</span>
         </div>
         <p class="mini-reason">${item.reason}</p>
       </div>
@@ -125,9 +154,12 @@ export class UIController {
 
     this.resultsContainer.innerHTML = restaurants.map((r, idx) => {
       const isFav = appStorage.isFavorite(r.id);
-      const mins = Math.max(1, Math.round(r.durationSeconds / 60));
-      const km = (r.distanceMeters / 1000).toFixed(1);
+      const travelInfo = this.formatTravelDistance(r);
+      const openingBadge = this.getOpeningStatusBadge(r.openStatus);
       const priceText = r.priceLevel ? '৳'.repeat(r.priceLevel) : 'Price unlisted';
+      const costPerPersonText = r.estimatedCostPerPersonBdt
+        ? `~৳${r.estimatedCostPerPersonBdt}/person`
+        : 'Cost: Not available';
       const trafficColor = r.trafficLevel === 'Low' ? 'traffic-green' : (r.trafficLevel === 'Moderate' ? 'traffic-yellow' : 'traffic-red');
       const photoUrl = r.photos && r.photos.length > 0
         ? `/api/places/photo?name=${encodeURIComponent(r.photos[0].name)}&maxWidth=600`
@@ -158,11 +190,13 @@ export class UIController {
 
             <p class="card-address">${r.formattedAddress}</p>
 
-            <div class="card-metrics-row">
+            <div class="card-metrics-row" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0;">
+              ${openingBadge}
               <span class="metric-item rating-metric">⭐ ${r.rating} <small>(${r.userRatingCount})</small></span>
               <span class="metric-item price-metric">${priceText}</span>
-              <span class="metric-item time-metric">🕒 ${mins} min (${km} km)</span>
-              <span class="traffic-chip ${trafficColor}">🚦 ${r.trafficLevel} Traffic</span>
+              <span class="metric-item cost-metric" style="font-weight: 700; color: var(--primary);">${costPerPersonText}</span>
+              <span class="metric-item time-metric">🕒 ${travelInfo}</span>
+              ${r.trafficLevel && r.trafficLevel !== 'Unknown' ? `<span class="traffic-chip ${trafficColor}">🚦 ${r.trafficLevel} Traffic</span>` : ''}
             </div>
 
             <div class="card-transport-box">
@@ -177,8 +211,11 @@ export class UIController {
             </div>
 
             <div class="card-actions">
+              <button class="btn btn-outline btn-menu" data-id="${r.id}">
+                🍽️ Menu & Prices
+              </button>
               <button class="btn btn-outline btn-compare" data-id="${r.id}">
-                🔄 Compare Routes
+                🔄 Routes
               </button>
               <button class="btn btn-outline btn-explain" data-id="${r.id}">
                 📊 Why this pick?
@@ -221,6 +258,15 @@ export class UIController {
         });
       }
 
+      // Menu modal
+      const menuBtn = card.querySelector('.btn-menu');
+      if (menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.openMenuModal(r);
+        });
+      }
+
       // Compare Routes
       const compareBtn = card.querySelector('.btn-compare');
       if (compareBtn) {
@@ -239,12 +285,11 @@ export class UIController {
         });
       }
 
-      // Directions button (records directions signal)
+      // Directions button
       const directionsBtn = card.querySelector('.btn-directions');
       if (directionsBtn) {
         directionsBtn.addEventListener('click', () => {
           recordTasteSignal('directions', r);
-          // Set reminder flag for "Did you go?"
           appStorage.setItem('pending_visit_place', { id: r.id, name: r.displayName, cuisine: r.cuisine, timestamp: Date.now() });
         });
       }
@@ -395,6 +440,428 @@ export class UIController {
       const modalBody = this.compareModal.querySelector('.modal-body');
       modalBody.innerHTML = `<div class="error-msg">Error calculating routes: ${e.message}</div>`;
     }
+  }
+
+  openMenuModal(r) {
+    if (!this.menuModal) return;
+    const titleEl = document.getElementById('menuModalTitle');
+    const contentEl = document.getElementById('menuModalContent');
+    const closeBtn = document.getElementById('closeMenuModalBtn');
+    if (titleEl) titleEl.textContent = `🍽️ ${r.displayName} — Menu & Prices`;
+
+    const menu = r.menu || null;
+    const costPerPerson = r.estimatedCostPerPersonBdt;
+    const costRange = r.costRangeMinBdt && r.costRangeMaxBdt ? `৳${r.costRangeMinBdt} - ৳${r.costRangeMaxBdt}` : null;
+    const costDerivation = r.costDerivation || (r.priceLevel ? `Estimated based on price level (${'৳'.repeat(r.priceLevel)}) and average Dhaka dining portion` : null);
+
+    let costSectionHtml = '';
+    if (costPerPerson) {
+      costSectionHtml = `
+        <div class="menu-cost-box" style="background: var(--surface-alt); padding: 14px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <strong style="font-size: 1.1rem; color: var(--primary);">~৳${costPerPerson} per person</strong>
+            ${costRange ? `<span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">Range: ${costRange}</span>` : ''}
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+            <strong>How derived:</strong> ${costDerivation}
+          </p>
+        </div>
+      `;
+    } else {
+      costSectionHtml = `
+        <div class="menu-cost-box" style="background: var(--surface-alt); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border);">
+          <span style="font-size: 0.9rem; color: var(--text-muted);">Estimated cost per person: <strong>Not available</strong> (insufficient verified pricing data)</span>
+        </div>
+      `;
+    }
+
+    let itemsHtml = '';
+    if (menu && Array.isArray(menu.items) && menu.items.length > 0) {
+      itemsHtml = `
+        <div class="menu-items-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+          ${menu.items.map(item => {
+            const badgeClass = item.status === 'Verified' ? 'status-open' : (item.status === 'Unverified' ? 'status-closing' : 'status-unknown');
+            const priceLabel = item.priceBdt ? `৳${item.priceBdt}` : 'Not available';
+            return `
+              <div class="menu-item-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;">
+                <div style="flex: 1; margin-right: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <strong style="font-size: 0.95rem;">${item.name}</strong>
+                    <span class="status-chip ${badgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${item.status || 'Verified'}</span>
+                  </div>
+                  ${item.description ? `<p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${item.description}</p>` : ''}
+                </div>
+                <div style="text-align: right; min-width: 80px;">
+                  <strong style="font-size: 1rem; color: var(--primary);">${priceLabel}</strong>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    } else {
+      itemsHtml = `
+        <div class="empty-state" style="padding: 24px; text-align: center; background: var(--surface-alt); border-radius: 12px; margin-bottom: 16px;">
+          <p style="font-weight: 700; margin-bottom: 4px;">No verified menu items currently on file</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Verified menus are traceable from official sources or owner submission. No estimates are presented as factual prices.</p>
+        </div>
+      `;
+    }
+
+    const sourceHtml = menu && menu.sourceUrl ? `
+      <div class="menu-source-card" style="padding: 12px; background: var(--surface-alt); border-radius: 10px; font-size: 0.85rem; border: 1px solid var(--border);">
+        <p><strong>Traceable Source:</strong> ${menu.sourceName || 'Official Listing'}</p>
+        <p style="margin-top: 4px; word-break: break-all;">
+          <strong>Link:</strong> <a href="${menu.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">${menu.sourceUrl}</a>
+        </p>
+        <p style="margin-top: 4px; color: var(--text-muted); font-size: 0.8rem;">
+          <strong>Last checked:</strong> ${menu.lastChecked || 'Recently'}
+        </p>
+      </div>
+    ` : `
+      <div class="menu-source-card" style="padding: 12px; background: var(--surface-alt); border-radius: 10px; font-size: 0.85rem; border: 1px solid var(--border);">
+        <p style="color: var(--text-muted);">Source: <em>Unverified / Awaiting owner or verified submission</em></p>
+      </div>
+    `;
+
+    const websiteBtnHtml = (menu?.sourceUrl || r.websiteUri) ? `
+      <div style="margin-top: 14px; text-align: right;">
+        <a href="${menu?.sourceUrl || r.websiteUri}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+          🌐 View Official Menu / Website
+        </a>
+      </div>
+    ` : '';
+
+    if (contentEl) {
+      contentEl.innerHTML = `
+        ${costSectionHtml}
+        <h4 style="margin-bottom: 10px;">📋 Menu Items & Prices</h4>
+        ${itemsHtml}
+        ${sourceHtml}
+        ${websiteBtnHtml}
+      `;
+    }
+
+    this.menuModal.classList.add('open');
+    if (closeBtn) closeBtn.onclick = () => this.menuModal.classList.remove('open');
+    this.menuModal.onclick = (e) => {
+      if (e.target === this.menuModal) this.menuModal.classList.remove('open');
+    };
+  }
+
+  openSideBySideModal(restaurants, userLocation) {
+    if (!this.sideBySideModal) return;
+    const selectorsContainer = document.getElementById('compareSelectorsContainer');
+    const tableContainer = document.getElementById('sideBySideTableContainer');
+    const closeBtn = document.getElementById('closeSideBySideModalBtn');
+    const budgetSlider = document.getElementById('compareBudgetSlider');
+    const budgetValue = document.getElementById('compareBudgetValue');
+
+    if (!restaurants || restaurants.length === 0) {
+      if (tableContainer) {
+        tableContainer.innerHTML = '<p class="empty-msg">No restaurants available to compare. Please run a search first.</p>';
+      }
+      this.sideBySideModal.classList.add('open');
+      if (closeBtn) closeBtn.onclick = () => this.sideBySideModal.classList.remove('open');
+      return;
+    }
+
+    let selectedIds = [restaurants[0]?.id, restaurants[1]?.id, restaurants[2]?.id].filter(Boolean);
+    let maxBudget = budgetSlider ? parseInt(budgetSlider.value, 10) : 2500;
+
+    const renderSelectors = () => {
+      if (!selectorsContainer) return;
+      selectorsContainer.innerHTML = [0, 1, 2].map(slotIdx => `
+        <div style="flex: 1; min-width: 140px;">
+          <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">Place ${slotIdx + 1}:</label>
+          <select class="form-input compare-select" data-slot="${slotIdx}" style="width: 100%; padding: 6px 10px; font-size: 0.85rem;">
+            <option value="">-- None --</option>
+            ${restaurants.map(r => `
+              <option value="${r.id}" ${selectedIds[slotIdx] === r.id ? 'selected' : ''}>${r.displayName} (${r.cuisine})</option>
+            `).join('')}
+          </select>
+        </div>
+      `).join('');
+
+      selectorsContainer.querySelectorAll('.compare-select').forEach(sel => {
+        sel.onchange = (e) => {
+          const slot = parseInt(e.target.dataset.slot, 10);
+          selectedIds[slot] = e.target.value || null;
+          renderTable();
+        };
+      });
+    };
+
+    const renderTable = () => {
+      if (!tableContainer) return;
+      const comparedPlaces = selectedIds
+        .map(id => restaurants.find(r => r.id === id))
+        .filter(Boolean);
+
+      if (comparedPlaces.length < 2) {
+        tableContainer.innerHTML = '<p class="empty-msg" style="padding: 20px; text-align: center;">Please select at least 2 restaurants above to compare.</p>';
+        return;
+      }
+
+      tableContainer.innerHTML = `
+        <table class="compare-table" style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border);">
+              <th style="text-align: left; padding: 10px; width: 22%;">Feature</th>
+              ${comparedPlaces.map(r => `
+                <th style="text-align: left; padding: 10px; width: ${Math.floor(78 / comparedPlaces.length)}%;">
+                  <div style="font-weight: 800; font-size: 1rem; color: var(--text);">${r.displayName}</div>
+                  <div style="font-size: 0.8rem; color: var(--primary);">${r.cuisine}</div>
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Distance</td>
+              ${comparedPlaces.map(r => {
+                const km = (r.distanceMeters / 1000).toFixed(1);
+                const isApprox = r.durationSeconds === null || r.isStraightLine;
+                return `<td style="padding: 10px;">${km} km ${isApprox ? '<small style="color: var(--text-muted);">(approx. straight-line)</small>' : ''}</td>`;
+              }).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Travel Time</td>
+              ${comparedPlaces.map(r => {
+                if (r.durationSeconds !== null && r.durationSeconds !== undefined) {
+                  return `<td style="padding: 10px;">🚗 ${Math.max(1, Math.round(r.durationSeconds / 60))} min</td>`;
+                }
+                return `<td style="padding: 10px; color: var(--text-muted);">Not available</td>`;
+              }).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Operating Status</td>
+              ${comparedPlaces.map(r => `<td style="padding: 10px;">${this.getOpeningStatusBadge(r.openStatus)}</td>`).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Price Range</td>
+              ${comparedPlaces.map(r => `<td style="padding: 10px; font-weight: 700;">${r.priceLevel ? '৳'.repeat(r.priceLevel) : 'Not available'}</td>`).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Cost Per Person</td>
+              ${comparedPlaces.map(r => {
+                const cost = r.estimatedCostPerPersonBdt;
+                if (!cost) return `<td style="padding: 10px; color: var(--text-muted);">Not available</td>`;
+                const withinBudget = cost <= maxBudget;
+                return `
+                  <td style="padding: 10px;">
+                    <span style="font-weight: 800; color: ${withinBudget ? 'var(--primary)' : 'var(--danger)'};">~৳${cost}</span>
+                    ${!withinBudget ? '<span style="font-size: 0.75rem; color: var(--danger); display: block;">Over budget</span>' : ''}
+                    <small style="font-size: 0.75rem; color: var(--text-muted); display: block;">${r.costDerivation || ''}</small>
+                  </td>
+                `;
+              }).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Cuisines</td>
+              ${comparedPlaces.map(r => `<td style="padding: 10px;">${r.cuisine || 'Not available'}</td>`).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Dietary Info</td>
+              ${comparedPlaces.map(r => `
+                <td style="padding: 10px; font-size: 0.85rem;">
+                  ${r.halal ? '🕌 Halal ' : ''}
+                  ${r.vegetarian ? '🥗 Veg ' : ''}
+                  ${r.no_beef ? '🥩 No Beef' : ''}
+                  ${(!r.halal && !r.vegetarian && !r.no_beef) ? '<span style="color: var(--text-muted);">Unverified</span>' : ''}
+                </td>
+              `).join('')}
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Menu Source</td>
+              ${comparedPlaces.map(r => {
+                if (r.menu?.sourceUrl) {
+                  return `
+                    <td style="padding: 10px; font-size: 0.8rem;">
+                      <a href="${r.menu.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">
+                        ${r.menu.sourceName || 'Source Link'}
+                      </a>
+                      <small style="display: block; color: var(--text-muted);">Checked: ${r.menu.lastChecked || 'Recent'}</small>
+                    </td>
+                  `;
+                }
+                return `<td style="padding: 10px; color: var(--text-muted); font-size: 0.8rem;">Unverified source</td>`;
+              }).join('')}
+            </tr>
+            <tr>
+              <td style="padding: 10px;"></td>
+              ${comparedPlaces.map(r => {
+                const dirUrl = mapController.getGoogleMapsDirectionsUrl(userLocation, r);
+                return `
+                  <td style="padding: 10px;">
+                    <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-block;">
+                      🧭 Directions
+                    </a>
+                  </td>
+                `;
+              }).join('')}
+            </tr>
+          </tbody>
+        </table>
+      `;
+    };
+
+    if (budgetSlider && budgetValue) {
+      budgetSlider.oninput = (e) => {
+        maxBudget = parseInt(e.target.value, 10);
+        budgetValue.textContent = `≤ ${maxBudget} BDT`;
+        renderTable();
+      };
+    }
+
+    renderSelectors();
+    renderTable();
+
+    this.sideBySideModal.classList.add('open');
+    if (closeBtn) closeBtn.onclick = () => this.sideBySideModal.classList.remove('open');
+    this.sideBySideModal.onclick = (e) => {
+      if (e.target === this.sideBySideModal) this.sideBySideModal.classList.remove('open');
+    };
+  }
+
+  openProfileModal(onSave) {
+    if (!this.profileModal) return;
+    const closeBtn = document.getElementById('closeProfileModalBtn');
+    const cuisinesContainer = document.getElementById('profileCuisinesList');
+    const budgetMinInput = document.getElementById('profileBudgetMin');
+    const budgetMaxInput = document.getElementById('profileBudgetMax');
+    const dietHalal = document.getElementById('profileDietHalal');
+    const dietVeg = document.getElementById('profileDietVeg');
+    const dietVegan = document.getElementById('profileDietVegan');
+    const dietNoBeef = document.getElementById('profileDietNoBeef');
+    const dislikedContainer = document.getElementById('dislikedTagsContainer');
+    const addDislikedInput = document.getElementById('addDislikedInput');
+    const addDislikedBtn = document.getElementById('addDislikedBtn');
+    const resetBtn = document.getElementById('resetProfileBtn');
+    const saveBtn = document.getElementById('saveProfileBtn');
+
+    let currentProfile = appStorage.getFoodProfile();
+    let preferredCuisines = [...(currentProfile.preferredCuisines || [])];
+    let dislikedFoods = [...(currentProfile.dislikedFoods || [])];
+
+    const ALL_CUISINES = [
+      'Japanese', 'Bangladeshi', 'Indian', 'Chinese', 'Korean',
+      'Fast Food', 'Cafe', 'Kabab', 'Biriyani', 'Dessert', 'Coffee', 'Burger'
+    ];
+
+    const renderCuisines = () => {
+      if (!cuisinesContainer) return;
+      cuisinesContainer.innerHTML = ALL_CUISINES.map(c => {
+        const isSelected = preferredCuisines.includes(c);
+        return `
+          <button type="button" class="chip cuisine-pref-chip ${isSelected ? 'active' : ''}" data-cuisine="${c}" style="cursor: pointer;">
+            ${c} ${isSelected ? '✓' : ''}
+          </button>
+        `;
+      }).join('');
+
+      cuisinesContainer.querySelectorAll('.cuisine-pref-chip').forEach(btn => {
+        btn.onclick = () => {
+          const c = btn.dataset.cuisine;
+          if (preferredCuisines.includes(c)) {
+            preferredCuisines = preferredCuisines.filter(x => x !== c);
+          } else {
+            preferredCuisines.push(c);
+          }
+          renderCuisines();
+        };
+      });
+    };
+
+    const renderDisliked = () => {
+      if (!dislikedContainer) return;
+      if (dislikedFoods.length === 0) {
+        dislikedContainer.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-muted);">None specified</span>';
+        return;
+      }
+      dislikedContainer.innerHTML = dislikedFoods.map((item, idx) => `
+        <span class="chip" style="background: var(--surface-alt); border: 1px solid var(--border); padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px;">
+          ${item}
+          <button type="button" class="remove-disliked-btn" data-idx="${idx}" style="background: none; border: none; cursor: pointer; color: var(--danger); font-weight: 800;">✕</button>
+        </span>
+      `).join('');
+
+      dislikedContainer.querySelectorAll('.remove-disliked-btn').forEach(b => {
+        b.onclick = () => {
+          const idx = parseInt(b.dataset.idx, 10);
+          dislikedFoods.splice(idx, 1);
+          renderDisliked();
+        };
+      });
+    };
+
+    const syncForm = (prof) => {
+      preferredCuisines = [...(prof.preferredCuisines || [])];
+      dislikedFoods = [...(prof.dislikedFoods || [])];
+      if (budgetMinInput) budgetMinInput.value = prof.budgetMin || 200;
+      if (budgetMaxInput) budgetMaxInput.value = prof.budgetMax || 1200;
+      if (dietHalal) dietHalal.checked = Boolean(prof.dietary?.halal);
+      if (dietVeg) dietVeg.checked = Boolean(prof.dietary?.vegetarian);
+      if (dietVegan) dietVegan.checked = Boolean(prof.dietary?.vegan);
+      if (dietNoBeef) dietNoBeef.checked = Boolean(prof.dietary?.no_beef);
+      renderCuisines();
+      renderDisliked();
+    };
+
+    syncForm(currentProfile);
+
+    if (addDislikedBtn && addDislikedInput) {
+      addDislikedBtn.onclick = () => {
+        const val = addDislikedInput.value.trim();
+        if (val && !dislikedFoods.includes(val)) {
+          dislikedFoods.push(val);
+          addDislikedInput.value = '';
+          renderDisliked();
+        }
+      };
+      addDislikedInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addDislikedBtn.click();
+        }
+      };
+    }
+
+    if (resetBtn) {
+      resetBtn.onclick = () => {
+        const confirmed = confirm('Are you sure you want to reset your food profile to default settings?');
+        if (confirmed) {
+          const def = appStorage.resetFoodProfile();
+          syncForm(def);
+        }
+      };
+    }
+
+    if (saveBtn) {
+      saveBtn.onclick = () => {
+        const updated = {
+          preferredCuisines,
+          budgetMin: parseInt(budgetMinInput?.value || '200', 10),
+          budgetMax: parseInt(budgetMaxInput?.value || '1200', 10),
+          dietary: {
+            halal: Boolean(dietHalal?.checked),
+            vegetarian: Boolean(dietVeg?.checked),
+            vegan: Boolean(dietVegan?.checked),
+            no_beef: Boolean(dietNoBeef?.checked)
+          },
+          dislikedFoods
+        };
+        appStorage.saveFoodProfile(updated);
+        this.profileModal.classList.remove('open');
+        if (onSave) onSave(updated);
+      };
+    }
+
+    this.profileModal.classList.add('open');
+    if (closeBtn) closeBtn.onclick = () => this.profileModal.classList.remove('open');
+    this.profileModal.onclick = (e) => {
+      if (e.target === this.profileModal) this.profileModal.classList.remove('open');
+    };
   }
 
   initDidYouGoPrompt() {

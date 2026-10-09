@@ -10,7 +10,21 @@ const STORAGE_KEYS = {
   ONBOARDING_COMPLETED: 'gulshan_mobile_onboarded',
   CACHED_RESULTS: 'gulshan_mobile_cached_results',
   SAVED_PLACES: 'gulshan_mobile_saved_places',
-  PROMPTED_PLACES: 'gulshan_mobile_prompted_places'
+  PROMPTED_PLACES: 'gulshan_mobile_prompted_places',
+  FOOD_PROFILE: 'gulshan_mobile_food_profile'
+};
+
+const DEFAULT_FOOD_PROFILE = {
+  preferredCuisines: [],
+  budgetMin: 200,
+  budgetMax: 1200,
+  dietary: {
+    halal: false,
+    vegetarian: false,
+    vegan: false,
+    no_beef: false
+  },
+  dislikedFoods: []
 };
 
 class MobileStorage {
@@ -197,12 +211,47 @@ class MobileStorage {
     await this.setItem(STORAGE_KEYS.PROMPTED_PLACES, prompted);
   }
 
+  async getFoodProfile() {
+    const p = await this.getItem(STORAGE_KEYS.FOOD_PROFILE);
+    if (!p) return { ...DEFAULT_FOOD_PROFILE, dietary: { ...DEFAULT_FOOD_PROFILE.dietary } };
+    return {
+      preferredCuisines: Array.isArray(p.preferredCuisines) ? p.preferredCuisines : [],
+      budgetMin: Number.isFinite(p.budgetMin) ? p.budgetMin : 200,
+      budgetMax: Number.isFinite(p.budgetMax) ? p.budgetMax : 1200,
+      dietary: {
+        halal: Boolean(p.dietary?.halal),
+        vegetarian: Boolean(p.dietary?.vegetarian),
+        vegan: Boolean(p.dietary?.vegan),
+        no_beef: Boolean(p.dietary?.no_beef)
+      },
+      dislikedFoods: Array.isArray(p.dislikedFoods) ? p.dislikedFoods : []
+    };
+  }
+
+  async saveFoodProfile(profile) {
+    const current = await this.getFoodProfile();
+    const updated = {
+      ...current,
+      ...profile,
+      dietary: { ...current.dietary, ...(profile?.dietary || {}) }
+    };
+    await this.setItem(STORAGE_KEYS.FOOD_PROFILE, updated);
+    return updated;
+  }
+
+  async resetFoodProfile() {
+    const def = { ...DEFAULT_FOOD_PROFILE, dietary: { ...DEFAULT_FOOD_PROFILE.dietary } };
+    await this.setItem(STORAGE_KEYS.FOOD_PROFILE, def);
+    return def;
+  }
+
   async exportAllData() {
     return {
       preferences: await this.getPreferences(),
       favorites: await this.getFavorites(),
       history: await this.getHistory(),
       tasteProfile: await this.getTasteProfile(),
+      foodProfile: await this.getFoodProfile(),
       learningEnabled: await this.isLearningEnabled(),
       exportedAt: new Date().toISOString()
     };

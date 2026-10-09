@@ -74,9 +74,108 @@ export function evaluateClosingSoon(regularOpeningHours, durationSeconds) {
 }
 
 /**
+ * Accurately determines restaurant opening status in Asia/Dhaka time.
+ * Handles:
+ * - "Open now"
+ * - "Closing soon (within 60 minutes)"
+ * - "Closed"
+ * - "Hours unknown"
+ * Handles midnight rollover (e.g. 12:00 PM to 01:00 AM).
+ */
+export function getDhakaOpeningStatus(regularOpeningHours) {
+  if (!regularOpeningHours || (!regularOpeningHours.openTime && !regularOpeningHours.closingTime)) {
+    return {
+      status: 'Hours unknown',
+      label: 'Hours unknown',
+      isOpen: null,
+      isClosingSoon: false,
+      minutesUntilClose: null
+    };
+  }
+
+  try {
+    const dhakaParts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Dhaka',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false
+    }).formatToParts(new Date());
+
+    const curHour = parseInt(dhakaParts.find(p => p.type === 'hour')?.value || '0', 10);
+    const curMin = parseInt(dhakaParts.find(p => p.type === 'minute')?.value || '0', 10);
+    const curTotalMin = curHour * 60 + curMin;
+
+    const [openH, openM] = (regularOpeningHours.openTime || '11:00').split(':').map(Number);
+    const [closeH, closeM] = (regularOpeningHours.closingTime || '23:00').split(':').map(Number);
+
+    const openTotalMin = openH * 60 + openM;
+    let closeTotalMin = closeH * 60 + closeM;
+
+    const closesAfterMidnight = closeTotalMin < openTotalMin;
+    let isOpen = false;
+    let minutesUntilClose = null;
+
+    if (closesAfterMidnight) {
+      if (curTotalMin >= openTotalMin) {
+        isOpen = true;
+        minutesUntilClose = (closeTotalMin + 1440) - curTotalMin;
+      } else if (curTotalMin < closeTotalMin) {
+        isOpen = true;
+        minutesUntilClose = closeTotalMin - curTotalMin;
+      } else {
+        isOpen = false;
+      }
+    } else {
+      if (curTotalMin >= openTotalMin && curTotalMin < closeTotalMin) {
+        isOpen = true;
+        minutesUntilClose = closeTotalMin - curTotalMin;
+      } else {
+        isOpen = false;
+      }
+    }
+
+    if (!isOpen) {
+      return {
+        status: 'Closed',
+        label: 'Closed',
+        isOpen: false,
+        isClosingSoon: false,
+        minutesUntilClose: 0
+      };
+    }
+
+    if (minutesUntilClose !== null && minutesUntilClose <= 60) {
+      return {
+        status: 'Closing soon',
+        label: `Closing soon (${minutesUntilClose} min)`,
+        isOpen: true,
+        isClosingSoon: true,
+        minutesUntilClose
+      };
+    }
+
+    return {
+      status: 'Open now',
+      label: 'Open now',
+      isOpen: true,
+      isClosingSoon: false,
+      minutesUntilClose
+    };
+  } catch (err) {
+    return {
+      status: 'Hours unknown',
+      label: 'Hours unknown',
+      isOpen: null,
+      isClosingSoon: false,
+      minutesUntilClose: null
+    };
+  }
+}
+
+/**
  * Generates plain-language trade-off explanation for why this restaurant was ranked
  */
-export function generateRecommendationReason(restaurant, allRanked, userPriority, tasteMatch, weatherContext) {
+export function generateRecommendationReason(restaurant, allRanked, userPriority, tasteMatch, weatherContext, foodProfile = null) {
   const name = restaurant.displayName;
   const mins = Math.max(1, Math.round(restaurant.durationSeconds / 60));
   const km = (restaurant.distanceMeters / 1000).toFixed(1);
@@ -107,9 +206,32 @@ export function generateRecommendationReason(restaurant, allRanked, userPriority
     tradeOffPart = `${mins} min away (${km} km) with ${traffic} traffic at ${priceLabel}.`;
   }
 
+  // Food Profile match honest reason (Phase 3)
+  let profilePart = '';
+  if (foodProfile) {
+    const isPrefCuisine = foodProfile.preferredCuisines?.some(c => c.toLowerCase() === restaurant.cuisine?.toLowerCase());
+    const cost = restaurant.estimatedCostPerPersonBdt;
+    const isUnderBudget = cost && foodProfile.budgetMax && cost <= foodProfile.budgetMax;
+    
+    // Check dietary requirement transparency
+    let dietaryNote = '';
+    const hasDietReq = foodProfile.dietary?.halal || foodProfile.dietary?.vegetarian || foodProfile.dietary?.vegan || foodProfile.dietary?.no_beef;
+    if (hasDietReq && (!restaurant.halal && !restaurant.vegetarian && !restaurant.no_beef)) {
+      dietaryNote = ' (Dietary certification: unverified)';
+    }
+
+    if (isPrefCuisine && isUnderBudget) {
+      profilePart = `Matches your ${restaurant.cuisine} + under ${foodProfile.budgetMax} BDT preference${dietaryNote}. `;
+    } else if (isPrefCuisine) {
+      profilePart = `Matches your ${restaurant.cuisine} preference${dietaryNote}. `;
+    } else if (isUnderBudget) {
+      profilePart = `Under your ${foodProfile.budgetMax} BDT budget (~৳${cost}/person)${dietaryNote}. `;
+    }
+  }
+
   // Taste personalization mention
   let tastePart = '';
-  if (tasteMatch && tasteMatch > 0.65) {
+  if (!profilePart && tasteMatch && tasteMatch > 0.65) {
     tastePart = `Matches your preference for ${restaurant.cuisine || 'this cuisine'}. `;
   }
 
@@ -125,7 +247,7 @@ export function generateRecommendationReason(restaurant, allRanked, userPriority
     closingPart = ' ⚠️ Closes shortly after your estimated arrival.';
   }
 
-  return `${tastePart}${tradeOffPart}${weatherPart}${closingPart}`.trim();
+  return `${profilePart}${tastePart}${tradeOffPart}${weatherPart}${closingPart}`.trim();
 }
 
 /**
@@ -201,7 +323,11 @@ export function rankRestaurants({
   timeBudgetMinutes = null,
   companion = null,
   preferences = null,
-  banditProfile = null
+  banditProfile = null,
+  openNowOnly = false,
+  distanceRadiusMeters = null,
+  foodProfile = null,
+  filters = null
 }) {
   if (!candidates || candidates.length === 0) return [];
 
@@ -253,6 +379,106 @@ export function rankRestaurants({
     });
   }
 
+  // 3. Open Now Only filter
+  if (openNowOnly) {
+    pool = pool.filter(c => {
+      const op = getDhakaOpeningStatus(c.regularOpeningHours);
+      return op.isOpen === true;
+    });
+  }
+
+  // 4. Distance Radius filter
+  if (distanceRadiusMeters) {
+    const maxRadius = Number(distanceRadiusMeters);
+    if (!isNaN(maxRadius) && maxRadius > 0) {
+      pool = pool.filter(c => (c.distanceMeters || 0) <= maxRadius);
+    }
+  }
+
+  // 5. Price Range & Custom Facet Filters (Availability, Cuisine, Restaurant Type, Dietary, Features)
+  if (filters) {
+    if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
+      const minP = Number.isFinite(Number(filters.priceMin)) ? Number(filters.priceMin) : 0;
+      const maxP = Number.isFinite(Number(filters.priceMax)) ? Number(filters.priceMax) : Infinity;
+
+      pool = pool.filter(c => {
+        // Check verified menu items
+        if (c.menu?.items && c.menu.items.length > 0) {
+          const prices = c.menu.items.map(i => i.price).filter(Number.isFinite);
+          if (prices.length > 0) {
+            const minItemPrice = Math.min(...prices);
+            const maxItemPrice = Math.max(...prices);
+            const costPerPerson = c.menu?.estimatedCostPerPerson?.amount || c.estimatedCostPerPersonBdt;
+            if (costPerPerson && costPerPerson >= minP && costPerPerson <= maxP) {
+              return true;
+            }
+            if (minItemPrice <= maxP && maxItemPrice >= minP) {
+              return true;
+            }
+          }
+        }
+        // Check estimated cost per person
+        const cost = c.estimatedCostPerPerson?.amount || c.estimatedCostPerPersonBdt;
+        if (cost) {
+          return cost >= minP && cost <= maxP;
+        }
+        // Fallback to price level tier
+        const tierMap = {
+          1: { min: 50, max: 400 },
+          2: { min: 250, max: 950 },
+          3: { min: 700, max: 2000 },
+          4: { min: 1500, max: 6000 }
+        };
+        const tier = tierMap[c.priceLevel || 2] || { min: 0, max: 5000 };
+        return tier.min <= maxP && tier.max >= minP;
+      });
+    }
+
+    if (Array.isArray(filters.availability) && filters.availability.length > 0) {
+      pool = pool.filter(c => {
+        const op = getDhakaOpeningStatus(c.regularOpeningHours);
+        return filters.availability.some(av => {
+          if (av === 'open_now') return op.isOpen === true;
+          if (av === 'closing_soon') return op.isClosingSoon === true;
+          if (av === 'open_late') {
+            const closeTime = c.regularOpeningHours?.closingTime || '23:00';
+            const [cH] = closeTime.split(':').map(Number);
+            return cH >= 23 || (cH >= 0 && cH <= 4);
+          }
+          return false;
+        });
+      });
+    }
+
+    if (Array.isArray(filters.cuisines) && filters.cuisines.length > 0) {
+      pool = pool.filter(c => filters.cuisines.some(cuisine => cuisine.toLowerCase() === (c.cuisine || '').toLowerCase()));
+    }
+
+    if (Array.isArray(filters.restaurantTypes) && filters.restaurantTypes.length > 0) {
+      pool = pool.filter(c => {
+        const types = c.restaurantType || ['Dine-in', 'Casual Dining'];
+        return filters.restaurantTypes.some(t => types.includes(t));
+      });
+    }
+
+    if (Array.isArray(filters.dietary) && filters.dietary.length > 0) {
+      pool = pool.filter(c => {
+        if (filters.dietary.includes('halal') && c.halal === false) return false;
+        if (filters.dietary.includes('vegetarian') && !c.vegetarian) return false;
+        if (filters.dietary.includes('vegan') && !c.vegan) return false;
+        if (filters.dietary.includes('no_beef') && !c.no_beef) return false;
+        return true;
+      });
+    }
+
+    if (Array.isArray(filters.features) && filters.features.length > 0) {
+      pool = pool.filter(c => {
+        const feat = c.features || [];
+        return filters.features.every(f => feat.includes(f));
+      });
+    }
+  }
+
   if (pool.length === 0) return [];
 
   // Compute candidate-set mean rating for Bayesian calculation
@@ -263,6 +489,7 @@ export function rankRestaurants({
   const enriched = pool.map(c => {
     const transport = getTransportSummary(c.distanceMeters || 1500, c.durationSeconds || 900, c.trafficLevel || 'Moderate');
     const closingStatus = evaluateClosingSoon(c.regularOpeningHours, c.durationSeconds || 900);
+    const openStatus = getDhakaOpeningStatus(c.regularOpeningHours);
     const bayesianRating = calculateBayesianRating(c.rating, c.userRatingCount, meanRating);
 
     // Preference metadata (marked unverified with allergen disclaimer)
@@ -275,8 +502,11 @@ export function rankRestaurants({
 
     return {
       ...c,
+      estimatedCostPerPerson: c.estimatedCostPerPerson || c.menu?.estimatedCostPerPerson || null,
+      estimatedCostPerPersonBdt: c.estimatedCostPerPersonBdt || c.menu?.estimatedCostPerPerson?.amount || null,
       transport,
       closingStatus,
+      openStatus,
       bayesianRating,
       dietaryVerification
     };
@@ -439,6 +669,14 @@ export function rankRestaurants({
       contextBonus += 3;
     }
 
+    // Food profile preferred cuisine match bonus (+12 points)
+    let foodProfileBonus = 0;
+    if (foodProfile && Array.isArray(foodProfile.preferredCuisines) && c.cuisine) {
+      if (foodProfile.preferredCuisines.some(pc => pc.toLowerCase() === c.cuisine.toLowerCase())) {
+        foodProfileBonus = 12;
+      }
+    }
+
     // Closing soon penalty: -30 points if within 30 min of arrival
     let closingPenalty = 0;
     if (c.closingStatus && c.closingStatus.isClosingSoon) {
@@ -455,7 +693,7 @@ export function rankRestaurants({
        (weights.cost || 0) * costFactor +
        (weights.taste || 0) * tasteFactor) * 100;
 
-    let finalScore = baseScore + cuisineBonus + contextBonus - budgetPenalty - weatherPenalty - closingPenalty;
+    let finalScore = baseScore + cuisineBonus + contextBonus + foodProfileBonus - budgetPenalty - weatherPenalty - closingPenalty;
 
     // Optional collaborative filtering blend
     if (collaborativeData && collaborativeData.hasEnoughData && collaborativeData.predictions[c.id] !== undefined) {
@@ -486,8 +724,12 @@ export function rankRestaurants({
     };
   });
 
-  // Sort descending by score
-  scored.sort((a, b) => b.score - a.score);
+  // Sort descending by score, or ascending by distance if priority is Closest
+  if (priority === 'Closest') {
+    scored.sort((a, b) => (a.distanceMeters || 0) - (b.distanceMeters || 0));
+  } else {
+    scored.sort((a, b) => b.score - a.score);
+  }
 
   // Assign Badges
   let fastestId = null;
@@ -515,7 +757,7 @@ export function rankRestaurants({
   return scored.map((item, index) => {
     const badges = [];
     if (index === 0) {
-      badges.push('Best Overall');
+      badges.push(priority === 'Closest' ? 'Closest' : 'Best Overall');
     }
     if (item.id === fastestId) {
       badges.push('Fastest to Reach');
@@ -532,7 +774,7 @@ export function rankRestaurants({
 
     const reason = item.isTrySomethingNew && item.explorationReason
       ? item.explorationReason
-      : generateRecommendationReason(item, scored, priority, item.factorBreakdown.taste / 100, weatherContext);
+      : generateRecommendationReason(item, scored, priority, item.factorBreakdown.taste / 100, weatherContext, foodProfile);
 
     return {
       ...item,
@@ -548,6 +790,7 @@ export default {
   calculateBayesianRating,
   normalize,
   evaluateClosingSoon,
+  getDhakaOpeningStatus,
   generateRecommendationReason,
   generateCounterfactualExplanation,
   rankRestaurants

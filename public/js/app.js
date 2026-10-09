@@ -6,6 +6,7 @@ import { ui } from './ui.js';
 import { initMoodUI } from './mood-ui.js';
 import { initTasteUI } from './taste-ui.js';
 import { initMealTimeUI } from './mealtime-ui.js';
+import { initFilterUI } from './filter-ui.js';
 
 async function initApp() {
   const wakeupBanner = document.getElementById('serverWakeupBanner');
@@ -49,6 +50,7 @@ async function initApp() {
     initTasteUI();
     initLocationControls(config.presetLocations);
     initFilterChips();
+    initFilterUI();
     initModals();
     ui.initDidYouGoPrompt();
     initFeedbackCard();
@@ -107,7 +109,7 @@ function initLocationControls(presets = {}) {
   if (gpsBtn) {
     gpsBtn.addEventListener('click', () => {
       if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
+        alert('Geolocation is not supported by your browser. Please select an area manually.');
         return;
       }
       gpsBtn.disabled = true;
@@ -126,14 +128,18 @@ function initLocationControls(presets = {}) {
         (err) => {
           gpsBtn.disabled = false;
           gpsBtn.innerHTML = '<span>📡</span> Use Current GPS';
-          console.warn('Geolocation denied or failed, falling back to preset.', err);
-          alert('GPS permission was denied or unavailable. Falling back to Notun Bazar.');
-          state.setLocation(23.7975, 90.4234, 'Notun Bazar');
-          if (select) select.value = 'Notun Bazar';
-          if (status) status.textContent = 'Starting from: Notun Bazar';
-          executeSearch();
+          console.warn('Geolocation denied or failed, allowing manual Dhaka area selection.', err);
+          let reasonMsg = 'GPS permission was denied or unavailable.';
+          if (err.code === 1) reasonMsg = 'GPS permission denied. Please select your neighborhood in Dhaka from the dropdown.';
+          else if (err.code === 2) reasonMsg = 'Location unavailable or GPS turned off. Pick an area in Dhaka from the dropdown.';
+          else if (err.code === 3) reasonMsg = 'GPS timed out. Pick an area in Dhaka from the dropdown.';
+          
+          alert(reasonMsg);
+          if (select) {
+            select.focus();
+          }
         },
-        { timeout: 8000 }
+        { timeout: 10000, enableHighAccuracy: true }
       );
     });
   }
@@ -165,6 +171,29 @@ function initFilterChips() {
         state.setPriority(btn.dataset.priority);
         executeSearch();
       });
+    });
+  }
+
+  // Distance Radius Chips (Phase 1)
+  const radiusContainer = document.getElementById('radiusChipsContainer');
+  if (radiusContainer) {
+    radiusContainer.querySelectorAll('.radius-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        radiusContainer.querySelectorAll('.radius-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const radiusVal = btn.dataset.radius === 'all' ? null : parseInt(btn.dataset.radius, 10);
+        state.setDistanceRadius(radiusVal);
+        executeSearch();
+      });
+    });
+  }
+
+  // Open Now Only Toggle (Phase 1)
+  const openNowToggle = document.getElementById('openNowFilterToggle');
+  if (openNowToggle) {
+    openNowToggle.addEventListener('change', (e) => {
+      state.setOpenNowOnly(e.target.checked);
+      executeSearch();
     });
   }
 
@@ -216,6 +245,24 @@ function initModals() {
     closeFav?.addEventListener('click', () => favModal.classList.remove('open'));
     favModal.addEventListener('click', (e) => {
       if (e.target === favModal) favModal.classList.remove('open');
+    });
+  }
+
+  // Side-by-Side Comparison Modal (Phase 2)
+  const comparePlacesBtn = document.getElementById('openSideBySideBtn');
+  if (comparePlacesBtn) {
+    comparePlacesBtn.addEventListener('click', () => {
+      ui.openSideBySideModal(state.results, state.currentLocation);
+    });
+  }
+
+  // Food Profile Modal (Phase 3)
+  const profileBtn = document.getElementById('openProfileBtn');
+  if (profileBtn) {
+    profileBtn.addEventListener('click', () => {
+      ui.openProfileModal(() => {
+        executeSearch();
+      });
     });
   }
 
@@ -345,6 +392,7 @@ async function executeSearch(options = {}) {
   ui.showLoading();
 
   try {
+    const foodProfile = appStorage.getFoodProfile();
     const payload = {
       lat: state.currentLocation.lat,
       lng: state.currentLocation.lng,
@@ -352,7 +400,10 @@ async function executeSearch(options = {}) {
       priority: state.priority,
       budget: state.budget,
       mood: state.mood,
-      surpriseMe: Boolean(options.surpriseMe)
+      openNowOnly: state.openNowOnly,
+      distanceRadiusMeters: state.distanceRadius,
+      surpriseMe: Boolean(options.surpriseMe),
+      foodProfile
     };
 
     const data = await fetchRecommendations(payload);
@@ -372,12 +423,12 @@ async function executeSearch(options = {}) {
       mapController.highlightRestaurant(state.currentLocation, restaurant);
     });
 
-    ui.renderResults(data.results, state.currentLocation, (restaurant) => {
+    ui.renderResults(state.results, state.currentLocation, (restaurant) => {
       mapController.highlightRestaurant(state.currentLocation, restaurant);
     });
 
     // Update map with markers
-    mapController.update(state.currentLocation, data.results, (restaurant) => {
+    mapController.update(state.currentLocation, state.results, (restaurant) => {
       const card = document.getElementById(`card-${restaurant.id}`);
       if (card) {
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -388,7 +439,7 @@ async function executeSearch(options = {}) {
 
     const countTag = document.getElementById('resultsCountTag');
     if (countTag) {
-      countTag.textContent = `${data.results.length} places ranked`;
+      countTag.textContent = `${state.results.length} places ranked`;
     }
 
     // Show feedback card

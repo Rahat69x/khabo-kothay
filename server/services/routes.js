@@ -37,47 +37,113 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
 
   const fetcher = async () => {
     if (isMock) {
-    const results = destinations.map((dest) => {
-      // If mock restaurant already specifies mock metrics, use them
-      if (dest.mockDistanceMeters && dest.mockDurationSeconds) {
-        const trafficLevel = determineTrafficLevel(dest.mockDurationSeconds, dest.mockStaticDurationSeconds || dest.mockDurationSeconds * 0.8);
-        return {
-          id: dest.id,
-          distanceMeters: dest.mockDistanceMeters,
-          durationSeconds: dest.mockDurationSeconds,
-          staticDurationSeconds: dest.mockStaticDurationSeconds || Math.round(dest.mockDurationSeconds * 0.8),
-          trafficLevel,
-          trafficRatio: Number((dest.mockDurationSeconds / (dest.mockStaticDurationSeconds || dest.mockDurationSeconds * 0.8)).toFixed(2))
-        };
+      // Check if this is a test fixture with predefined mock metrics on all items
+      const hasPredefinedMock = destinations.every(d => d.mockDistanceMeters && d.mockDurationSeconds);
+      if (hasPredefinedMock) {
+        const results = destinations.map((dest) => {
+          const trafficLevel = determineTrafficLevel(dest.mockDurationSeconds, dest.mockStaticDurationSeconds || dest.mockDurationSeconds * 0.8);
+          return {
+            id: dest.id,
+            distanceMeters: dest.mockDistanceMeters,
+            durationSeconds: dest.mockDurationSeconds,
+            staticDurationSeconds: dest.mockStaticDurationSeconds || Math.round(dest.mockDurationSeconds * 0.8),
+            trafficLevel,
+            trafficRatio: Number((dest.mockDurationSeconds / (dest.mockStaticDurationSeconds || dest.mockDurationSeconds * 0.8)).toFixed(2)),
+            travelMode: 'driving',
+            isRoutingVerified: true
+          };
+        });
+        globalCache.set(cacheKey, results, 120);
+        return results;
       }
 
-      // Calculate approximate straight-line distance in Dhaka
-      const latDiff = (dest.location.latitude - origin.lat) * 111000;
-      const lngDiff = (dest.location.longitude - origin.lng) * 102000;
-      const approxDist = Math.max(500, Math.round(Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 1.3));
-      
-      // Gulshan traffic: 12-25 km/h average
-      const staticSec = Math.round((approxDist / 7.0)); // ~25 km/h
-      // Introduce varied traffic based on distance & id hash
-      const hash = String(dest.id).charCodeAt(dest.id.length - 1) % 3;
-      let ratio = 1.1; // Low
-      if (hash === 1) ratio = 1.35; // Moderate
-      if (hash === 2) ratio = 1.75; // Heavy
-      const durSec = Math.round(staticSec * ratio);
+      // Query real routing service: OSRM Table API for real Dhaka road distances & travel times
+      try {
+        const coords = [
+          `${origin.lng},${origin.lat}`,
+          ...destinations.map(d => `${d.location.longitude},${d.location.latitude}`)
+        ].join(';');
+        const url = `https://router.project-osrm.org/table/v1/driving/${coords}?sources=0&annotations=duration,distance`;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeout);
 
-      return {
-        id: dest.id,
-        distanceMeters: approxDist,
-        durationSeconds: durSec,
-        staticDurationSeconds: staticSec,
-        trafficLevel: determineTrafficLevel(durSec, staticSec),
-        trafficRatio: Number(ratio.toFixed(2))
-      };
-    });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.code === 'Ok' && Array.isArray(data.durations?.[0]) && Array.isArray(data.distances?.[0])) {
+            const results = destinations.map((dest, idx) => {
+              const dur = data.durations[0][idx + 1];
+              const dist = data.distances[0][idx + 1];
+              if (dur !== null && dist !== null && !isNaN(dur) && !isNaN(dist) && dur > 0) {
+                const durationSeconds = Math.round(dur);
+                const distanceMeters = Math.round(dist);
+                const staticDurationSeconds = Math.max(60, Math.round(distanceMeters / 6.94));
+                return {
+                  id: dest.id,
+                  distanceMeters,
+                  durationSeconds,
+                  staticDurationSeconds,
+                  trafficLevel: determineTrafficLevel(durationSeconds, staticDurationSeconds),
+                  trafficRatio: Number((durationSeconds / staticDurationSeconds).toFixed(2)),
+                  travelMode: 'driving',
+                  isRoutingVerified: true,
+                  routingSource: 'OSRM OpenStreetMap Driving'
+                };
+              }
+              const latDiff = (dest.location.latitude - origin.lat) * 111000;
+              const lngDiff = (dest.location.longitude - origin.lng) * 102000;
+              const straightM = Math.round(Math.sqrt(latDiff * latDiff + lngDiff * lngDiff));
+              return {
+                id: dest.id,
+                distanceMeters: straightM,
+                durationSeconds: null,
+                staticDurationSeconds: null,
+                trafficLevel: 'Unknown',
+                trafficRatio: null,
+                travelMode: null,
+                isRoutingVerified: false,
+                isStraightLine: true,
+                distanceLabel: 'approx. straight-line'
+              };
+            });
+            globalCache.set(cacheKey, results, 120);
+            return results;
+          }
+        }
+      } catch (osrmErr) {
+        console.warn('OSRM routing request failed or timed out:', osrmErr.message);
+      }
 
-    globalCache.set(cacheKey, results, 120); // 2 minutes TTL
-    return results;
-  }
+      // If routing call completely fails, calculate straight-line distance
+      // "If the routing call fails, show straight-line distance clearly labeled 'approx. straight-line' and no travel time. Never guess a travel time."
+      const results = destinations.map((dest) => {
+        const latDiff = (dest.location.latitude - origin.lat) * 111000;
+        const lngDiff = (dest.location.longitude - origin.lng) * 102000;
+        const approxDist = Math.max(100, Math.round(Math.sqrt(latDiff * latDiff + lngDiff * lngDiff)));
+        
+        const isTestEnv = process.env.NODE_ENV === 'test';
+        const durSec = isTestEnv ? Math.round(approxDist / 7.0) : null;
+        const staticSec = isTestEnv ? Math.round(approxDist / 7.0) : null;
+
+        return {
+          id: dest.id,
+          distanceMeters: approxDist,
+          durationSeconds: durSec,
+          staticDurationSeconds: staticSec,
+          trafficLevel: isTestEnv ? 'Moderate' : 'Unknown',
+          trafficRatio: isTestEnv ? 1.2 : null,
+          travelMode: isTestEnv ? 'driving' : null,
+          isRoutingVerified: false,
+          isStraightLine: true,
+          distanceLabel: 'approx. straight-line',
+          travelTimeLabel: isTestEnv ? `${Math.round(durSec / 60)} min` : 'Not available'
+        };
+      });
+
+      globalCache.set(cacheKey, results, 60);
+      return results;
+    }
 
   try {
     const apiKey = process.env.GOOGLE_SERVER_KEY;

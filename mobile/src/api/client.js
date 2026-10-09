@@ -84,7 +84,11 @@ class MobileApiClient {
     surpriseMe = false,
     timeBudgetMinutes = null,
     companion = null,
-    preferences = null
+    preferences = null,
+    openNowOnly = false,
+    distanceRadiusMeters = null,
+    foodProfile = null,
+    filters = null
   }) {
     const payload = {
       lat,
@@ -98,7 +102,11 @@ class MobileApiClient {
       surpriseMe,
       timeBudgetMinutes,
       companion,
-      preferences
+      preferences,
+      openNowOnly,
+      distanceRadiusMeters,
+      foodProfile,
+      filters
     };
 
     // If already in confirmed offline mode, serve immediately from local engine
@@ -242,7 +250,7 @@ class MobileApiClient {
       if (onStatusChange && attempt === 1) {
         onStatusChange({
           status: 'waking',
-          message: 'Connecting...',
+          message: 'Waking up the server, this can take up to a minute...',
           attempt,
           elapsedSeconds: Math.round((Date.now() - startTime) / 1000)
         });
