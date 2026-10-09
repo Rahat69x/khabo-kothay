@@ -49,11 +49,11 @@
 
 - **Status**: **BUILT & VERIFIED** (Expo EAS Cloud Preview Build)
 - **EAS Account**: `rahat69x`
-- **Build ID**: `6f1c0f91-8011-4bea-a61e-543920fe6fd5`
-- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/6f1c0f91-8011-4bea-a61e-543920fe6fd5
-- **Direct Download URL**: https://expo.dev/artifacts/eas/VIA-_8HvfmRAKwBoLU0-dCa9ZrPrwxBkNa7Z0nKmooY.apk
-- **Expiration Date**: 2026-10-22T21:13:25.609Z
-- **Git Commit**: `99f9a87d4e0da9696e1a7832260f18167bd34baf` ("fix(mobile): load custom fonts with useFonts and ensure robust React Navigation theme font mapping")
+- **Build ID**: `c9ede65c-fe09-43a4-be82-ac387fe55b43`
+- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/c9ede65c-fe09-43a4-be82-ac387fe55b43
+- **Direct Download URL**: https://expo.dev/artifacts/eas/rMFmb0HujmN7GZRhsSETyb-_3oUNFExoTB3NduEaOwU.apk
+- **Expiration Date**: 2026-10-23T06:53:09.985Z
+- **Git Commit**: `f82e27f7fc8b2483523326e2690e5d5ac376d96b` ("fix(mobile): implement offline-first local recommendation engine, meal-time solver, and fix 404 error")
 
 ---
 
