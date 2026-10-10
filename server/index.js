@@ -102,12 +102,15 @@ app.use('/api', limiter);
 
 // Mobile client deterrent authentication token check middleware
 const authCheckMiddleware = (req, res, next) => {
-  // Public metadata & health endpoints
+  // Public metadata, health, and APK download endpoints
   if (
     req.path === '/health' ||
     req.path === '/ready' ||
     req.path === '/config' ||
-    req.path === '/places/photo'
+    req.path === '/places/photo' ||
+    req.path === '/download-info' ||
+    req.path === '/apk/meta' ||
+    req.path.startsWith('/qr')
   ) {
     return next();
   }
@@ -135,6 +138,11 @@ app.use('/api', authCheckMiddleware);
 // Root Liveness & Readiness Probes (for orchestrators, load balancers, and monitoring)
 app.get('/health', healthHandler);
 app.get('/ready', readyHandler);
+
+// APK Download & QR Sharing Landing Pages
+app.get(['/download', '/apk'], (req, res) => {
+  res.sendFile(path.join(publicDir, 'download.html'));
+});
 
 // Serve frontend static assets
 app.use(express.static(publicDir));

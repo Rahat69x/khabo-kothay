@@ -1,0 +1,541 @@
+/* KHABO KOTHAY? - APK Download & Sharing Page Styles */
+
+:root {
+  --dl-max-width: 880px;
+  --dl-radius: 18px;
+  --dl-card-bg: var(--color-surface);
+  --dl-border: var(--color-line);
+  --dl-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+body.download-page {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dl-header {
+  border-bottom: 1px solid var(--dl-border);
+  background: var(--dl-card-bg);
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.dl-header-inner {
+  max-width: var(--dl-max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dl-brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 12px;
+}
+
+.dl-brand-logo {
+  height: 38px;
+  width: auto;
+}
+
+.dl-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-heading, inherit);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+}
+
+.dl-btn:hover {
+  transform: translateY(-1px);
+}
+
+.dl-btn:active {
+  transform: translateY(1px);
+}
+
+.dl-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-surface) !important;
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.28);
+}
+
+.dl-btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.dl-btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--dl-border);
+}
+
+.dl-btn-secondary:hover {
+  background-color: var(--color-surface-alt);
+  border-color: var(--color-primary);
+}
+
+.dl-btn-accent {
+  background-color: var(--color-ink);
+  color: var(--color-surface) !important;
+}
+
+.dl-btn-accent:hover {
+  background-color: var(--color-ink);
+  opacity: 0.9;
+}
+
+.dl-container {
+  max-width: var(--dl-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 20px 60px;
+  flex: 1;
+}
+
+/* Hero section */
+.dl-hero-card {
+  background: var(--dl-card-bg);
+  border: 1px solid var(--dl-border);
+  border-radius: var(--dl-radius);
+  padding: 36px 32px;
+  box-shadow: var(--dl-shadow);
+  margin-bottom: 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.dl-hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+}
+
+.dl-app-icon-wrap {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 18px;
+  border-radius: 22px;
+  background: var(--color-ink);
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(255, 87, 34, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dl-app-icon-wrap img {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+}
+
+.dl-app-title {
+  font-family: var(--font-heading, inherit);
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.dl-app-tagline {
+  color: var(--color-muted);
+  font-size: 1.05rem;
+  max-width: 580px;
+  margin: 0 auto 20px;
+  line-height: 1.5;
+}
+
+.dl-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.dl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--color-primary-tint);
+  color: var(--color-accent-strong);
+  border: 1px solid rgba(255, 87, 34, 0.18);
+}
+
+.dl-badge.neutral {
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+  border-color: var(--dl-border);
+}
+
+.dl-badge.success {
+  background: var(--color-success-tint);
+  color: var(--color-success);
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+/* Download CTAs Grid */
+.dl-cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.dl-cta-card {
+  background: var(--dl-card-bg);
+  border: 2px solid var(--dl-border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.dl-cta-card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.dl-cta-card.featured {
+  border-color: var(--color-primary);
+  background: linear-gradient(180deg, var(--dl-card-bg) 0%, var(--color-primary-tint) 100%);
+}
+
+.dl-cta-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dl-cta-icon {
+  font-size: 1.8rem;
+}
+
+.dl-cta-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.dl-cta-desc {
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  line-height: 1.45;
+  margin: 0 0 18px;
+}
+
+.dl-cta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* QR Code Section */
+.dl-qr-section {
+  background: var(--dl-card-bg);
+  border: 1px solid var(--dl-border);
+  border-radius: var(--dl-radius);
+  padding: 32px;
+  box-shadow: var(--dl-shadow);
+  margin-bottom: 28px;
+}
+
+.dl-section-title {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dl-section-subtitle {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  margin: 0 0 24px;
+}
+
+.dl-qr-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.dl-qr-display-box {
+  background: var(--color-surface);
+  border: 2px solid var(--dl-border);
+  border-radius: 20px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.dl-qr-image {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+
+.dl-qr-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  background: var(--color-surface-alt);
+  padding: 4px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.dl-qr-tab {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--color-muted);
+  transition: all 0.2s;
+}
+
+.dl-qr-tab.active {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.dl-copy-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.dl-input {
+  flex: 1;
+  background: var(--color-bg);
+  border: 1px solid var(--dl-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--color-ink);
+}
+
+.dl-qr-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Steps section */
+.dl-steps-section {
+  background: var(--dl-card-bg);
+  border: 1px solid var(--dl-border);
+  border-radius: var(--dl-radius);
+  padding: 32px;
+  box-shadow: var(--dl-shadow);
+  margin-bottom: 28px;
+}
+
+.dl-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.dl-step-card {
+  background: var(--color-bg);
+  border: 1px solid var(--dl-border);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: left;
+}
+
+.dl-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.dl-step-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 6px;
+}
+
+.dl-step-text {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Integrity card */
+.dl-security-card {
+  background: var(--dl-card-bg);
+  border: 1px solid var(--dl-border);
+  border-radius: var(--dl-radius);
+  padding: 24px;
+  box-shadow: var(--dl-shadow);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.dl-sec-info {
+  flex: 1;
+  min-width: 280px;
+}
+
+.dl-sha-box {
+  background: var(--color-bg);
+  border: 1px solid var(--dl-border);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.78rem;
+  word-break: break-all;
+  margin-top: 6px;
+  display: inline-block;
+}
+
+/* Toast */
+.dl-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--color-ink);
+  color: var(--color-surface);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.dl-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* Footer */
+.dl-footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--dl-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dl-cta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dl-qr-layout {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .dl-qr-display-box {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .dl-qr-tabs {
+    margin: 0 auto 18px;
+  }
+
+  .dl-qr-btn-group {
+    justify-content: center;
+  }
+
+  .dl-steps-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dl-app-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dl-steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dl-hero-card {
+    padding: 28px 18px;
+  }
+
+  .dl-header {
+    padding: 12px 16px;
+  }
+}

@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import QRCode from 'qrcode';
 import pkg from '../../package.json' with { type: 'json' };
 import { searchRestaurants, getPlaceDetails } from '../services/places.js';
 import { computeTravelTimes, compareRoutes } from '../services/routes.js';
@@ -767,6 +768,77 @@ router.post('/meal-time/feedback', (req, res) => {
     res.json({ success: true, message: 'Meal-time feedback recorded successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to record meal-time feedback' });
+  }
+});
+
+const APK_METADATA = {
+  appName: 'KHABO KOTHAY?',
+  appNameBn: 'খাবো কোথায়?',
+  version: pkg.version || '1.1.0',
+  apkSize: '61.06 MB',
+  apkSizeBytes: 64024956,
+  sha256: '40238FEF2107530877B65E76B7444E4F5A3C2F93CC7DF0A6E69AFFF319F62C3C',
+  packageId: 'com.khabokothay.app',
+  googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
+  googleDriveUserUrl: 'https://drive.google.com/drive/u/5/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
+  directDownloadUrl: '/downloads/khabo-kothay-latest.apk',
+  qrDownloadUrl: '/downloads/khabo-kothay-qr.png',
+  qrDriveUrl: '/downloads/khabo-kothay-drive-qr.png',
+  minAndroidVersion: 'Android 8.0+ (Oreo)',
+  targetSdk: 'Android 14 (API 34)'
+};
+
+/**
+ * GET /api/download-info (or /api/apk/meta)
+ * Returns APK version, size, checksums, and hosting links
+ */
+router.get(['/download-info', '/apk/meta'], (req, res) => {
+  res.json(APK_METADATA);
+});
+
+/**
+ * GET /api/qr
+ * Query: url (string), format ('png'|'svg'|'dataurl'), size (number)
+ * Generates and returns rendered QR code
+ */
+router.get('/qr', async (req, res) => {
+  try {
+    const rawUrl = req.query.url || `${req.protocol}://${req.get('host')}/download`;
+    const format = (req.query.format || req.query.type || 'svg').toLowerCase();
+    const size = Math.min(Math.max(parseInt(req.query.size, 10) || 512, 128), 2048);
+
+    if (format === 'png') {
+      const buf = await QRCode.toBuffer(rawUrl, {
+        width: size,
+        margin: 2,
+        color: { dark: '#171717', light: '#FFFFFF' }
+      });
+      res.setHeader('Content-Type', 'image/png');
+      return res.send(buf);
+    }
+
+    if (format === 'dataurl') {
+      const dataUrl = await QRCode.toDataURL(rawUrl, {
+        width: size,
+        margin: 2,
+        color: { dark: '#171717', light: '#FFFFFF' }
+      });
+      return res.json({ dataUrl, url: rawUrl });
+    }
+
+    // Default SVG format
+    const svgStr = await QRCode.toString(rawUrl, {
+      type: 'svg',
+      width: size,
+      margin: 2,
+      color: { dark: '#171717', light: '#FFFFFF' }
+    });
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.send(svgStr);
+  } catch (err) {
+    logger.error({ err }, 'Error generating dynamic QR code');
+    res.status(500).json({ error: 'Failed to generate QR code' });
   }
 });
 
