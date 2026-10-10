@@ -58,6 +58,9 @@
         <button id="installAppBtn" class="btn btn-primary header-btn hidden" aria-label="Install app on phone">
           <span>📲</span> Install
         </button>
+        <button id="langToggleBtn" class="btn btn-secondary header-btn" aria-label="Toggle language (Bangla / English)" title="Toggle Language">
+          <span>🌐</span> বাংলা
+        </button>
         <button id="themeToggleBtn" class="btn btn-secondary header-btn" aria-label="Toggle theme mode" title="Switch Theme (System / Light / Dark)">
           <span id="themeToggleIcon">🌓</span> <span id="themeToggleLabel">Auto</span>
         </button>
@@ -70,6 +73,12 @@
         <button id="openSideBySideBtn" class="btn btn-secondary header-btn" aria-label="Compare restaurants side by side">
           <span>⚖️</span> Compare
         </button>
+        <button id="openGroupPlannerBtn" class="btn btn-secondary header-btn" aria-label="Open group food planner">
+          <span>👥</span> Group
+        </button>
+        <button id="openMealEstimatorBtn" class="btn btn-secondary header-btn" aria-label="Open meal cost estimator">
+          <span>🧮</span> Estimator
+        </button>
         <button id="openProfileBtn" class="btn btn-secondary header-btn" aria-label="Open personal food profile">
           <span>🥗</span> Profile
         </button>
@@ -79,6 +88,17 @@
       </div>
     </div>
   </header>
+
+  <!-- Offline Status Banner -->
+  <aside id="offlineBanner" class="server-wakeup-banner offline-banner hidden" role="status" aria-live="polite">
+    <div class="container wakeup-inner" style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span aria-hidden="true">⚠️</span>
+        <span id="offlineBannerMsg">You are offline. Showing cached restaurants and saved favorites.</span>
+      </div>
+      <button id="offlineRetryBtn" class="btn btn-outline btn-sm" style="padding: 4px 10px;">Retry</button>
+    </div>
+  </aside>
 
   <!-- Server Wake-up Status Banner (for idle/free tiers) -->
   <aside id="serverWakeupBanner" class="server-wakeup-banner hidden" role="status" aria-live="polite">
@@ -696,6 +716,28 @@
           <button type="button" id="saveProfileBtn" class="btn btn-primary">Save Profile</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Group Food Planner Modal (Feature F) -->
+  <div id="groupPlannerModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3>👥 Group Food Planner</h3>
+        <button id="closeGroupPlannerModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div id="groupPlannerBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Meal Cost Estimator Modal (Feature G) -->
+  <div id="mealEstimatorModal" class="modal-backdrop" aria-modal="true" role="dialog">
+    <div class="modal-box modal-md">
+      <div class="modal-header">
+        <h3>🧮 Meal Cost Estimator</h3>
+        <button id="closeMealEstimatorModalBtn" class="close-modal-btn">✕</button>
+      </div>
+      <div id="mealEstimatorBody" class="modal-body"></div>
     </div>
   </div>
 

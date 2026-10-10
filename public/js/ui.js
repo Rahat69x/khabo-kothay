@@ -2,6 +2,7 @@ import { appStorage } from './storage.js';
 import { recordTasteSignal, compareRoutes } from './api.js';
 import { mapController } from './map.js';
 import { esc, safeUrl } from './escape.js';
+import { mealCostEstimator } from './meal-estimator.js';
 
 export class UIController {
   constructor() {
@@ -529,13 +530,18 @@ export class UIController {
       </div>
     `;
 
-    const websiteBtnHtml = (menu?.sourceUrl || r.websiteUri) ? `
-      <div style="margin-top: 14px; text-align: right;">
-        <a href="${safeUrl(menu?.sourceUrl || r.websiteUri)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-          🌐 View Official Menu / Website
-        </a>
+    const modalActionsHtml = `
+      <div style="margin-top: 14px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
+        <button type="button" id="menuModalPartyEstimateBtn" class="btn btn-secondary btn-sm">
+          🧮 Estimate Bill (1-10 Diners)
+        </button>
+        ${(menu?.sourceUrl || r.websiteUri) ? `
+          <a href="${safeUrl(menu?.sourceUrl || r.websiteUri)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+            🌐 View Official Menu / Website
+          </a>
+        ` : ''}
       </div>
-    ` : '';
+    `;
 
     if (contentEl) {
       contentEl.innerHTML = `
@@ -543,8 +549,13 @@ export class UIController {
         <h4 style="margin-bottom: 10px;">📋 Menu Items & Prices</h4>
         ${itemsHtml}
         ${sourceHtml}
-        ${websiteBtnHtml}
+        ${modalActionsHtml}
       `;
+
+      contentEl.querySelector('#menuModalPartyEstimateBtn')?.addEventListener('click', () => {
+        this.menuModal.classList.remove('open');
+        mealCostEstimator.openForRestaurant(r);
+      });
     }
 
     this.menuModal.classList.add('open');

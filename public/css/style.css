@@ -2484,4 +2484,37 @@ body {
   border-color: var(--color-primary);
 }
 
+/* Offline Banner */
+.offline-banner {
+  background: var(--color-surface-alt);
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--color-ink);
+  padding: 10px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Group Food Planner & Estimator Components */
+.group-intro-box, .estimator-receipt {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.member-card, .match-item-card {
+  background: var(--color-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease;
+}
+
+.member-card:hover, .match-item-card:hover {
+  border-color: var(--color-primary);
+}
+
+.estimator-control-group {
+  margin-bottom: 8px;
+}
+
+
 

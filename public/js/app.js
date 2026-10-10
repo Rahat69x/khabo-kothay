@@ -8,10 +8,51 @@ import { initMoodUI } from './mood-ui.js';
 import { initTasteUI } from './taste-ui.js';
 import { initMealTimeUI } from './mealtime-ui.js';
 import { initFilterUI } from './filter-ui.js';
+import { initI18n, toggleLanguage, applyTranslations } from './i18n.js';
+import { groupFoodPlanner } from './group-planner.js';
+import { mealCostEstimator } from './meal-estimator.js';
 
 async function initApp() {
   const wakeupBanner = document.getElementById('serverWakeupBanner');
   const wakeupMsg = document.getElementById('serverWakeupMsg');
+  const offlineBanner = document.getElementById('offlineBanner');
+  const offlineRetryBtn = document.getElementById('offlineRetryBtn');
+
+  // Initialize bilingual translations
+  initI18n();
+
+  // Offline / Online network state handling
+  function handleNetworkStatus() {
+    if (!navigator.onLine) {
+      if (offlineBanner) offlineBanner.classList.remove('hidden');
+    } else {
+      if (offlineBanner) offlineBanner.classList.add('hidden');
+    }
+  }
+  window.addEventListener('online', handleNetworkStatus);
+  window.addEventListener('offline', handleNetworkStatus);
+  handleNetworkStatus();
+
+  offlineRetryBtn?.addEventListener('click', () => {
+    executeSearch();
+  });
+
+  // Language toggle button listener
+  const langToggleBtn = document.getElementById('langToggleBtn');
+  langToggleBtn?.addEventListener('click', () => {
+    toggleLanguage();
+    // Re-render recommendations with translated labels
+    if (state.topPicks) {
+      ui.renderTopPicks(state.topPicks, (restaurant) => {
+        mapController.highlightRestaurant(state.currentLocation, restaurant);
+      });
+    }
+    if (state.results) {
+      ui.renderResults(state.results, state.currentLocation, (restaurant) => {
+        mapController.highlightRestaurant(state.currentLocation, restaurant);
+      });
+    }
+  });
 
   // Trigger non-blocking warm up check
   pingWarmUp((statusObj) => {
@@ -53,6 +94,8 @@ async function initApp() {
     initFilterChips();
     initFilterUI();
     initModals();
+    groupFoodPlanner.init();
+    mealCostEstimator.init();
     ui.initDidYouGoPrompt();
     initFeedbackCard();
     initPwaInstall();
@@ -73,7 +116,24 @@ async function initApp() {
     await executeSearch();
   } catch (err) {
     console.error('App initialization error:', err);
-    ui.showError(err.message, () => executeSearch());
+    // If initial fetch failed, try offline cache
+    const cached = appStorage.getItem('khabo_cached_results');
+    if (cached && Array.isArray(cached.results) && cached.results.length > 0) {
+      if (offlineBanner) offlineBanner.classList.remove('hidden');
+      state.setResults(cached.results, cached.topPicks);
+      ui.renderTopPicks(cached.topPicks, (restaurant) => {
+        mapController.highlightRestaurant(state.currentLocation, restaurant);
+      });
+      ui.renderResults(state.results, state.currentLocation, (restaurant) => {
+        mapController.highlightRestaurant(state.currentLocation, restaurant);
+      });
+      mapController.update(state.currentLocation, state.results, (restaurant) => {
+        const card = document.getElementById(`card-${restaurant.id}`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    } else {
+      ui.showError(err.message, () => executeSearch());
+    }
   }
 }
 
@@ -411,6 +471,13 @@ async function executeSearch(options = {}) {
 
     const data = await fetchRecommendations(payload);
 
+    // Save to offline cache
+    appStorage.setItem('khabo_cached_results', {
+      results: data.results,
+      topPicks: data.topPicks,
+      timestamp: Date.now()
+    });
+
     state.setResults(data.results, data.topPicks);
 
     // Save to search history
@@ -452,6 +519,27 @@ async function executeSearch(options = {}) {
     }
   } catch (err) {
     console.error('Search failed:', err);
+    const cached = appStorage.getItem('khabo_cached_results');
+    if (cached && Array.isArray(cached.results) && cached.results.length > 0) {
+      const offlineBanner = document.getElementById('offlineBanner');
+      if (offlineBanner) offlineBanner.classList.remove('hidden');
+      state.setResults(cached.results, cached.topPicks);
+      ui.renderTopPicks(cached.topPicks, (restaurant) => {
+        mapController.highlightRestaurant(state.currentLocation, restaurant);
+      });
+      ui.renderResults(state.results, state.currentLocation, (restaurant) => {
+        mapController.highlightRestaurant(state.currentLocation, restaurant);
+      });
+      mapController.update(state.currentLocation, state.results, (restaurant) => {
+        const card = document.getElementById(`card-${restaurant.id}`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      const countTag = document.getElementById('resultsCountTag');
+      if (countTag) {
+        countTag.textContent = `${state.results.length} places (Offline Cache)`;
+      }
+      return;
+    }
     ui.showError(err.message, () => executeSearch(options));
   }
 }
