@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme, DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useColorScheme, Text, Platform } from 'react-native';
+import { useColorScheme, Text, Platform, Image } from 'react-native';
 import { useFonts } from 'expo-font';
 
 import { lightTheme, darkTheme } from './src/config/theme.js';
@@ -46,6 +46,13 @@ function BottomTabs({ theme, onThemeChange }) {
         name="Home"
         options={{
           title: t('tabs.home'),
+          headerLeft: () => (
+            <Image
+              source={require('./assets/icon.png')}
+              style={{ width: 28, height: 28, borderRadius: 6, marginLeft: 16 }}
+              resizeMode="contain"
+            />
+          ),
           tabBarIcon: () => <Text style={{ fontSize: 18 }}>🏠</Text>
         }}
       >

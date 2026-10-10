@@ -10,11 +10,11 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#F97316",
+      "backgroundColor": "#111111",
       "dark": {
         "image": "./assets/splash-dark.png",
         "resizeMode": "contain",
-        "backgroundColor": "#121212"
+        "backgroundColor": "#111111"
       }
     },
     "assetBundlePatterns": ["**/*"],
@@ -41,7 +41,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundImage": "./assets/adaptive-icon-background.png",
-        "backgroundColor": "#F97316",
+        "backgroundColor": "#111111",
         "monochromeImage": "./assets/adaptive-icon-monochrome.png"
       },
       "permissions": [

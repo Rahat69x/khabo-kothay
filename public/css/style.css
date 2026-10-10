@@ -82,8 +82,8 @@ body {
   height: 38px;
   border-radius: var(--radius-sm);
   object-fit: contain;
-  box-shadow: 0 4px 14px rgba(59, 63, 168, 0.35);
-  background-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  background-color: transparent;
 }
 
 .brand-icon {

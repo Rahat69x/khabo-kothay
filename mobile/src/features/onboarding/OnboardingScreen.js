@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { mobileStorage } from '../../services/storage.js';
 import { getCurrentOrFallbackLocation } from '../../services/location.js';
 import { t } from '../../i18n/index.js';
@@ -33,7 +33,7 @@ export default function OnboardingScreen({ navigation, theme }) {
       <ScrollView contentContainerStyle={styles.scroll}>
         {step === 1 ? (
           <View style={styles.card}>
-            <Text style={styles.emoji}>🍛📍</Text>
+            <Image source={require('../../../assets/icon.png')} style={styles.logoBadge} resizeMode="contain" />
             <Text style={[styles.title, { color: theme.colors.text }]}>
               Welcome to Khabo Kothay?
             </Text>
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   card: { alignItems: 'center' },
+  logoBadge: { width: 72, height: 72, borderRadius: 16, alignSelf: 'center', marginBottom: 16 },
   emoji: { fontSize: 64, marginBottom: 16 },
   title: { fontSize: 24, fontWeight: '800', textAlign: 'center', marginBottom: 10 },
   subtitle: { fontSize: 16, textAlign: 'center', marginBottom: 16, lineHeight: 22 },

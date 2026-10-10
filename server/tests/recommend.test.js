@@ -182,7 +182,7 @@ describe('Recommendation Engine (Stage 5 & Personalized)', () => {
     const japPlace = {
       id: 'jap',
       displayName: 'Sushi Bar',
-      cuisine: 'Japanese',
+      cuisine: 'Chinese',
       distanceMeters: 2000,
       durationSeconds: 900,
       trafficRatio: 1.2,

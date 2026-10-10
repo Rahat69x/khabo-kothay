@@ -356,8 +356,7 @@ function initTheme() {
     }
 
     if (logoImg) {
-      const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      logoImg.src = isDark ? '/img/logo-dark.svg' : '/img/logo.svg';
+      logoImg.src = '/img/icon.svg';
     }
 
     if (mapController?.applyTheme) {

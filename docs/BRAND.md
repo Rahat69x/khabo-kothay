@@ -131,30 +131,40 @@ Typography is self-hosted locally on the web and bundled within the mobile app. 
 
 ---
 
-## 5. Logo Identity (The Name is the Logo)
+## 5. Logo Identity (K + Question Mark + Orange Location Pin)
 
-Master vector SVG files are stored in `/brand/logo/`. All letterforms have been converted into vector path outlines so the logo never depends on local font availability.
+Master vector SVG files are stored in `/brand/logo/`. All letterforms and symbols have been converted into pure vector path outlines so the logo never depends on local font availability.
 
-- **Wordmark**: `"Khabo Kothay?"` set in Plus Jakarta Sans Bold.
-  - The text `"Khabo Kothay"` is Indigo (`#3B3FA8`) on light backgrounds and near-white (`#ECECFA`) on dark backgrounds.
-  - The question mark `"?"` is always Saffron (`#FFB020`), with its base dot drawn as a custom map-pin drop vector.
-- **Variants Provided**:
-  - `wordmark-light.svg`: Indigo text + Saffron `?` for light surfaces.
-  - `wordmark-dark.svg`: Off-white text (`#ECECFA`) + Saffron `?` for dark surfaces.
-  - `wordmark-on-indigo.svg`: Pure white text (`#FFFFFF`) + Saffron `?` for solid indigo backgrounds and splash screens.
-- **App Icon**:
-  - Indigo (`#3B3FA8`) squircle/rounded-square canvas featuring a bold white `?` whose dot is a saffron map-pin drop.
-  - Simple, balanced, and legible down to 48px.
-  - Android 13+ Themed Icons supported via `adaptive-monochrome.svg` and `adaptive-icon-monochrome.png`.
+- **Primary Brand Colors**:
+  - Warm Orange: `#FF8C00` (Map pin, accent highlight, and punctuation mark)
+  - Deep Black: `#111111` (Squircle app icon background and dark typography)
+  - Pure White: `#FFFFFF` (Stylized "K" glyph and dark-mode typography)
+- **Symbol & App Icon**:
+  - Stylized geometric letter **"K"** with precision upward angled cut (chevron) on the left stem, bold diagonal arms with vertical and horizontal terminal slices, and deep optical junction notch.
+  - Crowned by a sleek **Orange Location Pin** (`#FF8C00`) with circular cutout resting on the top horizontal stem ledge.
+  - Set inside a soft rounded squircle (`#111111`, radius 22%) for standard app icon, or available transparent.
+  - Highly optimized and legible down to `48×48`, `64×64`, and `128×128`.
+- **Horizontal Combo Logo**:
+  - Squircle K-Pin icon badge combined with friendly, bold **"Khabo Kothay?"** typography in Plus Jakarta Sans Bold.
+  - Terminal `"?"` hook in orange with custom map-pin teardrop dot.
+  - `logo.svg` / `logo-horizontal-light.svg`: Dark text (`#111111`) + Orange `?` for light surfaces.
+  - `logo-dark.svg` / `logo-horizontal-dark.svg`: Crisp white text (`#FFFFFF`) + Orange `?` for dark surfaces.
+- **Android Adaptive & Themed Icons**:
+  - `adaptive-icon.png`: Precision foreground centered in Android 66% safe zone circle.
+  - `adaptive-icon-background.png`: Solid `#111111` background.
+  - `adaptive-icon-monochrome.png`: Android 13+ material themed icon silhouette.
+  - `notification-icon.png`: 96×96 white-on-transparent status bar notification silhouette.
+- **Splash Screens**:
+  - `splash.png` (Light) and `splash-dark.png` (Dark): 1242×2688 centered emblem and bilingual branding.
 
 ### Logo Rules
-1. **Clear Space**: Always maintain clear space around the wordmark equal to or greater than the height of the letter `"K"`.
+1. **Clear Space**: Always maintain clear space around the logo equal to or greater than the height of the pin.
 2. **Minimum Size**:
    - Wordmark minimum height: `24px` on digital screens, `8mm` in print.
-   - App Icon minimum size: `48px` x `48px`.
+   - App Icon minimum size: `32px` x `32px` (optimal at `48px`+).
 3. **No Stretching or Distortion**: The aspect ratio must remain strictly locked.
-4. **No Arbitrary Recoloring**: Never change the text or saffron question mark to unapproved colors.
-5. **Background Contrast**: Use `wordmark-light.svg` on light backgrounds, `wordmark-dark.svg` on dark backgrounds, and `wordmark-on-indigo.svg` on indigo surfaces.
+4. **No Arbitrary Recoloring**: Never alter the orange pin (`#FF8C00`) or distort the K geometry.
+5. **Background Contrast**: Use light-mode variants on light surfaces and dark-mode variants on dark surfaces.
 
 ---
 

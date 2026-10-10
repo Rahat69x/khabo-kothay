@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * scripts/tune-mealtime.js
  * Analyzes anonymous meal-time feedback logs and suggests updated wait and eating times.

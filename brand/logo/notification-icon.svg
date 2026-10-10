@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <g transform="translate(8.64, 8.64) scale(0.15375)">
+    <path d="M 163 198
+    C 134 165 122 147 122 128
+    C 122 105 140 88 163 88
+    C 186 88 204 105 204 128
+    C 204 147 192 165 163 198 Z
+    M 163 114
+    A 14 14 0 1 0 163 142
+    A 14 14 0 1 0 163 114 Z" fill="#FFFFFF" fill-rule="evenodd"/>
+    <path d="M 135 204
+    L 191 204
+    L 191 246
+    L 366 110
+    L 366 186
+    L 224 282
+    L 372 386
+    L 304 386
+    L 191 316
+    L 135 386
+    Z" fill="#FFFFFF"/>
+  </g>
+</svg>

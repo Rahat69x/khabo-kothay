@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Switch,
   Share,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { mobileStorage } from '../../services/storage.js';
 import { scheduleMealNudges, cancelAllNudges } from '../../services/notifications.js';
@@ -196,7 +197,17 @@ export default function SettingsScreen({ theme, onThemeChange }) {
 
         {/* About Info */}
         <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>ℹ️ {t('settings.about')}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+            <Image
+              source={require('../../../assets/icon.png')}
+              style={{ width: 44, height: 44, borderRadius: 10, marginRight: 12 }}
+              resizeMode="contain"
+            />
+            <View>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 2 }]}>ℹ️ {t('settings.about')}</Text>
+              <Text style={{ fontSize: 12, color: theme.colors.primary, fontWeight: '700' }}>খাবো কোথায়? • Official App</Text>
+            </View>
+          </View>
           <Text style={[styles.aboutText, { color: theme.colors.textMuted }]}>
             Khabo Kothay? (খাবো কোথায়?) - Dhaka Traffic-Aware Dining Assistant
           </Text>
