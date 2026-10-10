@@ -7,7 +7,15 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cpp:build": "g++ -O3 -std=c++17 -Iengines/routing-core/include engines/routing-core/src/KDTree.cpp engines/routing-core/src/RoutingCore.cpp engines/routing-core/src/main.cpp -o engines/routing-core/routing_core.exe",
+    "cpp:bench": "powershell -Command \"& ./engines/routing-core/routing_core.exe\"",
+    "py:test": "python ml/analytics-pipeline/test_analytics.py",
+    "py:pipeline": "python ml/analytics-pipeline/pipeline_runner.py",
+    "java:build": "powershell -Command \"if (-not (Test-Path services/traffic-dispatch/bin)) { New-Item -ItemType Directory -Path services/traffic-dispatch/bin }; javac -d services/traffic-dispatch/bin (Get-ChildItem -Path services/traffic-dispatch/src -Filter *.java -Recurse).FullName\"",
+    "java:test": "java -cp services/traffic-dispatch/bin com.khabokothay.TrafficDispatchTest",
+    "java:run": "java -cp services/traffic-dispatch/bin com.khabokothay.TrafficApp",
+    "test:all": "npm test && npm run py:test && npm run java:test"
   },
   "keywords": [
     "dhaka",

@@ -10,3 +10,10 @@ coverage/
 scripts/output/
 *.apk
 release/
+*.exe
+*.o
+*.class
+target/
+__pycache__/
+*.pyc
+bin/
