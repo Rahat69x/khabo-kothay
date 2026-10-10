@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
@@ -777,9 +777,9 @@ const APK_METADATA = {
   appName: 'KHABO KOTHAY?',
   appNameBn: 'খাবো কোথায়?',
   version: pkg.version || '1.1.0',
-  apkSize: '61.06 MB',
-  apkSizeBytes: 64024956,
-  sha256: '40238FEF2107530877B65E76B7444E4F5A3C2F93CC7DF0A6E69AFFF319F62C3C',
+  apkSize: '64.98 MB',
+  apkSizeBytes: 68135777,
+  sha256: 'E5E8D00B8DA110EC7390A57315C76DA1AFD1C8C9B1FC5E54178272CA17D31353',
   packageId: 'com.khabokothay.app',
   googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
   googleDriveUserUrl: 'https://drive.google.com/drive/u/5/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
