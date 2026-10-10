@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">খাবো কোথায়?</string>
+    <string name="eat_now">এখনই খাবো</string>
+    <string name="favorites">পছন্দের তালিকা</string>
+    <string name="history">ইতিহাস</string>
+    <string name="settings">সেটিংস</string>
+
+    <!-- Notifications -->
+    <string name="channel_closing_soon">বন্ধ হওয়ার সতর্কবার্তা</string>
+    <string name="channel_closing_soon_desc">আপনার পছন্দের জায়গা বন্ধ হওয়ার আগে জানিয়ে দেয়</string>
+    <string name="channel_budget">বাজেট সতর্কবার্তা</string>
+    <string name="channel_budget_desc">খাবার বাজেটের অগ্রগতি সংক্রান্ত নোটিফিকেশন</string>
+    <string name="channel_guides">উৎসব ও সিজনাল গাইড</string>
+    <string name="channel_guides_desc">ঢাকা খাবারের বিশেষ গাইড ও তালিকা</string>
+    <string name="channel_reminders">খাবারের রিমাইন্ডার</string>
+    <string name="channel_reminders_desc">লাঞ্চ বা ডিনারের জন্য অপ্ট-ইন রিমাইন্ডার</string>
+    <string name="channel_nearby">কাছের পছন্দের জায়গা</string>
+    <string name="channel_nearby_desc">যেতে চান এমন কোনো জায়গার কাছে থাকলে অ্যালার্ট</string>
+    <string name="notification_permission_rationale">খাবো কোথায়? শুধুমাত্র আপনার পছন্দের অ্যালার্টের জন্য নোটিফিকেশন পাঠায়। আমরা অপ্রয়োজনীয় নোটিফিকেশন পাঠাই না।</string>
+
+    <!-- Currency & Price -->
+    <string name="currency_symbol">৳</string>
+    <string name="estimated_label">(আনুমানিক)</string>
+    <string name="predicted_label">(ভবিষ্যদ্বাণী)</string>
+    <string name="verified_label">যাচাইকৃত</string>
+    <string name="unverified_label">অযাচাইকৃত</string>
+</resources>

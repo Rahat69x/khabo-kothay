@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Khabo Kothay?</string>
+    <string name="eat_now">Eat now</string>
+    <string name="favorites">Favorites</string>
+    <string name="history">History</string>
+    <string name="settings">Settings</string>
+
+    <!-- Notifications -->
+    <string name="channel_closing_soon">Closing Soon Alerts</string>
+    <string name="channel_closing_soon_desc">Notifies you when your favorite places are about to close</string>
+    <string name="channel_budget">Budget Alerts</string>
+    <string name="channel_budget_desc">Neutral notifications on food budget milestones</string>
+    <string name="channel_guides">Seasonal Guides</string>
+    <string name="channel_guides_desc">Editorial festival and food guides</string>
+    <string name="channel_reminders">Meal Reminders</string>
+    <string name="channel_reminders_desc">Opt-in reminders for breakfast, lunch, or dinner</string>
+    <string name="channel_nearby">Nearby Places</string>
+    <string name="channel_nearby_desc">Alerts when near places on your want-to-try list</string>
+    <string name="notification_permission_rationale">Khabo Kothay? uses notifications only for closing alerts and meal reminders you opt into. We never spam.</string>
+
+    <!-- Currency & Price -->
+    <string name="currency_symbol">৳</string>
+    <string name="estimated_label">(estimated)</string>
+    <string name="predicted_label">(predicted)</string>
+    <string name="verified_label">Verified</string>
+    <string name="unverified_label">Unverified</string>
+</resources>

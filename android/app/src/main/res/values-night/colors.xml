@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Tokens -->
+    <color name="primary">#8B90F0</color>
+    <color name="primary_variant">#5C61C7</color>
+    <color name="accent">#FFB020</color>
+    <color name="background">#11122B</color>
+    <color name="surface">#1B1D45</color>
+    <color name="ink">#ECECFA</color>
+    <color name="ink_muted">#9DA0C8</color>
+
+    <!-- Traffic & Status Tokens -->
+    <color name="traffic_green">#22C55E</color>
+    <color name="traffic_amber">#F59E0B</color>
+    <color name="traffic_red">#EF4444</color>
+</resources>

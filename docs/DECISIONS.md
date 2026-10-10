@@ -141,3 +141,30 @@
   - Android SDK (ANDROID_HOME), sdkmanager, and Gradle require installation or environment variable configuration on Windows. Android Studio with bundled Android SDK (API 34/35) and cmdline-tools is required for building `/android`.
 - **Backend Fixes Prior to Android Cutover**:
   - All Section 8 bugs (price propagation, error handling, cold-boot timeout, empty lists) were resolved and verified in the backend layer with 100% test coverage before beginning the native client skeleton.
+
+## Phase F Decisions: Shared Foundation (v4 Blueprint)
+
+### 13. Discrete Feature Flags
+- **Decision**: Define 11 discrete feature flags in \`FeatureFlags.java\` (Android) and \`Settings\` (FastAPI): \`outingCost\`, \`closingAlerts\`, \`budgetTracker\`, \`occasionFilters\`, \`homeWidget\`, \`parkingAccess\`, \`hiddenGems\` (false), \`seasonalGuides\`, \`dishSearch\`, \`wantToTry\`, \`geofenceReminders\` (false).
+- **Rationale**: Allows toggling any feature off cleanly without regression or breaking app builds.
+
+### 14. Centralized Notification Registry
+- **Decision**: Centralize all notifications in \`NotificationHelper\` across 5 channels (\`closing_soon\`, \`budget\`, \`guides\`, \`reminders\`, \`nearby\`).
+- **Enforcement**:
+  - Global master switch + per-channel switches.
+  - Quiet hours strictly enforced (default 23:00 to 07:00 Asia/Dhaka).
+  - Global daily cap of 3 notifications across all channels combined.
+  - \`POST_NOTIFICATIONS\` permission requested only when the user explicitly enables an alert.
+
+### 15. WorkManager Conventions & Battery Reality
+- **Decision**: All background tasks use WorkManager with \`NetworkType.CONNECTED\` and \`setRequiresBatteryNotLow(true)\`. No exact alarms.
+- **User Disclosure**: Inform users in UI that notifications may experience delays due to manufacturer battery savers and Android Doze mode.
+
+### 16. Device-First Privacy Strategy
+- **Decision**: Full adherence to \`docs/PRIVACY_MATRIX.md\`. Personal locations (Home, Office, Uni), spend history, budget settings, and accessibility needs remain exclusively in on-device SQLite. The server receives only boolean/derived request flags.
+
+### 17. Timezone Asia/Dhaka & Clock Abstraction
+- **Decision**: System clock locked to \`Asia/Dhaka\` zone with \`Clock\` interface allowing deterministic time manipulation in unit tests via \`FakeClock\`.
+
+### 18. Room Versioned Migrations & Exported Schemas
+- **Decision**: Room database set to \`exportSchema = true\` with versioned migration pipeline for the 6 new tables: \`favorite_alert\`, \`budget_settings\`, \`spend_entries\`, \`want_to_try\`, \`saved_guide\`, \`guide_reminder\`.

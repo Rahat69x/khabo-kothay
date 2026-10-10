@@ -1,0 +1,83 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "com.khabokothay.app"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.khabokothay.app"
+        minSdk 24
+        targetSdk 34
+        versionCode 3
+        versionName "4.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            buildConfigField "String", "API_BASE_URL", "\"https://api.khabokothay.com/api/v1/\""
+        }
+        debug {
+            buildConfigField "String", "API_BASE_URL", "\"http://10.0.2.2:8000/api/v1/\""
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.11.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "androidx.core:core-splashscreen:1.0.1"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment:2.7.7"
+    implementation "androidx.navigation:navigation-ui:2.7.7"
+
+    // Lifecycle / MVVM
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-livedata:2.7.0"
+
+    // Room
+    implementation "androidx.room:room-runtime:2.6.1"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
+
+    // WorkManager
+    implementation "androidx.work:work-runtime:2.9.0"
+
+    // Retrofit & OkHttp
+    implementation "com.squareup.retrofit2:retrofit:2.10.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.10.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
+
+    // Play Services
+    implementation "com.google.android.gms:play-services-maps:18.2.0"
+    implementation "com.google.android.gms:play-services-location:21.2.0"
+    implementation "com.google.maps.android:android-maps-utils:3.8.2"
+
+    // Testing
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.mockito:mockito-core:5.11.0"
+    testImplementation "androidx.room:room-testing:2.6.1"
+}

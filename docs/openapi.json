@@ -1,0 +1,768 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Khabo Kothay? API",
+    "description": "API for Khabo Kothay? Dhaka Cafe and Restaurant Finder (v4 Blueprint)",
+    "version": "4.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Default v1 API root"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "UPSTREAM_QUOTA",
+                  "UPSTREAM_KEY_INVALID",
+                  "UPSTREAM_TIMEOUT",
+                  "NO_RESULTS",
+                  "BAD_INPUT",
+                  "RATE_LIMITED",
+                  "SERVER_WAKING"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "hint": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "hint",
+              "requestId"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "app": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Dhaka"
+          }
+        },
+        "required": [
+          "ok",
+          "status",
+          "app",
+          "version",
+          "timestamp"
+        ]
+      },
+      "OutingCostRequest": {
+        "type": "object",
+        "properties": {
+          "placeId": {
+            "type": "string"
+          },
+          "partySize": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "transport": {
+            "type": "string",
+            "enum": [
+              "rickshaw",
+              "cng",
+              "car",
+              "ride_share",
+              "motorcycle",
+              "walking"
+            ],
+            "default": "cng"
+          },
+          "origin": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lng": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "lat",
+              "lng"
+            ]
+          },
+          "destination": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lng": {
+                "type": "number"
+              }
+            }
+          },
+          "includeTaxes": {
+            "type": "boolean",
+            "default": true
+          },
+          "vatPct": {
+            "type": "number",
+            "default": 15
+          },
+          "servicePct": {
+            "type": "number",
+            "default": 5
+          },
+          "parkingFeeBdt": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "required": [
+          "placeId",
+          "origin"
+        ]
+      },
+      "OutingCostResponse": {
+        "type": "object",
+        "properties": {
+          "food": {
+            "type": "object",
+            "properties": {
+              "lowBdt": {
+                "type": "number"
+              },
+              "highBdt": {
+                "type": "number"
+              },
+              "source": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "confidence"
+            ]
+          },
+          "taxes": {
+            "type": "object",
+            "properties": {
+              "vatBdt": {
+                "type": "number"
+              },
+              "serviceBdt": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "vatBdt",
+              "serviceBdt"
+            ]
+          },
+          "transport": {
+            "type": "object",
+            "properties": {
+              "outboundBdt": {
+                "type": "number"
+              },
+              "returnBdt": {
+                "type": "number"
+              },
+              "vehicles": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "outboundBdt",
+              "returnBdt",
+              "vehicles"
+            ]
+          },
+          "parkingBdt": {
+            "type": "number"
+          },
+          "totalPerPerson": {
+            "type": "object",
+            "properties": {
+              "lowBdt": {
+                "type": "number"
+              },
+              "highBdt": {
+                "type": "number"
+              }
+            }
+          },
+          "totalParty": {
+            "type": "object",
+            "properties": {
+              "lowBdt": {
+                "type": "number"
+              },
+              "highBdt": {
+                "type": "number"
+              }
+            }
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "food",
+          "taxes",
+          "transport",
+          "parkingBdt",
+          "assumptions",
+          "flags"
+        ]
+      },
+      "FavoritesStatusRequest": {
+        "type": "object",
+        "properties": {
+          "placeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "placeIds"
+        ]
+      },
+      "FavoritesStatusItem": {
+        "type": "object",
+        "properties": {
+          "placeId": {
+            "type": "string"
+          },
+          "openNow": {
+            "type": "boolean"
+          },
+          "closesAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "minutesToClose": {
+            "type": "integer",
+            "nullable": true
+          },
+          "hoursSource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "placeId",
+          "openNow",
+          "hoursSource"
+        ]
+      },
+      "WidgetTopPickResponse": {
+        "type": "object",
+        "properties": {
+          "placeId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "openStatus": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "integer"
+          },
+          "trafficLevel": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "placeId",
+          "name",
+          "openStatus",
+          "durationSeconds",
+          "trafficLevel",
+          "reason",
+          "updatedAt"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "API Health Check",
+        "responses": {
+          "200": {
+            "description": "Service is operational",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/locations": {
+      "get": {
+        "summary": "Get Dhaka Areas Dataset",
+        "responses": {
+          "200": {
+            "description": "List of 80 Dhaka areas"
+          }
+        }
+      }
+    },
+    "/locations/search": {
+      "get": {
+        "summary": "Search Dhaka Areas",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching locations"
+          }
+        }
+      }
+    },
+    "/locations/nearest": {
+      "get": {
+        "summary": "Get Nearest Area",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nearest location"
+          }
+        }
+      }
+    },
+    "/restaurants/search": {
+      "post": {
+        "summary": "Search Restaurants with Filters",
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/recommend": {
+      "post": {
+        "summary": "Get Ranked Dining Recommendations",
+        "responses": {
+          "200": {
+            "description": "Ranked candidates"
+          }
+        }
+      }
+    },
+    "/meal-time/search": {
+      "post": {
+        "summary": "Meal-Time Mode Feasible Recommendations",
+        "responses": {
+          "200": {
+            "description": "Feasible candidates"
+          }
+        }
+      }
+    },
+    "/places/{placeId}/details": {
+      "get": {
+        "summary": "Lazy Load Place Details",
+        "parameters": [
+          {
+            "name": "placeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Place details"
+          }
+        }
+      }
+    },
+    "/places/photo": {
+      "get": {
+        "summary": "Proxy Google Photos",
+        "responses": {
+          "200": {
+            "description": "Photo binary stream"
+          }
+        }
+      }
+    },
+    "/routes/compare": {
+      "post": {
+        "summary": "Compare Multi-Transit Routes",
+        "responses": {
+          "200": {
+            "description": "Multi-modal route estimates"
+          }
+        }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "summary": "Submit User Feedback",
+        "responses": {
+          "200": {
+            "description": "Feedback recorded"
+          }
+        }
+      }
+    },
+    "/context/weather": {
+      "get": {
+        "summary": "Get Dhaka Weather Context",
+        "responses": {
+          "200": {
+            "description": "Weather conditions"
+          }
+        }
+      }
+    },
+    "/outing-cost": {
+      "post": {
+        "summary": "Calculate Total Outing Cost (Task 1)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutingCostRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Outing cost breakdown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutingCostResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favorites/status": {
+      "post": {
+        "summary": "Batch Check Favorite Places Opening Status (Task 2)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FavoritesStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status for favorites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FavoritesStatusItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/widget/top-pick": {
+      "get": {
+        "summary": "Lightweight Top Pick for Home Widget (Task 5)",
+        "responses": {
+          "200": {
+            "description": "Top pick summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetTopPickResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Lightweight Top Pick with Coordinate Fix for Home Widget (Task 5)",
+        "responses": {
+          "200": {
+            "description": "Top pick summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetTopPickResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dishes": {
+      "get": {
+        "summary": "Get Dishes Dictionary (Task 9)",
+        "responses": {
+          "200": {
+            "description": "Versioned dishes catalog"
+          }
+        }
+      }
+    },
+    "/dishes/suggest": {
+      "get": {
+        "summary": "Dish Autocomplete Suggestions (Task 9)",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching dishes"
+          }
+        }
+      }
+    },
+    "/dish-search": {
+      "post": {
+        "summary": "Dish-First Search (Task 9)",
+        "responses": {
+          "200": {
+            "description": "Places known for dish with evidence"
+          }
+        }
+      }
+    },
+    "/guides": {
+      "get": {
+        "summary": "Get Active Seasonal & Festival Guides (Task 8)",
+        "responses": {
+          "200": {
+            "description": "Active editorial guides"
+          }
+        }
+      }
+    },
+    "/guides/{id}": {
+      "get": {
+        "summary": "Get Seasonal Guide Detail (Task 8)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Guide with live resolved places"
+          }
+        }
+      }
+    },
+    "/gems": {
+      "post": {
+        "summary": "Submit a Hidden Gem (Task 7)",
+        "responses": {
+          "200": {
+            "description": "Gem submission created in pending state"
+          }
+        }
+      }
+    },
+    "/gems/nearby": {
+      "get": {
+        "summary": "Get Published Hidden Gems Nearby (Task 7)",
+        "responses": {
+          "200": {
+            "description": "Nearby community gems"
+          }
+        }
+      }
+    },
+    "/gems/{id}": {
+      "get": {
+        "summary": "Get Hidden Gem Details (Task 7)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gem details"
+          }
+        }
+      }
+    },
+    "/gems/{id}/confirm": {
+      "post": {
+        "summary": "Confirm or Upvote Hidden Gem (Task 7)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Confirmation recorded"
+          }
+        }
+      }
+    },
+    "/gems/{id}/report": {
+      "post": {
+        "summary": "Report Inappropriate Hidden Gem (Task 7)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report logged for moderation"
+          }
+        }
+      }
+    },
+    "/uploads/sign": {
+      "post": {
+        "summary": "Get Signed Photo Upload URL (Task 7)",
+        "responses": {
+          "200": {
+            "description": "S3 signed upload URL"
+          }
+        }
+      }
+    }
+  }
+}

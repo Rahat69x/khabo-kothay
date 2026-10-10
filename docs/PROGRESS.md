@@ -163,3 +163,28 @@
 - **Incorrect Restaurant Prices**: 🟢 **RESOLVED** — Single source of truth with 33 verified restaurants in BDT (৳); `ui.js` modal bug resolved; budget chips (৳ to ৳৳৳৳), dual sliders, and numeric inputs bidirectionally synced; itemized meal estimator implemented.
 - **Test Suite Status**: 🟢 **159 / 159 PASS** across 25 Vitest files; 9/9 Python analytics PASS; 12/12 Java dispatch PASS.
 - **Documentation**: `docs/PROBLEMS.md` and `docs/DECISIONS.md` updated.
+
+
+---
+
+## Phase F: Shared Foundation (Completed)
+
+### 1. Architectural & Privacy Deliverables
+- **Data Privacy Matrix**: Completed in [docs/PRIVACY_MATRIX.md](file:///docs/PRIVACY_MATRIX.md) covering all ten feature tasks, device-only isolation, and zero review-text scraping compliance.
+- **Contract-First OpenAPI**: Exported OpenAPI 3.0 specification in [docs/openapi.json](file:///docs/openapi.json) with standardized error schema \`{error: {code, message, hint, requestId}}\`.
+- **Clock Abstraction**: Implemented Asia/Dhaka timezone clock abstraction (\`Clock\`, \`SystemClock\`, \`FakeClock\`) in both Python FastAPI and Android Java.
+
+### 2. Python FastAPI Backend Skeleton (`/api`)
+- **Core Architecture**: \`app/core/config.py\`, \`app/core/clock.py\`, \`app/core/errors.py\`, \`app/core/guard.py\`.
+- **Health Endpoint**: \`/api/v1/health\` and alias \`/api/health\` returning service health and timestamp in Asia/Dhaka.
+- **Testing**: 4 / 4 pytest tests passing (health, fake clock, usage guard, feature flags).
+
+### 3. Android Native Skeleton (`/android`)
+- **Gradle & Build**: Gradle project with Android Gradle Plugin, compileSdk 34, Java 17, minSdk 24, targetSdk 34, Material 3 DayNight colors, R8 keep rules.
+- **Notification Registry**: \`NotificationHelper\` supporting 5 channels (\`closing_soon\`, \`budget\`, \`guides\`, \`reminders\`, \`nearby\`), quiet hours (23:00-07:00), and a 3-notification daily cap.
+- **Room Database**: \`AppDatabase\` with schema export enabled and entities for \`favorite_alert\`, \`budget_settings\`, \`spend_entries\`, \`want_to_try\`, \`saved_guide\`, and \`guide_reminder\`.
+- **Bengali & Formatting**: \`BengaliFormatter\` with English-to-Bangla digits and BDT (৳) currency formatting.
+- **Testing**: 7 / 7 JUnit unit tests passing.
+
+### 4. Regression Status
+- **Legacy Node Test Suite**: 🟢 **159 / 159 PASS** (100% parity preserved).
