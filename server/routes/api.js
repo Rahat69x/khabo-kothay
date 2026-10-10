@@ -273,11 +273,13 @@ router.post('/recommend', async (req, res, next) => {
     let candidates = [];
     const moodConfig = mood ? getMoodConfig(mood) : null;
 
+    const candidateBudget = (filters && (filters.priceMin !== undefined || filters.priceMax !== undefined)) ? null : budget;
+
     if (moodConfig && (!cuisine || cuisine === 'All')) {
       if (moodConfig.cuisines && moodConfig.cuisines.length > 0) {
         // Fetch candidates for primary mood cuisines
         const promises = moodConfig.cuisines.slice(0, 3).map(c =>
-          searchRestaurants({ lat: userLat, lng: userLng, cuisine: c, budget })
+          searchRestaurants({ lat: userLat, lng: userLng, cuisine: c, budget: candidateBudget })
         );
         const nested = await Promise.all(promises);
         const seen = new Set();
@@ -290,10 +292,10 @@ router.post('/recommend', async (req, res, next) => {
           }
         }
       } else {
-        candidates = await searchRestaurants({ lat: userLat, lng: userLng, cuisine: 'All', budget });
+        candidates = await searchRestaurants({ lat: userLat, lng: userLng, cuisine: 'All', budget: candidateBudget });
       }
     } else {
-      candidates = await searchRestaurants({ lat: userLat, lng: userLng, cuisine, budget });
+      candidates = await searchRestaurants({ lat: userLat, lng: userLng, cuisine, budget: candidateBudget });
     }
 
     if (candidates.length === 0) {

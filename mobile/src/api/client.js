@@ -46,7 +46,7 @@ class MobileApiClient {
     };
   }
 
-  async request(endpoint, options = {}, timeoutMs = 4500) {
+  async request(endpoint, options = {}, timeoutMs = 12000) {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = { ...this.getHeaders(), ...(options.headers || {}) };
 
@@ -70,7 +70,7 @@ class MobileApiClient {
 
   async getConfig() {
     try {
-      return await this.request('/api/config', {}, 2500);
+      return await this.request('/api/config', {}, 8000);
     } catch {
       return { ok: true, app: 'Khabo Kothay?', offline: true };
     }
@@ -78,7 +78,7 @@ class MobileApiClient {
 
   async getWeather(lat, lng) {
     try {
-      return await this.request(`/api/context/weather?lat=${lat}&lng=${lng}`, {}, 2500);
+      return await this.request(`/api/context/weather?lat=${lat}&lng=${lng}`, {}, 6000);
     } catch {
       return getLocalWeather();
     }
@@ -130,14 +130,14 @@ class MobileApiClient {
       const data = await this.request('/api/recommend', {
         method: 'POST',
         body: JSON.stringify(payload)
-      }, 4000);
+      }, 12000);
 
       if (data && Array.isArray(data.results) && data.results.length > 0) {
         return data;
       }
       return getLocalRecommendations(payload);
     } catch (err) {
-      console.warn('Backend /api/recommend unavailable, using embedded local engine:', err.message);
+      console.warn('Backend /api/recommend unavailable or wake-up delayed, using embedded local engine:', err.message);
       this.isOfflineMode = true;
       return getLocalRecommendations(payload);
     }

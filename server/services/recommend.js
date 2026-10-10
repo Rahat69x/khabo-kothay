@@ -7,6 +7,7 @@ import { selectExplorationCandidates } from './discovery.js';
 import { getCollaborativePredictions } from './collaborative.js';
 import { getTransportSummary } from './cost.js';
 import { projectWeightsToSimplexBounds, generateBanditExplanation } from './bandit.js';
+import { matchesCuisine } from './mock.js';
 
 /**
  * Calculates Bayesian average rating
@@ -405,26 +406,35 @@ export function rankRestaurants({
       const maxP = Number.isFinite(Number(filters.priceMax)) ? Number(filters.priceMax) : Infinity;
 
       pool = pool.filter(c => {
-        // Check verified menu items
+        const cost = c.estimatedCostPerPersonBdt || c.estimatedCostPerPerson?.amount || c.menu?.estimatedCostPerPerson?.amount;
+        if (cost !== null && cost !== undefined && Number.isFinite(cost)) {
+          if (cost >= minP && cost <= maxP) {
+            return true;
+          }
+          if (c.menu?.items && c.menu.items.length > 0) {
+            const prices = c.menu.items.map(i => i.price !== undefined ? i.price : i.priceBdt).filter(Number.isFinite);
+            if (prices.length > 0) {
+              const minItemPrice = Math.min(...prices);
+              const maxItemPrice = Math.max(...prices);
+              if (minItemPrice <= maxP && maxItemPrice >= minP) {
+                if (minP >= 1500 && cost < 1000) return false;
+                if (maxP <= 400 && cost > 550) return false;
+                return true;
+              }
+            }
+          }
+          return false;
+        }
+
         if (c.menu?.items && c.menu.items.length > 0) {
-          const prices = c.menu.items.map(i => i.price).filter(Number.isFinite);
+          const prices = c.menu.items.map(i => i.price !== undefined ? i.price : i.priceBdt).filter(Number.isFinite);
           if (prices.length > 0) {
             const minItemPrice = Math.min(...prices);
             const maxItemPrice = Math.max(...prices);
-            const costPerPerson = c.menu?.estimatedCostPerPerson?.amount || c.estimatedCostPerPersonBdt;
-            if (costPerPerson && costPerPerson >= minP && costPerPerson <= maxP) {
-              return true;
-            }
-            if (minItemPrice <= maxP && maxItemPrice >= minP) {
-              return true;
-            }
+            return minItemPrice <= maxP && maxItemPrice >= minP;
           }
         }
-        // Check estimated cost per person
-        const cost = c.estimatedCostPerPerson?.amount || c.estimatedCostPerPersonBdt;
-        if (cost) {
-          return cost >= minP && cost <= maxP;
-        }
+
         // Fallback to price level tier
         const tierMap = {
           1: { min: 50, max: 400 },
@@ -649,7 +659,7 @@ export function rankRestaurants({
 
     // Cuisine match bonus
     let cuisineBonus = 0;
-    if (cuisine && cuisine !== 'All' && c.cuisine && c.cuisine.toLowerCase() === cuisine.toLowerCase()) {
+    if (cuisine && cuisine !== 'All' && c.cuisine && matchesCuisine(c.cuisine, cuisine)) {
       cuisineBonus = 5;
     }
 

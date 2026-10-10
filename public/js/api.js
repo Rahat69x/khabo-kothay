@@ -44,14 +44,36 @@ export async function pingWarmUp(onStatusChange = null, maxWaitMs = 60000) {
   return { ok: false, error: 'Warmup timeout' };
 }
 
-export async function fetchWithRetry(url, options = {}, maxRetries = 5, onRetry = null) {
+export const DEFAULT_PRESET_CONFIG = {
+  googleBrowserKey: '',
+  useMockData: true,
+  presetLocations: {
+    "Notun Bazar": { lat: 23.7975, lng: 90.4234, name: "Notun Bazar Bus Stand" },
+    "Gulshan 1": { lat: 23.7785, lng: 90.4178, name: "Gulshan 1 Circle" },
+    "Gulshan 2": { lat: 23.7925, lng: 90.4150, name: "Gulshan 2 Circle" },
+    "Banani": { lat: 23.7937, lng: 90.4046, name: "Banani Road 11" },
+    "Baridhara": { lat: 23.7998, lng: 90.4215, name: "Baridhara Diplomatic Zone" },
+    "Dhanmondi": { lat: 23.7465, lng: 90.3760, name: "Dhanmondi Road 27" },
+    "Uttara": { lat: 23.8728, lng: 90.3984, name: "Uttara Sector 3" },
+    "Bashundhara R/A": { lat: 23.8164, lng: 90.4278, name: "Bashundhara R/A Gate" },
+    "Mirpur": { lat: 23.8071, lng: 90.3686, name: "Mirpur 10 Circle" },
+    "Bailey Road": { lat: 23.7410, lng: 90.4072, name: "Bailey Road" }
+  }
+};
+
+export async function fetchWithRetry(url, options = {}, maxRetries = 3, onRetry = null) {
   let attempt = 0;
-  let delay = 1500;
+  let delay = 1200;
   while (attempt <= maxRetries) {
     try {
-      const res = await fetch(url, options);
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutMs = options.timeoutMs || 10000;
+      const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+      const res = await fetch(url, { ...options, signal: options.signal || controller?.signal });
+      if (timer) clearTimeout(timer);
+
       if (res.status === 502 || res.status === 503 || res.status === 504) {
-        throw new Error(`Server sleeping (status ${res.status})`);
+        throw new Error(`Server is booting up (HTTP ${res.status})`);
       }
       return res;
     } catch (err) {
@@ -59,15 +81,23 @@ export async function fetchWithRetry(url, options = {}, maxRetries = 5, onRetry 
       if (attempt > maxRetries) throw err;
       if (onRetry) onRetry(attempt, maxRetries);
       await new Promise(r => setTimeout(r, delay));
-      delay = Math.min(delay * 1.5, 8000);
+      delay = Math.min(delay * 1.5, 6000);
     }
   }
 }
 
 export async function fetchConfig() {
-  const res = await fetchWithRetry('/api/config');
-  if (!res.ok) throw new Error('Failed to load application configuration');
-  return res.json();
+  try {
+    const res = await fetchWithRetry('/api/config', {}, 3);
+    if (!res.ok) {
+      console.warn('API config returned status ' + res.status + ', using fallback presets');
+      return DEFAULT_PRESET_CONFIG;
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('Network error loading config, using fallback presets:', err.message);
+    return DEFAULT_PRESET_CONFIG;
+  }
 }
 
 export async function fetchWeather(lat, lng) {

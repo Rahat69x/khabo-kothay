@@ -17,3 +17,8 @@ target/
 __pycache__/
 *.pyc
 bin/
+
+.agent/
+.agents/
+.gemini/
+.gsd/

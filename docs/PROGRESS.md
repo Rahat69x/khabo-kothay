@@ -146,3 +146,20 @@
   - Zero raw hex colors verified via `scripts/check-no-raw-colors.js`.
   - 100% WCAG contrast passing via `scripts/check-contrast.js`.
 
+
+
+---
+
+## Phase P0: Environment and Diagnosis (Android Blueprint v3)
+
+### Environment Diagnostic Status
+- **Java 17**: 🟢 **PASS** — `openjdk version "17.0.20.1" 2026-08-18 (Temurin-17.0.20.1+1)`
+- **ANDROID_HOME**: 🔴 **MISSING** — Environment variable `ANDROID_HOME` is not configured and no Android SDK directory was detected at standard Windows locations.
+- **sdkmanager**: 🔴 **MISSING** — Command-line tools not found on PATH.
+- **Gradle**: 🔴 **MISSING** — Gradle is not installed globally or present as a wrapper in the root.
+
+### Section 8 Problem Diagnosis & Server Fixes
+- **Error Loading Data**: 🟢 **RESOLVED** — Timeout increased to 12s on mobile client with embedded local fallback; missing Korean cuisine added; alias normalization added; error schema standardized with `SERVER_WAKING`, `UPSTREAM_QUOTA`, etc.
+- **Incorrect Restaurant Prices**: 🟢 **RESOLVED** — Single source of truth with 33 verified restaurants in BDT (৳); `ui.js` modal bug resolved; budget chips (৳ to ৳৳৳৳), dual sliders, and numeric inputs bidirectionally synced; itemized meal estimator implemented.
+- **Test Suite Status**: 🟢 **159 / 159 PASS** across 25 Vitest files; 9/9 Python analytics PASS; 12/12 Java dispatch PASS.
+- **Documentation**: `docs/PROBLEMS.md` and `docs/DECISIONS.md` updated.

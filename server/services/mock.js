@@ -15,15 +15,44 @@ export const PRESET_LOCATIONS = {
 
 export const MOCK_RESTAURANTS = REAL_DHAKA_RESTAURANTS;
 
+export function normalizeCuisine(cuisine) {
+  if (!cuisine || cuisine === 'All') return 'All';
+  const c = String(cuisine).trim().toLowerCase();
+  if (c === 'biryani' || c === 'biriyani') return 'biriyani';
+  if (c === 'kabab' || c === 'kebab') return 'kabab';
+  if (c === 'cafe' || c === 'coffee') return 'cafe';
+  if (c === 'bangladeshi' || c === 'bengali') return 'bangladeshi';
+  return c;
+}
+
+export function matchesCuisine(restaurantCuisine, targetCuisine) {
+  if (!targetCuisine || targetCuisine === 'All') return true;
+  const targetNorm = normalizeCuisine(targetCuisine);
+  const restNorm = normalizeCuisine(restaurantCuisine);
+  if (targetNorm === restNorm) return true;
+  if ((targetNorm === 'cafe' && restNorm === 'coffee') || (targetNorm === 'coffee' && restNorm === 'cafe')) return true;
+  if ((targetNorm === 'burger' && restNorm === 'fast food') || (targetNorm === 'fast food' && restNorm === 'burger')) return true;
+  return false;
+}
+
 export function getMockCandidates(cuisine, budget = null, origin = null) {
   let list = [...MOCK_RESTAURANTS];
   if (cuisine && cuisine !== "All") {
-    list = list.filter(r => r.cuisine.toLowerCase() === cuisine.toLowerCase());
+    const cuisineFiltered = list.filter(r => matchesCuisine(r.cuisine, cuisine));
+    if (cuisineFiltered.length > 0) {
+      list = cuisineFiltered;
+    }
   }
   if (budget) {
     const budgetNum = parseInt(budget, 10);
     if (!isNaN(budgetNum)) {
-      const budgetFiltered = list.filter(r => r.priceLevel === null || r.priceLevel <= budgetNum + 1);
+      const budgetMaxMap = { 1: 500, 2: 1200, 3: 2500, 4: 10000 };
+      const maxAllowedCost = budgetMaxMap[budgetNum] || 2000;
+      const budgetFiltered = list.filter(r => {
+        if (r.estimatedCostPerPersonBdt && r.estimatedCostPerPersonBdt <= maxAllowedCost) return true;
+        if (r.priceLevel !== null && r.priceLevel <= budgetNum) return true;
+        return false;
+      });
       if (budgetFiltered.length > 0) {
         list = budgetFiltered;
       }
@@ -38,3 +67,4 @@ export function getMockCandidates(cuisine, budget = null, origin = null) {
   }
   return list.slice(0, 25);
 }
+

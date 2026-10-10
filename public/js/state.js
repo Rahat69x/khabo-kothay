@@ -83,8 +83,8 @@ class AppState {
     let min = 0;
     let max = 5000;
     if (budget === 1) { min = 0; max = 400; }
-    else if (budget === 2) { min = 400; max = 1000; }
-    else if (budget === 3) { min = 1000; max = 2000; }
+    else if (budget === 2) { min = 400; max = 950; }
+    else if (budget === 3) { min = 950; max = 2000; }
     else if (budget === 4) { min = 2000; max = 5000; }
     this.facetFilters.priceMin = min;
     this.facetFilters.priceMax = max;
@@ -130,31 +130,31 @@ class AppState {
       const max = Number.isFinite(f.priceMax) ? f.priceMax : Infinity;
 
       let matchesPrice = false;
+      const costPerPerson = r.estimatedCostPerPersonBdt || r.estimatedCostPerPerson?.amount || r.menu?.estimatedCostPerPerson?.amount;
+
+      // Check estimated cost per person first (definitive BDT metric)
+      if (costPerPerson && costPerPerson >= min && costPerPerson <= max) {
+        matchesPrice = true;
+      }
+
       // Check menu items
-      if (r.menu?.items && r.menu.items.length > 0) {
-        const itemPrices = r.menu.items.map(i => i.price).filter(Number.isFinite);
+      if (!matchesPrice && r.menu?.items && r.menu.items.length > 0) {
+        const itemPrices = r.menu.items.map(i => i.price !== undefined ? i.price : i.priceBdt).filter(Number.isFinite);
         if (itemPrices.length > 0) {
-          const costPerPerson = r.menu?.estimatedCostPerPerson?.amount || r.estimatedCostPerPersonBdt;
-          if (costPerPerson && costPerPerson >= min && costPerPerson <= max) {
-            matchesPrice = true;
-          } else if (itemPrices.some(p => p >= min && p <= max)) {
+          const minItemPrice = Math.min(...itemPrices);
+          const maxItemPrice = Math.max(...itemPrices);
+          if (minItemPrice <= max && maxItemPrice >= min) {
             matchesPrice = true;
           }
         }
       }
-      // Check top-level cost per person
-      if (!matchesPrice && (r.estimatedCostPerPerson?.amount || r.estimatedCostPerPersonBdt)) {
-        const cost = r.estimatedCostPerPerson?.amount || r.estimatedCostPerPersonBdt;
-        if (cost >= min && cost <= max) {
-          matchesPrice = true;
-        }
-      }
-      // Check price level fallback
-      if (!matchesPrice && (!r.menu?.items || r.menu.items.length === 0)) {
+
+      // Check price level fallback if neither cost nor items match
+      if (!matchesPrice && !costPerPerson && (!r.menu?.items || r.menu.items.length === 0)) {
         const tierMap = {
           1: { min: 0, max: 400 },
-          2: { min: 400, max: 1000 },
-          3: { min: 1000, max: 2000 },
+          2: { min: 400, max: 950 },
+          3: { min: 950, max: 2000 },
           4: { min: 2000, max: 5000 }
         };
         const tier = tierMap[r.priceLevel || 2] || { min: 0, max: 5000 };

@@ -218,7 +218,17 @@ export function getLocalRecommendations({
 
   // 1. Filter: Cuisine
   if (cuisine && cuisine !== 'All') {
-    const cuisineMatches = pool.filter(r => r.cuisine.toLowerCase() === cuisine.toLowerCase());
+    const cuisineMatches = pool.filter(r => {
+      const c = String(r.cuisine || '').toLowerCase();
+      const target = String(cuisine).toLowerCase();
+      if (c === target) return true;
+      if ((target === 'biryani' || target === 'biriyani') && (c === 'biryani' || c === 'biriyani')) return true;
+      if ((target === 'kabab' || target === 'kebab') && (c === 'kabab' || c === 'kebab')) return true;
+      if ((target === 'cafe' || target === 'coffee') && (c === 'cafe' || c === 'coffee')) return true;
+      if ((target === 'burger' || target === 'fast food') && (c === 'burger' || c === 'fast food')) return true;
+      if ((target === 'bangladeshi' || target === 'bengali') && (c === 'bangladeshi' || c === 'bengali')) return true;
+      return false;
+    });
     if (cuisineMatches.length > 0) {
       pool = cuisineMatches;
     }
@@ -255,7 +265,7 @@ export function getLocalRecommendations({
 
       pool = pool.filter(c => {
         if (c.menu?.items && c.menu.items.length > 0) {
-          const prices = c.menu.items.map(i => i.price).filter(Number.isFinite);
+          const prices = c.menu.items.map(i => i.price !== undefined ? i.price : i.priceBdt).filter(Number.isFinite);
           if (prices.length > 0) {
             const minItemPrice = Math.min(...prices);
             const maxItemPrice = Math.max(...prices);

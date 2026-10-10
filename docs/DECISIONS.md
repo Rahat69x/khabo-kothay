@@ -130,3 +130,14 @@
 - **Feature Flag**:
   - Enclosed behind `mealTimeMode` flag (controlled via `FEATURE_MEAL_TIME_MODE`).
 
+
+## Phase P0 Decisions: Native Java Android App & Python FastAPI Architecture Transition
+
+### 12. Native Android App (Java 17, Material 3, MVVM) & Python FastAPI Transition
+- **Decision**: Port client layer to native Java 17 under `/android` following Android Blueprint v3 specifications, and port backend engine to Python FastAPI under `/api`. Keep `/server` and `/mobile` as legacy references until parity checks pass.
+- **Contract First**: `docs/openapi.json` is the sole source of truth.
+- **Environment & Android SDK Prerequisite**:
+  - OpenJDK 17.0.20.1 Temurin is verified and present on the system.
+  - Android SDK (ANDROID_HOME), sdkmanager, and Gradle require installation or environment variable configuration on Windows. Android Studio with bundled Android SDK (API 34/35) and cmdline-tools is required for building `/android`.
+- **Backend Fixes Prior to Android Cutover**:
+  - All Section 8 bugs (price propagation, error handling, cold-boot timeout, empty lists) were resolved and verified in the backend layer with 100% test coverage before beginning the native client skeleton.

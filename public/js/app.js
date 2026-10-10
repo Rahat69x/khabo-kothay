@@ -81,7 +81,11 @@ async function initApp() {
     }
 
     // 3. Initialize Map
-    await mapController.init('mapContainer', config.googleBrowserKey);
+    try {
+      await mapController.init('mapContainer', config.googleBrowserKey);
+    } catch (mapErr) {
+      console.warn('Map initialization deferred or fallback mode:', mapErr.message);
+    }
 
     // 4. Initialize Modals & Features
     initTheme();

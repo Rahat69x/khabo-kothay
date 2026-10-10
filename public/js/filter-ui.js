@@ -57,15 +57,17 @@ export function initFilterUI() {
   // Helper to synchronize active budget chips based on min & max
   function syncBudgetChips(minVal, maxVal) {
     let matchedTier = null;
-    if (minVal === 0 && maxVal === 400) matchedTier = 1;
-    else if (minVal === 400 && maxVal === 1000) matchedTier = 2;
-    else if (minVal === 1000 && maxVal === 2000) matchedTier = 3;
-    else if (minVal === 2000 && maxVal === 5000) matchedTier = 4;
+    if (minVal <= 50 && maxVal <= 450) matchedTier = 1;
+    else if (minVal >= 350 && minVal <= 500 && maxVal >= 800 && maxVal <= 1100) matchedTier = 2;
+    else if (minVal >= 850 && minVal <= 1100 && maxVal >= 1800 && maxVal <= 2200) matchedTier = 3;
+    else if (minVal >= 1800 && maxVal >= 4500) matchedTier = 4;
+    else if (maxVal <= 400) matchedTier = 1;
+    else if (minVal >= 2000) matchedTier = 4;
 
     presetChips.forEach(chip => {
       const cMin = Number(chip.dataset.min);
       const cMax = Number(chip.dataset.max);
-      if (minVal === cMin && maxVal === cMax) {
+      if (Math.abs(minVal - cMin) <= 50 && Math.abs(maxVal - cMax) <= 100) {
         chip.classList.add('active');
       } else {
         chip.classList.remove('active');
@@ -80,6 +82,8 @@ export function initFilterUI() {
         chip.classList.remove('active');
       }
     });
+
+    return matchedTier;
   }
 
   let priceDebounce = null;
@@ -92,10 +96,13 @@ export function initFilterUI() {
     if (maxInput && maxInput.value !== String(maxVal)) maxInput.value = maxVal;
 
     updateSliderFill(minVal, maxVal);
-    syncBudgetChips(minVal, maxVal);
+    const matchedTier = syncBudgetChips(minVal, maxVal);
 
     clearTimeout(priceDebounce);
     priceDebounce = setTimeout(() => {
+      if (matchedTier) {
+        state.budget = matchedTier;
+      }
       state.setFacetFilters({ priceMin: minVal, priceMax: maxVal });
     }, 80);
   }
@@ -140,7 +147,7 @@ export function initFilterUI() {
     triggerPriceUpdate(minVal, maxVal, false);
   });
 
-  // Sidebar Preset Chips (৳ ≤400, ৳৳ 400–1k, ৳৳৳ 1k–2k, ৳৳৳৳ 2k+)
+  // Sidebar Preset Chips (৳ ≤400, ৳৳ 400–950, ৳৳৳ 950–2k, ৳৳৳৳ 2k+)
   presetChips.forEach(chip => {
     chip.addEventListener('click', () => {
       const min = Number(chip.dataset.min);
@@ -156,12 +163,26 @@ export function initFilterUI() {
       let min = 0;
       let max = 5000;
       if (tier === 1) { min = 0; max = 400; }
-      else if (tier === 2) { min = 400; max = 1000; }
-      else if (tier === 3) { min = 1000; max = 2000; }
+      else if (tier === 2) { min = 400; max = 950; }
+      else if (tier === 3) { min = 950; max = 2000; }
       else if (tier === 4) { min = 2000; max = 5000; }
 
       triggerPriceUpdate(min, max, false);
     });
+  });
+
+  // Subscribe to state changes for external budget updates
+  state.subscribe((curState, changeType) => {
+    if (changeType === 'budget') {
+      const min = curState.facetFilters.priceMin || 0;
+      const max = curState.facetFilters.priceMax || 5000;
+      if (minSlider) minSlider.value = min;
+      if (maxSlider) maxSlider.value = max;
+      if (minInput) minInput.value = min;
+      if (maxInput) maxInput.value = max;
+      updateSliderFill(min, max);
+      syncBudgetChips(min, max);
+    }
   });
 
   // Initial Slider Track Fill

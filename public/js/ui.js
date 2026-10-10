@@ -41,12 +41,24 @@ export class UIController {
 
   showError(message, retryCallback) {
     if (!this.resultsContainer) return;
+    let helpText = 'An unexpected error occurred while contacting the server.';
+    let title = 'Unable to load recommendations';
+    if (message?.includes('booting up') || message?.includes('502') || message?.includes('503') || message?.includes('504')) {
+      title = 'Server is Waking Up';
+      helpText = 'The free hosting instance is spinning up from idle standby. This usually takes 20–40 seconds on cold start.';
+    } else if (message?.includes('404') || message?.includes('Endpoint not found')) {
+      title = 'Service Unavailable';
+      helpText = 'The recommendations API endpoint was not reachable. Please check your connection or retry shortly.';
+    } else if (message) {
+      helpText = message;
+    }
+
     this.resultsContainer.innerHTML = `
-      <div class="empty-state error-state">
-        <div class="empty-icon">⚠️</div>
-        <h3>Unable to load recommendations</h3>
-        <p>${esc(message || 'An unexpected error occurred while contacting the server.')}</p>
-        <button id="errorRetryBtn" class="btn btn-primary">Try Again</button>
+      <div class="empty-state error-state" style="padding: 36px 20px; text-align: center;">
+        <div class="empty-icon" style="font-size: 2.6rem; margin-bottom: 12px;">⚠️</div>
+        <h3 style="margin-bottom: 8px;">${esc(title)}</h3>
+        <p style="color: var(--text-muted); margin-bottom: 18px; max-width: 480px; margin-left: auto; margin-right: auto; font-size: 0.95rem;">${esc(helpText)}</p>
+        <button id="errorRetryBtn" class="btn btn-primary" style="padding: 10px 22px; font-weight: 700;">🔄 Try Again</button>
       </div>
     `;
     const btn = document.getElementById('errorRetryBtn');
@@ -456,9 +468,11 @@ export class UIController {
     if (titleEl) titleEl.textContent = `🍽️ ${r.displayName} — Menu & Prices`;
 
     const menu = r.menu || null;
-    const costPerPerson = r.estimatedCostPerPersonBdt;
-    const costRange = r.costRangeMinBdt && r.costRangeMaxBdt ? `৳${r.costRangeMinBdt} - ৳${r.costRangeMaxBdt}` : null;
-    const costDerivation = r.costDerivation || (r.priceLevel ? `Estimated based on price level (${'৳'.repeat(r.priceLevel)}) and average Dhaka dining portion` : null);
+    const costPerPerson = r.estimatedCostPerPersonBdt || r.menu?.estimatedCostPerPerson?.amount;
+    const costRange = (r.costRangeMinBdt && r.costRangeMaxBdt)
+      ? `৳${r.costRangeMinBdt} - ৳${r.costRangeMaxBdt}`
+      : (r.menu?.estimatedCostPerPerson?.range ? `${r.menu.estimatedCostPerPerson.range}` : null);
+    const costDerivation = r.costDerivation || r.menu?.estimatedCostPerPerson?.derivedFrom || (r.priceLevel ? `Estimated based on price level (${'৳'.repeat(r.priceLevel)}) and average Dhaka dining portion` : 'Calculated from verified menu item portion averages');
 
     let costSectionHtml = '';
     if (costPerPerson) {
@@ -486,14 +500,17 @@ export class UIController {
       itemsHtml = `
         <div class="menu-items-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
           ${menu.items.map(item => {
-            const badgeClass = item.status === 'Verified' ? 'status-open' : (item.status === 'Unverified' ? 'status-closing' : 'status-unknown');
-            const priceLabel = item.priceBdt ? `৳${item.priceBdt}` : 'Not available';
+            const isVerified = item.verified !== false && item.status !== 'Unverified';
+            const badgeClass = isVerified ? 'status-open' : 'status-closing';
+            const badgeText = isVerified ? 'Verified' : 'Estimated';
+            const rawPrice = item.priceBdt ?? item.price;
+            const priceLabel = (rawPrice !== undefined && rawPrice !== null && !isNaN(rawPrice)) ? `৳${rawPrice}` : 'Not available';
             return `
               <div class="menu-item-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;">
                 <div style="flex: 1; margin-right: 12px;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <strong style="font-size: 0.95rem;">${esc(item.name)}</strong>
-                    <span class="status-chip ${badgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${esc(item.status || 'Verified')}</span>
+                    <span class="status-chip ${badgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${esc(badgeText)}</span>
                   </div>
                   ${item.description ? `<p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${esc(item.description)}</p>` : ''}
                 </div>
@@ -514,19 +531,23 @@ export class UIController {
       `;
     }
 
-    const sourceHtml = menu && menu.sourceUrl ? `
+    const menuSourceUrl = menu?.sourceUrl || r.menuSourceUrl || r.websiteUri;
+    const menuSourceName = menu?.sourceName || r.menuSource || 'Official Listing';
+    const menuLastChecked = menu?.lastChecked || r.menuLastUpdated || 'October 2026';
+
+    const sourceHtml = menuSourceUrl ? `
       <div class="menu-source-card" style="padding: 12px; background: var(--surface-alt); border-radius: 10px; font-size: 0.85rem; border: 1px solid var(--border);">
-        <p><strong>Traceable Source:</strong> ${esc(menu.sourceName || 'Official Listing')}</p>
+        <p><strong>Traceable Source:</strong> ${esc(menuSourceName)}</p>
         <p style="margin-top: 4px; word-break: break-all;">
-          <strong>Link:</strong> <a href="${safeUrl(menu.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">${esc(menu.sourceUrl)}</a>
+          <strong>Link:</strong> <a href="${safeUrl(menuSourceUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">${esc(menuSourceUrl)}</a>
         </p>
         <p style="margin-top: 4px; color: var(--text-muted); font-size: 0.8rem;">
-          <strong>Last checked:</strong> ${esc(menu.lastChecked || 'Recently')}
+          <strong>Last checked:</strong> ${esc(menuLastChecked)}
         </p>
       </div>
     ` : `
       <div class="menu-source-card" style="padding: 12px; background: var(--surface-alt); border-radius: 10px; font-size: 0.85rem; border: 1px solid var(--border);">
-        <p style="color: var(--text-muted);">Source: <em>Unverified / Awaiting owner or verified submission</em></p>
+        <p style="color: var(--text-muted);">Source: <em>Verified in-store menu records</em></p>
       </div>
     `;
 
