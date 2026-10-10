@@ -53,9 +53,7 @@ describe('Meal-Time Mode Core Engine', () => {
     expect(breakdownB.status).toBe('NOT_RECOMMENDED');
 
     // Restaurant C: total 42 min, but closes in 20 minutes from arrival -> REMOVED
-    const now = new Date();
-    now.setHours(13, 0, 0, 0); // 1:00 PM
-    const arrivalDate = new Date(now.getTime() + 7 * 60000); // 1:07 PM
+    const arrivalDate = new Date('2026-10-10T13:07:00+06:00'); // 1:07 PM Asia/Dhaka
     const finishDate = new Date(arrivalDate.getTime() + (4 + 18 + 30) * 60000); // wait + eat + 30m margin
 
     const candidateC = {
@@ -177,10 +175,8 @@ describe('Meal-Time Mode Core Engine', () => {
 
   // Test 7: Overnight and 24-hour opening hours
   it('correctly validates 24-hour places and midnight-crossing closing hours', () => {
-    const now = new Date();
-    now.setHours(21, 30, 0, 0); // 9:30 PM arrival
-    const arrivalDate = now;
-    const finishDate = new Date(now.getTime() + 60 * 60000); // 10:30 PM
+    const arrivalDate = new Date('2026-10-10T21:30:00+06:00'); // 9:30 PM Dhaka arrival
+    const finishDate = new Date(arrivalDate.getTime() + 60 * 60000); // 10:30 PM
 
     // 24-hour place
     const place24h = {
@@ -221,8 +217,7 @@ describe('Meal-Time Mode Core Engine', () => {
 
   // Test 9: Explicit servesLunch=false is removed
   it('rejects candidate if servesLunch is explicitly false during lunch mode', () => {
-    const arrivalDate = new Date();
-    arrivalDate.setHours(13, 0, 0, 0);
+    const arrivalDate = new Date('2026-10-10T13:00:00+06:00'); // 1:00 PM Dhaka
     const finishDate = new Date(arrivalDate.getTime() + 45 * 60000);
 
     const dinnerOnlyPlace = {

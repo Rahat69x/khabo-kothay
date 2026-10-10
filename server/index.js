@@ -115,7 +115,7 @@ const authCheckMiddleware = (req, res, next) => {
     return next();
   }
 
-  const appToken = process.env.APP_CLIENT_TOKEN;
+  const appToken = process.env.APP_CLIENT_TOKEN || 'gulshan_app_secret_token_2026';
   if (appToken) {
     const clientToken = req.headers['x-app-token'];
     const isMobileClient =

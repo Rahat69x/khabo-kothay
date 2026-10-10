@@ -773,7 +773,7 @@ router.post('/meal-time/feedback', (req, res) => {
   }
 });
 
-const APK_METADATA = {
+export const APK_METADATA = {
   appName: 'KHABO KOTHAY?',
   appNameBn: 'খাবো কোথায়?',
   version: pkg.version || '1.1.0',

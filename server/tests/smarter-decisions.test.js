@@ -58,12 +58,10 @@ describe('P2: Smarter Decisions & Recommendation Intelligence', () => {
 
     it('Dhaka traffic multiplier correctly models diurnal fluctuations', () => {
       // Rush hour (18:00) should have higher congestion multiplier than late night (23:00)
-      const eveningDate = new Date('2026-10-08T18:00:00Z');
-      eveningDate.setHours(18, 0, 0, 0);
+      const eveningDate = new Date('2026-10-08T18:00:00+06:00');
       const eveningMult = getDhakaTrafficMultiplier(eveningDate);
 
-      const nightDate = new Date('2026-10-08T23:30:00Z');
-      nightDate.setHours(23, 30, 0, 0);
+      const nightDate = new Date('2026-10-08T23:30:00+06:00');
       const nightMult = getDhakaTrafficMultiplier(nightDate);
 
       expect(eveningMult).toBeGreaterThan(nightMult);

@@ -11,6 +11,7 @@ jobs:
     name: Backend Tests & Quality Gates (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [18.x, 20.x, 22.x]
 
@@ -28,6 +29,9 @@ jobs:
         run: npm ci
 
       - name: Run automated test suites
+        env:
+          TZ: 'Asia/Dhaka'
+          APP_CLIENT_TOKEN: 'gulshan_app_secret_token_2026'
         run: npm test
 
       - name: Run credential leak & security audit
@@ -57,4 +61,5 @@ jobs:
           cd mobile && npm ci
 
       - name: Run mobile unit tests
+        working-directory: mobile
         run: npm test

@@ -18,8 +18,7 @@ describe('Meal-Time Mode API Integration', () => {
   });
 
   it('POST /api/v1/meal-time/search returns ranked time-feasible candidates', async () => {
-    const leaveAt = new Date();
-    leaveAt.setHours(13, 0, 0, 0); // 1:00 PM lunch
+    const leaveAt = new Date('2026-10-10T13:00:00+06:00'); // 1:00 PM lunch
 
     const res = await request(app)
       .post('/api/v1/meal-time/search')

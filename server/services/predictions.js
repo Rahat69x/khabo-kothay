@@ -11,7 +11,21 @@ const ROUTES_COMPUTE_URL = 'https://routes.googleapis.com/directions/v2:computeR
  * Models realistic traffic fluctuations in Dhaka across hours and minutes
  */
 export function getDhakaTrafficMultiplier(targetDate = new Date()) {
-  const hour = targetDate.getHours() + (targetDate.getMinutes() / 60);
+  let hour;
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Dhaka',
+      hour12: false,
+      hour: 'numeric',
+      minute: 'numeric'
+    });
+    const parts = formatter.formatToParts(new Date(targetDate));
+    const h = parseInt(parts.find(p => p.type === 'hour')?.value || '0', 10) % 24;
+    const m = parseInt(parts.find(p => p.type === 'minute')?.value || '0', 10);
+    hour = h + (m / 60);
+  } catch {
+    hour = targetDate.getHours() + (targetDate.getMinutes() / 60);
+  }
 
   // Peak 1: Morning commute (8:30 - 10:30)
   if (hour >= 8.5 && hour <= 10.5) {
