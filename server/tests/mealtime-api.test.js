@@ -6,6 +6,7 @@ import featureFlags from '../config/featureFlags.js';
 import { tuneMealTimeFromLogs } from '../../scripts/tune-mealtime.js';
 import fs from 'fs';
 import path from 'path';
+import { dataFile } from '../config/paths.js';
 
 const app = express();
 app.use(express.json());
@@ -103,12 +104,12 @@ describe('Meal-Time Mode API Integration', () => {
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
 
-    const feedbackFile = path.resolve('server', 'data', 'mealtime-feedback.jsonl');
+    const feedbackFile = dataFile('mealtime-feedback.jsonl');
     expect(fs.existsSync(feedbackFile)).toBe(true);
   });
 
   it('scripts/tune-mealtime.js processes feedback and writes suggested adjustments', () => {
-    const feedbackFile = path.resolve('server', 'data', 'mealtime-feedback.jsonl');
+    const feedbackFile = dataFile('mealtime-feedback.jsonl');
     // Ensure at least 5 sample records for tuning
     const samples = [
       { timestamp: new Date().toISOString(), mode: 'lunch', venueType: 'quick-service', plannedMinutes: 45, actualMinutes: 40, wasLate: false },

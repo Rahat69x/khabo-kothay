@@ -1,3 +1,4 @@
+import { esc } from './escape.js';
 import { state } from './state.js';
 import { ui } from './ui.js';
 import { mapController } from './map.js';
@@ -278,8 +279,8 @@ export function initFilterUI() {
     activeContainer.innerHTML = `
       <span class="active-filters-heading">Applied:</span>
       ${badges.map(b => `
-        <span class="active-filter-badge" data-type="${b.type}" ${b.val ? `data-val="${b.val}"` : ''}>
-          <span>${b.label}</span>
+        <span class="active-filter-badge" data-type="${esc(b.type)}" ${b.val ? `data-val="${esc(b.val)}"` : ''}>
+          <span>${esc(b.label)}</span>
           <span class="active-filter-remove" aria-label="Remove filter">✕</span>
         </span>
       `).join('')}

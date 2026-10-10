@@ -176,8 +176,8 @@ export function getDhakaOpeningStatus(regularOpeningHours) {
  * Generates plain-language trade-off explanation for why this restaurant was ranked
  */
 export function generateRecommendationReason(restaurant, allRanked, userPriority, tasteMatch, weatherContext, foodProfile = null) {
-  const name = restaurant.displayName;
-  const mins = Math.max(1, Math.round(restaurant.durationSeconds / 60));
+  const hasTime = Number.isFinite(restaurant.durationSeconds);
+  const mins = hasTime ? Math.max(1, Math.round(restaurant.durationSeconds / 60)) : null;
   const km = (restaurant.distanceMeters / 1000).toFixed(1);
   const traffic = restaurant.trafficLevel ? restaurant.trafficLevel.toLowerCase() : 'moderate';
   const priceLabel = restaurant.priceLevel ? '৳'.repeat(restaurant.priceLevel) : 'price unlisted';
@@ -186,10 +186,8 @@ export function generateRecommendationReason(restaurant, allRanked, userPriority
   const other = allRanked.find(r => r.id !== restaurant.id);
 
   let tradeOffPart = '';
-  if (other) {
-    const otherMins = Math.max(1, Math.round(other.durationSeconds / 60));
-    const otherKm = (other.distanceMeters / 1000).toFixed(1);
-
+  // Time comparisons only make sense when both travel times are known.
+  if (other && hasTime && Number.isFinite(other.durationSeconds)) {
     if (restaurant.durationSeconds < other.durationSeconds && restaurant.distanceMeters > other.distanceMeters) {
       const savedMins = Math.round((other.durationSeconds - restaurant.durationSeconds) / 60);
       const extraKm = ((restaurant.distanceMeters - other.distanceMeters) / 1000).toFixed(1);
@@ -200,10 +198,14 @@ export function generateRecommendationReason(restaurant, allRanked, userPriority
     } else if (restaurant.rating > other.rating) {
       tradeOffPart = `Higher rating (${restaurant.rating}★) and great consistency with ${restaurant.userRatingCount}+ reviews.`;
     }
+  } else if (other && restaurant.rating > other.rating) {
+    tradeOffPart = `Higher rating (${restaurant.rating}★) and great consistency with ${restaurant.userRatingCount}+ reviews.`;
   }
 
   if (!tradeOffPart) {
-    tradeOffPart = `${mins} min away (${km} km) with ${traffic} traffic at ${priceLabel}.`;
+    tradeOffPart = hasTime
+      ? `${mins} min away (${km} km) with ${traffic} traffic at ${priceLabel}.`
+      : `About ${km} km away (straight-line; travel time unavailable) at ${priceLabel}.`;
   }
 
   // Food Profile match honest reason (Phase 3)
@@ -327,7 +329,8 @@ export function rankRestaurants({
   openNowOnly = false,
   distanceRadiusMeters = null,
   foodProfile = null,
-  filters = null
+  filters = null,
+  now = new Date()
 }) {
   if (!candidates || candidates.length === 0) return [];
 
@@ -580,7 +583,6 @@ export function rankRestaurants({
   }
 
   // Context Signals: Time-of-day & weekend detection (UTC+6 for Dhaka)
-  const now = new Date();
   const dhakaHour = (now.getUTCHours() + 6) % 24;
   const dhakaDay = (now.getUTCDay() + (now.getUTCHours() + 6 >= 24 ? 1 : 0)) % 7;
   const isWeekend = contextConfig.weekendDays.includes(dhakaDay);
@@ -616,10 +618,12 @@ export function rankRestaurants({
   // Compute individual factors and composite score
   const scored = enriched.map(c => {
     // 0.0 to 1.0 factors
+    // Same fallbacks as the extrema above: a missing (null) travel time must not
+    // coerce to 0 and score as the fastest option.
     const ratingFactor = normalize(c.bayesianRating, minRating, maxRating, false);
-    const timeFactor = normalize(c.durationSeconds, minDuration, maxDuration, true);
-    const distanceFactor = normalize(c.distanceMeters, minDistance, maxDistance, true);
-    const trafficFactor = normalize(c.trafficRatio, minTraffic, maxTraffic, true);
+    const timeFactor = normalize(c.durationSeconds || 900, minDuration, maxDuration, true);
+    const distanceFactor = normalize(c.distanceMeters || 1500, minDistance, maxDistance, true);
+    const trafficFactor = normalize(c.trafficRatio || 1.2, minTraffic, maxTraffic, true);
     const priceFactor = normalize(c.priceLevel || 2, minPrice, maxPrice, true);
     const costFactor = normalize(c.transport.cheapestEstimatedCostBdt, minCost, maxCost, true);
 
@@ -738,7 +742,7 @@ export function rankRestaurants({
   let minCombinedPrice = Infinity;
 
   for (const item of scored) {
-    if (item.durationSeconds < minDurationSec) {
+    if (Number.isFinite(item.durationSeconds) && item.durationSeconds < minDurationSec) {
       minDurationSec = item.durationSeconds;
       fastestId = item.id;
     }

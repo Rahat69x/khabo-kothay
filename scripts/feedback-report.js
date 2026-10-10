@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { dataFile } from '../server/config/paths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 export function generateFeedbackReport(feedbackFilePath) {
-  const file = feedbackFilePath || path.join(rootDir, 'server', 'data', 'feedback.jsonl');
+  const file = feedbackFilePath || dataFile('feedback.jsonl');
 
   if (!fs.existsSync(file)) {
     console.log('No feedback records found yet at:', path.relative(rootDir, file));

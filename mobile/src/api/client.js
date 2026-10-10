@@ -18,11 +18,23 @@ try {
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || extraConfig.apiBaseUrl || 'http://10.0.2.2:3000';
 const APP_TOKEN = process.env.EXPO_PUBLIC_APP_CLIENT_TOKEN || extraConfig.appClientToken || 'gulshan_app_secret_token_2026';
 
+const OFFLINE_RETRY_MS = 60 * 1000;
+
 class MobileApiClient {
   constructor(baseUrl = API_BASE_URL, token = APP_TOKEN) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.token = token;
-    this.isOfflineMode = false;
+    this.offlineUntil = 0;
+  }
+
+  // Offline mode is a cooldown, not a permanent switch: a single cold-start timeout or
+  // error used to pin the whole session to the local engine until the app restarted.
+  get isOfflineMode() {
+    return Date.now() < this.offlineUntil;
+  }
+
+  set isOfflineMode(value) {
+    this.offlineUntil = value ? Date.now() + OFFLINE_RETRY_MS : 0;
   }
 
   getHeaders() {

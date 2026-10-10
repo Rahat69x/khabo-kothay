@@ -1,3 +1,4 @@
+import { esc } from './escape.js';
 import { appStorage } from './storage.js';
 
 export function initTasteUI() {
@@ -20,20 +21,20 @@ export function initTasteUI() {
     container.innerHTML = Object.entries(profile).map(([cuisine, score]) => `
       <div class="taste-item">
         <div class="taste-header">
-          <span class="taste-name">${cuisine}</span>
-          <span class="taste-value" id="val-${cuisine}">${score}%</span>
+          <span class="taste-name">${esc(cuisine)}</span>
+          <span class="taste-value" id="val-${esc(cuisine)}">${esc(score)}%</span>
         </div>
         <div class="taste-bar-bg">
-          <div class="taste-bar-fill" id="fill-${cuisine}" style="width: ${score}%;"></div>
+          <div class="taste-bar-fill" id="fill-${esc(cuisine)}" style="width: ${esc(score)}%;"></div>
         </div>
         <input 
           type="range" 
           min="0" 
           max="100" 
-          value="${score}" 
+          value="${esc(score)}" 
           class="taste-slider" 
-          data-cuisine="${cuisine}"
-          aria-label="${cuisine} preference score slider"
+          data-cuisine="${esc(cuisine)}"
+          aria-label="${esc(cuisine)} preference score slider"
         />
       </div>
     `).join('');

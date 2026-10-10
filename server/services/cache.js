@@ -24,15 +24,30 @@ export function getCoarseGrid(lat, lng) {
 /**
  * In-memory TTL Cache with Stale-While-Revalidate (SWR) support
  */
+// Cache keys include client-supplied values (coordinates, cuisine, place ids), so the
+// store needs a hard size cap and a sweep; expired entries are otherwise only removed
+// when the same key is read again.
+const MAX_ENTRIES = 5000;
+const SWEEP_INTERVAL_MS = 60 * 1000;
+
 class MemoryCache {
   constructor(defaultTtlSeconds = 300) {
     this.defaultTtlSeconds = defaultTtlSeconds;
     this.store = new Map();
+    this.inFlight = new Map();
     this.stats = {
       hits: 0,
       misses: 0,
       swrHits: 0
     };
+    setInterval(() => this.sweep(), SWEEP_INTERVAL_MS).unref();
+  }
+
+  sweep() {
+    const now = Date.now();
+    for (const [key, item] of this.store.entries()) {
+      if (now > item.swrExpiresAt) this.store.delete(key);
+    }
   }
 
   get(key) {
@@ -55,7 +70,12 @@ class MemoryCache {
     const now = Date.now();
     const expiresAt = now + (ttlSeconds * 1000);
     const swrExpiresAt = expiresAt + ((costControl.swrGraceWindowSeconds || 300) * 1000);
+    this.store.delete(key);
     this.store.set(key, { value, expiresAt, swrExpiresAt });
+    if (this.store.size > MAX_ENTRIES) {
+      // Oldest insertion first
+      this.store.delete(this.store.keys().next().value);
+    }
     return value;
   }
 
@@ -83,21 +103,29 @@ class MemoryCache {
       }
     }
 
-    // Cache miss or past SWR window
+    // Cache miss or past SWR window. Concurrent misses for the same key share one
+    // fetch, so a burst of identical searches makes one upstream (billed) call.
     this.stats.misses++;
-    const freshValue = await fetcher();
-    this.set(key, freshValue, ttlSeconds);
+    const freshValue = await this.fetchOnce(key, fetcher, ttlSeconds);
     return { data: freshValue, isStale: false, source: 'fresh-network' };
   }
 
+  fetchOnce(key, fetcher, ttlSeconds) {
+    let pending = this.inFlight.get(key);
+    if (!pending) {
+      pending = Promise.resolve()
+        .then(fetcher)
+        .then(value => this.set(key, value, ttlSeconds))
+        .finally(() => this.inFlight.delete(key));
+      this.inFlight.set(key, pending);
+    }
+    return pending;
+  }
+
   revalidateInBackground(key, fetcher, ttlSeconds) {
-    Promise.resolve().then(async () => {
-      try {
-        const fresh = await fetcher();
-        this.set(key, fresh, ttlSeconds);
-      } catch (err) {
-        logger.warn({ key, err: err.message }, 'Background SWR revalidation failed');
-      }
+    if (this.inFlight.has(key)) return;
+    this.fetchOnce(key, fetcher, ttlSeconds).catch(err => {
+      logger.warn({ key, err: err.message }, 'Background SWR revalidation failed');
     });
   }
 
@@ -110,12 +138,7 @@ class MemoryCache {
   }
 
   size() {
-    const now = Date.now();
-    for (const [key, item] of this.store.entries()) {
-      if (now > item.swrExpiresAt) {
-        this.store.delete(key);
-      }
-    }
+    this.sweep();
     return this.store.size;
   }
 
@@ -200,9 +223,11 @@ class RedisCacheAdapter {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 1500);
         const payload = typeof value === 'object' ? JSON.stringify(value) : String(value);
-        await fetch(`${this.upstashUrl}/set/${encodeURIComponent(key)}/${encodeURIComponent(payload)}?ex=${ttlSeconds}`, {
+        // Value goes in the body: candidate lists are tens of KB and overflow URL limits.
+        await fetch(`${this.upstashUrl}/set/${encodeURIComponent(key)}?EX=${ttlSeconds}`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${this.upstashToken}` },
+          body: payload,
           signal: controller.signal
         });
         clearTimeout(timeout);
@@ -213,7 +238,19 @@ class RedisCacheAdapter {
   }
 
   async getWithSWR(key, fetcher, ttlSeconds) {
-    return this.memory.getWithSWR(key, fetcher, ttlSeconds);
+    // On a cold instance (e.g. after a Render restart) fall back to Redis before refetching.
+    if (this.hasRedis && !this.memory.store.has(key)) {
+      const remote = await this.getAsync(key);
+      if (remote !== null) {
+        this.memory.set(key, remote, ttlSeconds);
+        return { data: remote, isStale: false, source: 'redis' };
+      }
+    }
+    const result = await this.memory.getWithSWR(key, fetcher, ttlSeconds);
+    if (this.hasRedis && result.source === 'fresh-network') {
+      this.syncToRedis(key, result.data, ttlSeconds);
+    }
+    return result;
   }
 
   delete(key) {

@@ -12,6 +12,11 @@ services:
         value: production
       - key: PORT
         value: 10000
+      # Render puts one proxy in front of the app; without this every user shares one rate-limit bucket
+      - key: TRUST_PROXY
+        value: 1
+      - key: ADMIN_TOKEN
+        sync: false
       - key: USE_MOCK_DATA
         sync: false
       - key: GOOGLE_SERVER_KEY

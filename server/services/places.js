@@ -60,6 +60,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
     }
 
   try {
+    quotaManager.checkAndRecordGoogleApiCall('places');
     const apiKey = process.env.GOOGLE_SERVER_KEY;
     const queryInfo = getCuisineQuery(cuisine);
 
@@ -76,6 +77,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
 
     const response = await fetch(PLACES_SEARCH_TEXT_URL, {
       method: 'POST',
+      signal: AbortSignal.timeout(8000),
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
@@ -85,7 +87,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
     });
 
     if (!response.ok) {
-      console.warn(`Places API responded with status ${response.status}. Falling back to mock data.`);
+      logger.warn({ status: response.status }, 'Places API error, falling back to mock data');
       const mockFallback = getMockCandidates(cuisine, budget, { lat: Number(lat), lng: Number(lng) });
       return mockFallback;
     }
@@ -128,7 +130,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
       return candidates;
     } catch (err) {
       logger.error({ err: err.message }, 'Error fetching Places API, falling back to mock candidates');
-      return getMockCandidates(cuisine, budget);
+      return getMockCandidates(cuisine, budget, { lat: Number(lat), lng: Number(lng) });
     }
   };
 
@@ -179,10 +181,12 @@ export async function getPlaceDetails(placeId, useMock = false) {
   }
 
   try {
+    quotaManager.checkAndRecordGoogleApiCall('places');
     const apiKey = process.env.GOOGLE_SERVER_KEY;
-    const url = `${PLACES_DETAILS_BASE_URL}/${placeId}`;
+    const url = `${PLACES_DETAILS_BASE_URL}/${encodeURIComponent(placeId)}`;
     const response = await fetch(url, {
       method: 'GET',
+      signal: AbortSignal.timeout(8000),
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
@@ -213,7 +217,7 @@ export async function getPlaceDetails(placeId, useMock = false) {
     globalCache.set(cacheKey, detail, 1800); // 30 min cache
     return detail;
   } catch (err) {
-    console.error(`Error getting place details for ${placeId}:`, err);
+    logger.error({ err: err.message, placeId }, 'Error getting place details');
     // Fallback to minimal info
     return {
       id: placeId,

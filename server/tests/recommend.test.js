@@ -208,7 +208,9 @@ describe('Recommendation Engine (Stage 5 & Personalized)', () => {
     const rankedWithoutProfile = rankRestaurants({
       candidates: [chiPlace, japPlace],
       priority: 'Best Overall',
-      tasteProfile: null
+      tasteProfile: null,
+      // Fixed weekday clock: on Dhaka weekends (Fri/Sat) Japanese gets a +3 leisure bonus
+      now: new Date('2026-10-12T06:00:00Z')
     });
 
     // Both have exact same scores and neither gets taste bonus

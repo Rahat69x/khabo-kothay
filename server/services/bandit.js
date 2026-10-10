@@ -1,8 +1,21 @@
 import banditConfig from '../config/bandit.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
 
-// In-memory store for device/user bandit state
+// In-memory store for device/user bandit state. Keys come from client headers/IPs,
+// so the map is capped: Map keeps insertion order, and get/set re-inserts to keep
+// recently used profiles at the end.
+// ponytail: in-memory LRU, profiles reset on restart; move to Redis if they must persist.
+const MAX_PROFILES = 5000;
 const banditProfiles = new Map();
+
+function storeProfile(deviceId, profile) {
+  banditProfiles.delete(deviceId);
+  banditProfiles.set(deviceId, profile);
+  if (banditProfiles.size > MAX_PROFILES) {
+    banditProfiles.delete(banditProfiles.keys().next().value);
+  }
+  return profile;
+}
 
 /**
  * Normalizes an object of weights so they sum to 1.0 while strictly respecting [min, max] bounds
@@ -84,17 +97,16 @@ export function generateBanditExplanation(currentWeights, defaultWeights = bandi
  * Get or create bandit profile for a device
  */
 export function getBanditProfile(deviceId = 'default') {
-  if (!banditProfiles.has(deviceId)) {
-    banditProfiles.set(deviceId, {
-      deviceId,
-      enabled: true,
-      weights: { ...banditConfig.defaultWeights },
-      updateCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
-  }
-  return banditProfiles.get(deviceId);
+  const existing = banditProfiles.get(deviceId);
+  if (existing) return storeProfile(deviceId, existing);
+  return storeProfile(deviceId, {
+    deviceId,
+    enabled: true,
+    weights: { ...banditConfig.defaultWeights },
+    updateCount: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  });
 }
 
 /**
@@ -109,8 +121,7 @@ export function resetBanditProfile(deviceId = 'default') {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  banditProfiles.set(deviceId, profile);
-  return profile;
+  return storeProfile(deviceId, profile);
 }
 
 /**
@@ -214,8 +225,7 @@ export function updateBanditWeights(deviceId, chosenRestaurant, candidateSet = [
   profile.updatedAt = new Date().toISOString();
   profile.explanationNote = generateBanditExplanation(projected);
 
-  banditProfiles.set(deviceId, profile);
-  return profile;
+  return storeProfile(deviceId, profile);
 }
 
 export default {

@@ -1,10 +1,7 @@
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { dataFile } from '../server/config/paths.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const SESSIONS_FILE = path.join(__dirname, '../server/data/eval-sessions.jsonl');
+const SESSIONS_FILE = dataFile('eval-sessions.jsonl');
 
 /**
  * Default sample evaluation sessions if log file is empty

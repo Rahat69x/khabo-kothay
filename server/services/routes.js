@@ -1,6 +1,8 @@
 import { globalCache, getCoarseGrid } from './cache.js';
 import thresholdsConfig from '../config/thresholds.json' with { type: 'json' };
 import { estimateCost } from './cost.js';
+import quotaManager from './quota.js';
+import logger from './logger.js';
 
 const ROUTES_MATRIX_URL = 'https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix';
 const ROUTES_COMPUTE_URL = 'https://routes.googleapis.com/directions/v2:computeRoutes';
@@ -112,7 +114,7 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
           }
         }
       } catch (osrmErr) {
-        console.warn('OSRM routing request failed or timed out:', osrmErr.message);
+        logger.warn({ err: osrmErr.message }, 'OSRM routing request failed or timed out');
       }
 
       // If routing call completely fails, calculate straight-line distance
@@ -146,6 +148,7 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
     }
 
   try {
+    quotaManager.checkAndRecordGoogleApiCall('routes');
     const apiKey = process.env.GOOGLE_SERVER_KEY;
     const origins = [{
       waypoint: {
@@ -168,6 +171,7 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
 
     const response = await fetch(ROUTES_MATRIX_URL, {
       method: 'POST',
+      signal: AbortSignal.timeout(8000),
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
@@ -182,7 +186,7 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
     });
 
     if (!response.ok) {
-      console.warn(`Routes API matrix status ${response.status}. Falling back to mock estimates.`);
+      logger.warn({ status: response.status }, 'Routes API matrix error, falling back to estimates');
       return computeTravelTimes(origin, destinations, true);
     }
 
@@ -227,7 +231,7 @@ export async function computeTravelTimes(origin, destinations, useMock = false) 
 
     return results;
   } catch (err) {
-    console.error('Error in computeTravelTimes:', err);
+    logger.error({ err: err.message }, 'Error in computeTravelTimes, falling back to estimates');
     return computeTravelTimes(origin, destinations, true);
   }
 };
@@ -316,6 +320,7 @@ export async function compareRoutes({ origin, destination, useMock = false }) {
   }
 
   try {
+    quotaManager.checkAndRecordGoogleApiCall('routes');
     const apiKey = process.env.GOOGLE_SERVER_KEY;
     const body = {
       origin: {
@@ -331,6 +336,7 @@ export async function compareRoutes({ origin, destination, useMock = false }) {
 
     const response = await fetch(ROUTES_COMPUTE_URL, {
       method: 'POST',
+      signal: AbortSignal.timeout(8000),
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
@@ -405,7 +411,7 @@ export async function compareRoutes({ origin, destination, useMock = false }) {
     globalCache.set(cacheKey, result, 120);
     return result;
   } catch (err) {
-    console.error('Error in compareRoutes:', err);
+    logger.error({ err: err.message }, 'Error in compareRoutes, falling back to estimates');
     return compareRoutes({ origin, destination, useMock: true });
   }
 }

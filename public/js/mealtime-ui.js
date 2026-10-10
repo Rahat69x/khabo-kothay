@@ -1,3 +1,4 @@
+import { esc } from './escape.js';
 import { searchMealTimeApi, sendMealTimeFeedbackApi } from './api.js';
 
 // Local storage key for saved personal places (never logged or sent to analytics)
@@ -20,12 +21,27 @@ export function savePlaceLocally(key, placeObj) {
   } catch (e) {}
 }
 
+// There's no geocoder, so typed area names are matched against the server's preset Dhaka
+// areas. Unmatched names are rejected rather than silently given fixed coordinates.
+export function resolveArea(name, presets = {}) {
+  const q = String(name || '').trim().toLowerCase();
+  if (!q) return null;
+  for (const [key, spot] of Object.entries(presets)) {
+    const k = key.toLowerCase();
+    if (k.includes(q) || q.includes(k) || String(spot.name || '').toLowerCase().includes(q)) {
+      return { name: spot.name || key, lat: spot.lat, lng: spot.lng };
+    }
+  }
+  return null;
+}
+
 export function initMealTimeUI({
   containerId = 'mealTimeControlPanel',
   resultsContainerId = 'resultsContainer',
   resultsHeadingId = 'resultsHeading',
   resultsCountTagId = 'resultsCountTag',
   originGetter,
+  presetsGetter = () => ({}),
   onCandidateSelected
 }) {
   const container = document.getElementById(containerId);
@@ -241,9 +257,15 @@ export function initMealTimeUI({
           const saved = getSavedPlaces();
           if (!saved[destType]) {
             // Friendly prompt to store locally on this device
-            const spotName = prompt(`Enter address or area for your ${destType.toUpperCase()} (saved only on this device):`, 'Gulshan 2');
+            const spotName = prompt(`Enter the area for your ${destType.toUpperCase()} (saved only on this device):`, 'Gulshan 2');
             if (spotName) {
-              savePlaceLocally(destType, { name: spotName, lat: 23.7925, lng: 90.4150 });
+              const presets = presetsGetter();
+              const spot = resolveArea(spotName, presets);
+              if (spot) {
+                savePlaceLocally(destType, spot);
+              } else {
+                alert(`Unknown area "${spotName}". Try one of: ${Object.keys(presets).join(', ')}`);
+              }
             }
           }
         }
@@ -300,7 +322,18 @@ export function initMealTimeUI({
         destPayload = saved[activeReturnDest];
       } else if (activeReturnDest === 'custom') {
         const customName = document.getElementById('customDestName')?.value || 'Banani';
-        destPayload = { name: customName, lat: 23.7937, lng: 90.4046 };
+        const presets = presetsGetter();
+        const spot = resolveArea(customName, presets);
+        if (!spot) {
+          resultsContainer.innerHTML = `
+            <div class="empty-results-card card-glass">
+              <h3>⚠️ Unknown return area</h3>
+              <p>We couldn't place "${esc(customName)}". Try one of: ${esc(Object.keys(presets).join(', '))}.</p>
+            </div>
+          `;
+          return;
+        }
+        destPayload = spot;
       }
     }
 
@@ -338,11 +371,30 @@ export function initMealTimeUI({
       resultsContainer.innerHTML = `
         <div class="empty-results-card card-glass">
           <h3>⚠️ Unable to Complete Search</h3>
-          <p>${err.message}</p>
+          <p>${esc(err.message)}</p>
         </div>
       `;
     }
   });
+}
+
+const EXPLAIN_LABELS = {
+  spareScore: 'Spare time',
+  speedScore: 'Total trip speed',
+  trafficScore: 'Traffic reliability',
+  openMarginScore: 'Time before closing',
+  routeScore: 'Route efficiency',
+  prefScore: 'Taste match',
+  budgetScore: 'Budget fit',
+  ratingScore: 'Rating'
+};
+
+function directionsHref(r) {
+  const loc = r.location;
+  const destination = loc && Number.isFinite(loc.latitude) && Number.isFinite(loc.longitude)
+    ? `${loc.latitude},${loc.longitude}`
+    : encodeURIComponent(r.name || '');
+  return `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
 }
 
 /**
@@ -367,8 +419,8 @@ export function renderMealTimeResults({
           <h4>💡 Computed Alternatives:</h4>
           <div class="alternatives-list">
             ${data.suggestions.map(s => `
-              <button type="button" class="btn btn-outline btn-sm alt-btn" data-type="${s.type}">
-                ${s.label}
+              <button type="button" class="btn btn-outline btn-sm alt-btn" data-type="${esc(s.type)}">
+                ${esc(s.label)}
               </button>
             `).join('')}
           </div>
@@ -377,12 +429,12 @@ export function renderMealTimeResults({
     }
 
     const shortestText = data.summary.shortestFeasibleTime
-      ? `<p class="shortest-time-note">Shortest time needed for any restaurant: <strong>${data.summary.shortestFeasibleTime} min</strong></p>`
+      ? `<p class="shortest-time-note">Shortest time needed for any restaurant: <strong>${esc(data.summary.shortestFeasibleTime)} min</strong></p>`
       : '';
 
     resultsContainer.innerHTML = `
       <div class="no-result-container card-glass">
-        <h3>⏳ ${data.summary.message}</h3>
+        <h3>⏳ ${esc(data.summary.message)}</h3>
         <p>Your total trip (travel both ways, waiting, eating, and safety buffer) exceeds your available time.</p>
         ${shortestText}
         ${altsHtml}
@@ -404,12 +456,12 @@ export function renderMealTimeResults({
     const statusText = r.status === 'SAFE' ? '🟢 Safe Fit' : r.status === 'TIGHT' ? '🟡 Tight Fit' : '🔴 Over Time';
 
     html += `
-      <article class="mealtime-card card-glass" data-id="${r.placeId}">
+      <article class="mealtime-card card-glass" data-id="${esc(r.placeId)}">
         <div class="card-header-row">
           <div class="card-title-group">
             <span class="rank-badge">#${idx + 1}</span>
-            <h3 class="restaurant-name">${r.name}</h3>
-            <span class="cuisine-pill">${r.cuisine || 'Various'}</span>
+            <h3 class="restaurant-name">${esc(r.name)}</h3>
+            <span class="cuisine-pill">${esc(r.cuisine || 'Various')}</span>
           </div>
           <div class="status-badge ${statusClass}">
             ${statusText}
@@ -417,37 +469,37 @@ export function renderMealTimeResults({
         </div>
 
         <div class="time-meta-row">
-          <span class="meta-item">🏁 <strong>Back by: ${r.backByTime}</strong></span>
-          <span class="meta-item">🕒 <strong>${r.openCheck.closesAt ? `Open until ${r.openCheck.closesAt}` : 'Hours unverified'}</strong></span>
-          <span class="meta-item spare-highlight">⏱️ <strong>${tb.spareMinutes} min spare</strong></span>
+          <span class="meta-item">🏁 <strong>Back by: ${esc(r.backByTime)}</strong></span>
+          <span class="meta-item">🕒 <strong>${r.openCheck.closesAt ? `Open until ${esc(r.openCheck.closesAt)}` : 'Hours unverified'}</strong></span>
+          <span class="meta-item spare-highlight">⏱️ <strong>${esc(tb.spareMinutes)} min spare</strong></span>
         </div>
 
         <!-- Segmented Time Bar -->
         <div class="segmented-time-bar-wrapper">
           <div class="segmented-time-bar">
-            <div class="segment seg-outbound" style="flex: ${tb.outbound}" title="Travel There: ${tb.outbound}m">
-              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><span class="seg-label">${tb.outbound}m</span>
+            <div class="segment seg-outbound" style="flex: ${esc(tb.outbound)}" title="Travel There: ${esc(tb.outbound)}m">
+              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><span class="seg-label">${esc(tb.outbound)}m</span>
             </div>
-            <div class="segment seg-wait" style="flex: ${tb.wait}" title="Wait & Order: ${tb.wait}m">
-              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="seg-label">${tb.wait}m</span>
+            <div class="segment seg-wait" style="flex: ${esc(tb.wait)}" title="Wait & Order: ${esc(tb.wait)}m">
+              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="seg-label">${esc(tb.wait)}m</span>
             </div>
-            <div class="segment seg-eat" style="flex: ${tb.eat || 1}" title="Eat: ${tb.eat}m">
-              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 2v20M6 2v7a3 3 0 0 0 6 0V2M9 9v13"/></svg></span><span class="seg-label">${tb.eat}m</span>
+            <div class="segment seg-eat" style="flex: ${tb.eat || 1}" title="Eat: ${esc(tb.eat)}m">
+              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 2v20M6 2v7a3 3 0 0 0 6 0V2M9 9v13"/></svg></span><span class="seg-label">${esc(tb.eat)}m</span>
             </div>
-            <div class="segment seg-return" style="flex: ${tb.return}" title="Travel Back: ${tb.return}m">
-              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></span><span class="seg-label">${tb.return}m</span>
+            <div class="segment seg-return" style="flex: ${esc(tb.return)}" title="Travel Back: ${esc(tb.return)}m">
+              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></span><span class="seg-label">${esc(tb.return)}m</span>
             </div>
-            <div class="segment seg-buffer" style="flex: ${tb.buffer}" title="Safety Buffer: ${tb.buffer}m">
-              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="seg-label">${tb.buffer}m</span>
+            <div class="segment seg-buffer" style="flex: ${esc(tb.buffer)}" title="Safety Buffer: ${esc(tb.buffer)}m">
+              <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="seg-label">${esc(tb.buffer)}m</span>
             </div>
             ${tb.spareMinutes > 0 ? `
-              <div class="segment seg-spare" style="flex: ${tb.spareMinutes}" title="Spare Time: ${tb.spareMinutes}m">
-                <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="seg-label">${tb.spareMinutes}m</span>
+              <div class="segment seg-spare" style="flex: ${esc(tb.spareMinutes)}" title="Spare Time: ${esc(tb.spareMinutes)}m">
+                <span class="seg-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="seg-label">${esc(tb.spareMinutes)}m</span>
               </div>
             ` : ''}
           </div>
           <div class="segmented-bar-legend">
-            <span>Total: <strong>${tb.total}m</strong> / ${r.availableMinutes}m</span>
+            <span>Total: <strong>${esc(tb.total)}m</strong> / ${esc(r.availableMinutes)}m</span>
           </div>
         </div>
 
@@ -456,14 +508,20 @@ export function renderMealTimeResults({
 
         <!-- Flags -->
         <div class="card-flags-row">
-          ${r.flags.map(f => `<span class="flag-chip">⚠️ ${f}</span>`).join('')}
+          ${r.flags.map(f => `<span class="flag-chip">⚠️ ${esc(f)}</span>`).join('')}
         </div>
 
         <!-- Card Actions -->
         <div class="card-footer-actions">
-          ${r.phoneNumber ? `<a href="tel:${r.phoneNumber}" class="btn btn-outline btn-sm">📞 Call</a>` : ''}
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.name)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">🧭 Directions</a>
-          <button type="button" class="btn btn-secondary btn-sm explain-btn" data-idx="${idx}">🔍 Explain This</button>
+          ${r.phoneNumber ? `<a href="tel:${esc(r.phoneNumber)}" class="btn btn-outline btn-sm">📞 Call</a>` : ''}
+          <a href="${esc(directionsHref(r))}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">🧭 Directions</a>
+          <button type="button" class="btn btn-secondary btn-sm explain-btn" data-idx="${idx}" aria-expanded="false">🔍 Explain This</button>
+        </div>
+        <div class="mealtime-explain hidden" id="mealtime-explain-${idx}">
+          <p><strong>Score ${esc(Math.round((r.score || 0) * 100))}/100</strong> — how this pick was weighed:</p>
+          <ul>
+            ${Object.entries(r.scoreComponents || {}).map(([k, v]) => `<li>${esc(EXPLAIN_LABELS[k] || k)}: ${esc(Math.round(v * 100))}%</li>`).join('')}
+          </ul>
         </div>
       </article>
     `;
@@ -474,14 +532,14 @@ export function renderMealTimeResults({
     html += `
       <details class="flexible-results-accordion card-glass">
         <summary class="flex-summary">
-          ⚠️ Slightly over your time (${data.flexibleResults.length} places +1 to +5 min over)
+          ⚠️ Slightly over your time (${esc(data.flexibleResults.length)} places +1 to +5 min over)
         </summary>
-        <p class="flex-warning">These places slightly exceed your ${data.summary.availableMinutes}-minute break. Only pick them if you have extra leeway.</p>
+        <p class="flex-warning">These places slightly exceed your ${esc(data.summary.availableMinutes)}-minute break. Only pick them if you have extra leeway.</p>
         <div class="flexible-cards-list">
           ${data.flexibleResults.map(r => `
             <div class="flex-card-row">
               <div class="flex-card-info">
-                <strong>${r.name}</strong> (${r.cuisine}) • Total: ${r.timeBreakdown.total} min
+                <strong>${esc(r.name)}</strong> (${esc(r.cuisine)}) • Total: ${esc(r.timeBreakdown.total)} min
               </div>
               <span class="over-chip">+${Math.abs(r.spareMinutes)} min over</span>
             </div>
@@ -507,6 +565,21 @@ export function renderMealTimeResults({
   `;
 
   resultsContainer.innerHTML = html;
+
+  resultsContainer.querySelectorAll('.explain-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(`mealtime-explain-${btn.dataset.idx}`);
+      const open = panel?.classList.toggle('hidden') === false;
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  });
+
+  resultsContainer.querySelectorAll('.mealtime-card').forEach((card, idx) => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('a, button')) return;
+      if (onCandidateSelected) onCandidateSelected(data.results[idx]);
+    });
+  });
 
   // Attach feedback submit handler
   document.getElementById('submitMealFeedbackBtn')?.addEventListener('click', async () => {

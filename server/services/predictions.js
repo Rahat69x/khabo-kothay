@@ -2,6 +2,7 @@ import { parseGoogleDuration } from './routes.js';
 import featureFlags from '../config/featureFlags.js';
 import globalCache from './cache.js';
 import logger from './logger.js';
+import quotaManager from './quota.js';
 
 const ROUTES_COMPUTE_URL = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
@@ -74,9 +75,11 @@ async function predictLegDuration(origin, destination, offsetMinutes, baseDurati
   }
 
   try {
+    quotaManager.checkAndRecordGoogleApiCall('routes');
     const apiKey = process.env.GOOGLE_SERVER_KEY;
     const response = await fetch(ROUTES_COMPUTE_URL, {
       method: 'POST',
+      signal: AbortSignal.timeout(8000),
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,

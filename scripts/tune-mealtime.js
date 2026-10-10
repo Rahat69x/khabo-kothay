@@ -8,8 +8,9 @@
 
 import fs from 'fs';
 import path from 'path';
+import { dataFile } from '../server/config/paths.js';
 
-const FEEDBACK_FILE = path.resolve('server', 'data', 'mealtime-feedback.jsonl');
+const FEEDBACK_FILE = dataFile('mealtime-feedback.jsonl');
 const CONFIG_FILE = path.resolve('config', 'mealtime.json');
 const SUGGESTED_FILE = path.resolve('config', 'mealtime.suggested.json');
 

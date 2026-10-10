@@ -271,22 +271,38 @@ export function checkOpeningFeasibility(restaurant, arrivalDate, finishDate, mod
     }
   }
 
+  // Work in Dhaka minutes-since-midnight. (Building the close time from the arrival's UTC
+  // date put it a day early for arrivals between 00:00 and 06:00 Dhaka time.)
   const arrivalDhaka = getDhakaTimeParts(arrivalDate);
-  const finishDhaka = getDhakaTimeParts(finishDate);
+  const arrivalMin = arrivalDhaka.hours * 60 + arrivalDhaka.minutes;
+  const closeMin = closeH * 60 + closeM;
 
-  // Compute close Date in local frame
-  const closeDate = new Date(arrivalDate.getTime());
-  const arrivalHours = arrivalDhaka.hours;
-  
-  // If close hour is early morning (< 6 AM) and arrival is in afternoon/evening (>= 12 PM),
-  // then closing time is past midnight on the following calendar day!
-  if (closeH < 6 && arrivalHours >= 12) {
-    closeDate.setUTCDate(closeDate.getUTCDate() + 1);
+  let openMin = null;
+  if (typeof hours.openTime === 'string' && /^\d{1,2}:\d{2}$/.test(hours.openTime)) {
+    const [oh, om] = hours.openTime.split(':').map(Number);
+    openMin = oh * 60 + om;
   }
-  closeDate.setUTCHours(closeH - 6, closeM, 0, 0); // Convert Dhaka hour (UTC+6) to UTC
 
-  const minutesFromArrivalToClose = Math.round((closeDate.getTime() - arrivalDate.getTime()) / 60000);
-  const minutesFromFinishToClose = Math.round((closeDate.getTime() - finishDate.getTime()) / 60000);
+  let minutesFromArrivalToClose;
+  if (openMin !== null) {
+    const crossesMidnight = closeMin <= openMin;
+    const openAtArrival = crossesMidnight
+      ? (arrivalMin >= openMin || arrivalMin < closeMin)
+      : (arrivalMin >= openMin && arrivalMin < closeMin);
+    if (!openAtArrival) {
+      return { passes: false, rejectionReason: `Not open at arrival (opens ${hours.openTime})`, flags, openAtArrival: false, minutesUntilClose: 0 };
+    }
+    minutesFromArrivalToClose = crossesMidnight && arrivalMin >= openMin
+      ? closeMin + 1440 - arrivalMin
+      : closeMin - arrivalMin;
+  } else {
+    minutesFromArrivalToClose = closeMin - arrivalMin;
+    // Early-morning close (< 6 AM) seen from an afternoon/evening arrival is tomorrow's close
+    if (closeH < 6 && arrivalDhaka.hours >= 12) {
+      minutesFromArrivalToClose += 1440;
+    }
+  }
+  const minutesFromFinishToClose = minutesFromArrivalToClose - Math.round((finishDate.getTime() - arrivalDate.getTime()) / 60000);
 
   // Hard gate 1: Must be open at arrival
   if (minutesFromArrivalToClose <= 0) {
@@ -614,27 +630,30 @@ export async function searchMealTime({
     }
   }
 
-  // Cost control 1: Candidate retrieval
+  // Cost control 1: Candidate retrieval. Meal-Time Mode ranks the curated Dhaka dataset in
+  // both modes; only the travel-time lookups below go to Google when keys are configured.
   const isMock = process.env.USE_MOCK_DATA === 'true' || !process.env.GOOGLE_SERVER_KEY;
-  let rawCandidates = [];
-  if (isMock) {
-    rawCandidates = getMockCandidates(filters.cuisine || 'All', filters.budget, origin);
-  } else {
-    // In live mode, query places with minimal field mask
-    rawCandidates = getMockCandidates(filters.cuisine || 'All', filters.budget, origin);
-  }
+  const rawCandidates = getMockCandidates(filters.cuisine || 'All', filters.budget, origin);
 
-  // Cost control 2: Prune candidates by geometry before matrix API calls
-  const candidates = pruneCandidatesByGeometry(rawCandidates, origin, availableMinNum, transport);
+  // Cost control 2: Prune candidates by geometry before matrix API calls, and cap at the
+  // 20 that get a routed travel time (the rest used to fall through with a made-up 10 min).
+  const candidates = pruneCandidatesByGeometry(rawCandidates, origin, availableMinNum, transport).slice(0, 20);
 
   // Cost control 3: Compute outbound and return travel legs
   // Outbound: Origin -> Restaurant
-  const outboundLegs = await computeTravelTimes(origin, candidates.slice(0, 20), isMock);
-  const outboundMap = new Map(outboundLegs.map(l => [l.id, l]));
+  const speedMps = (mealTimeConfig.transportModes[transport]?.speedKmh || 18.0) * 1000 / 3600;
+  const outboundLegs = await computeTravelTimes(origin, candidates, isMock);
+  const outboundMap = new Map(outboundLegs.map(l => {
+    if (Number.isFinite(l.durationSeconds) && l.durationSeconds > 0) return [l.id, l];
+    // Routing unavailable (straight-line fallback has no duration). Feasibility is a hard
+    // gate, so estimate conservatively from distance instead of treating it as 0-1 min.
+    const roadMeters = (l.distanceMeters || 1500) * 1.3;
+    return [l.id, { ...l, durationSeconds: Math.round(roadMeters / speedMps), trafficLevel: 'Moderate', isTravelTimeEstimated: true }];
+  }));
 
   // Compute return leg: Restaurant -> Destination with predicted traffic
   // Return departure is leaveAt + outbound + wait + eat
-  const returnLegs = candidates.slice(0, 20).map(c => {
+  const returnLegs = candidates.map(c => {
     const outLeg = outboundMap.get(c.id) || { durationSeconds: 600, distanceMeters: 1500, trafficLevel: 'Moderate' };
     const outMins = Math.round(outLeg.durationSeconds / 60);
 
@@ -652,8 +671,7 @@ export async function searchMealTime({
       const dLat = (destCoords.lat - c.location.latitude) * 111000;
       const dLng = (destCoords.lng - c.location.longitude) * 102000;
       const distM = Math.max(400, Math.round(Math.sqrt(dLat * dLat + dLng * dLng) * 1.3));
-      const speedKmh = mealTimeConfig.transportModes[transport]?.speedKmh || 18.0;
-      retDurationSec = Math.round((distM / (speedKmh * 1000 / 3600)) * 1.2);
+      retDurationSec = Math.round((distM / speedMps) * 1.2);
     }
 
     return {
@@ -725,9 +743,13 @@ export async function searchMealTime({
       detour,
       flags: [...(openCheck.flags || [])],
       phoneNumber: c.nationalPhoneNumber || null,
-      websiteUri: c.websiteUri || null
+      websiteUri: c.websiteUri || null,
+      location: c.location || null
     };
 
+    if (outLeg.isTravelTimeEstimated) {
+      evaluated.flags.push('Travel time estimated from distance');
+    }
     if (retLeg.durationSeconds !== outLeg.durationSeconds) {
       evaluated.flags.push('Traffic predicted');
     }

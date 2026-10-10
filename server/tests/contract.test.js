@@ -67,29 +67,33 @@ describe('P1 Operations, Contract & Cost Control Integration', () => {
   });
 
   describe('Per-Device Daily Search Limit & Cost Control', () => {
-    it('enforces 429 when a device exceeds its daily search limit', async () => {
-      const testDeviceId = 'test-device-rate-limit-999';
-
-      // Simulate consuming daily limit
-      for (let i = 0; i < 50; i++) {
-        quotaManager.checkAndRecordDeviceSearch(testDeviceId);
+    it('enforces 429 when a client exceeds its daily search limit', async () => {
+      // Quota is keyed by client IP; supertest connects over loopback
+      for (const ip of ['127.0.0.1', '::1', '::ffff:127.0.0.1']) {
+        for (let i = 0; i < 50; i++) {
+          quotaManager.checkAndRecordDeviceSearch(ip);
+        }
       }
 
-      // Next request with this device ID should receive HTTP 429
-      const res = await request(app)
-        .post('/api/v1/recommend')
-        .set('X-Device-Id', testDeviceId)
-        .send({
-          lat: 23.7925,
-          lng: 90.4150,
-          cuisine: 'All',
-          priority: 'Best Overall'
-        });
+      try {
+        // A fresh X-Device-Id must not reset the quota
+        const res = await request(app)
+          .post('/api/v1/recommend')
+          .set('X-Device-Id', 'fresh-device-id-to-bypass-quota')
+          .send({
+            lat: 23.7925,
+            lng: 90.4150,
+            cuisine: 'All',
+            priority: 'Best Overall'
+          });
 
-      expect(res.status).toBe(429);
-      expect(res.body.error).toContain('Daily search limit reached');
-      expect(res.body.limit).toBe(50);
-      expect(res.body.resetAt).toBeDefined();
+        expect(res.status).toBe(429);
+        expect(res.body.error).toContain('Daily search limit reached');
+        expect(res.body.limit).toBe(50);
+        expect(res.body.resetAt).toBeDefined();
+      } finally {
+        quotaManager.resetDailyUsage();
+      }
     });
   });
 

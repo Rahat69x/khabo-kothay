@@ -1,6 +1,7 @@
 import { appStorage } from './storage.js';
 import { recordTasteSignal, compareRoutes } from './api.js';
 import { mapController } from './map.js';
+import { esc, safeUrl } from './escape.js';
 
 export class UIController {
   constructor() {
@@ -43,7 +44,7 @@ export class UIController {
       <div class="empty-state error-state">
         <div class="empty-icon">⚠️</div>
         <h3>Unable to load recommendations</h3>
-        <p>${message || 'An unexpected error occurred while contacting the server.'}</p>
+        <p>${esc(message || 'An unexpected error occurred while contacting the server.')}</p>
         <button id="errorRetryBtn" class="btn btn-primary">Try Again</button>
       </div>
     `;
@@ -77,7 +78,7 @@ export class UIController {
             <span class="sparkle-icon">✨</span>
             <div>
               <h3>For you right now</h3>
-              <p class="top-picks-summary">${summary}</p>
+              <p class="top-picks-summary">${esc(summary)}</p>
             </div>
           </div>
         </div>
@@ -107,7 +108,7 @@ export class UIController {
       return '<span class="status-chip status-unknown">⚪ Hours unknown</span>';
     }
     if (openStatus.status === 'Closing soon') {
-      const minText = openStatus.minutesUntilClose ? ` (${openStatus.minutesUntilClose} min)` : '';
+      const minText = openStatus.minutesUntilClose ? ` (${esc(openStatus.minutesUntilClose)} min)` : '';
       return `<span class="status-chip status-closing">🟡 Closing soon${minText}</span>`;
     }
     if (openStatus.status === 'Open now' || openStatus.isOpen === true) {
@@ -132,15 +133,15 @@ export class UIController {
       : `${km} km (approx. straight-line)`;
 
     return `
-      <div class="mini-pick ${badgeClass}" data-id="${item.id}">
-        <span class="mini-badge">${badgeText}</span>
-        <h4 class="mini-name">${item.displayName}</h4>
+      <div class="mini-pick ${badgeClass}" data-id="${esc(item.id)}">
+        <span class="mini-badge">${esc(badgeText)}</span>
+        <h4 class="mini-name">${esc(item.displayName)}</h4>
         <div class="mini-meta">
-          <span>${item.rating}★ (${item.userRatingCount})</span>
+          <span>${esc(item.rating)}★ (${esc(item.userRatingCount)})</span>
           <span>•</span>
-          <span>${timeText}</span>
+          <span>${esc(timeText)}</span>
         </div>
-        <p class="mini-reason">${item.reason}</p>
+        <p class="mini-reason">${esc(item.reason)}</p>
       </div>
     `;
   }
@@ -168,62 +169,62 @@ export class UIController {
       const directionsUrl = mapController.getGoogleMapsDirectionsUrl(userLocation, r);
 
       return `
-        <article class="restaurant-card" id="card-${r.id}" data-id="${r.id}">
+        <article class="restaurant-card" id="card-${esc(r.id)}" data-id="${esc(r.id)}">
           <div class="card-media">
-            <img src="${photoUrl}" alt="${r.displayName}" class="card-photo" loading="lazy" />
+            <img src="${esc(photoUrl)}" alt="${esc(r.displayName)}" class="card-photo" loading="lazy" />
             <div class="card-badges">
               <span class="rank-badge">#${idx + 1}</span>
-              ${r.badges.map(b => `<span class="factor-badge ${this.getBadgeClass(b)}">${b}</span>`).join('')}
+              ${r.badges.map(b => `<span class="factor-badge ${this.getBadgeClass(b)}">${esc(b)}</span>`).join('')}
             </div>
-            <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${r.id}" aria-label="Toggle favorite">
+            <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${esc(r.id)}" aria-label="Toggle favorite">
               ${isFav ? '❤️' : '🤍'}
             </button>
           </div>
 
           <div class="card-body">
             <div class="card-header-row">
-              <h3 class="card-title">${r.displayName}</h3>
+              <h3 class="card-title">${esc(r.displayName)}</h3>
               <div class="card-score-pill" title="Algorithmic match score (0-100)">
-                ${r.score}<small>/100</small>
+                ${esc(r.score)}<small>/100</small>
               </div>
             </div>
 
-            <p class="card-address">${r.formattedAddress}</p>
+            <p class="card-address">${esc(r.formattedAddress)}</p>
 
             <div class="card-metrics-row" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0;">
               ${openingBadge}
-              <span class="metric-item rating-metric">⭐ ${r.rating} <small>(${r.userRatingCount})</small></span>
+              <span class="metric-item rating-metric">⭐ ${esc(r.rating)} <small>(${esc(r.userRatingCount)})</small></span>
               <span class="metric-item price-metric">${priceText}</span>
-              <span class="metric-item cost-metric" style="font-weight: 700; color: var(--primary);">${costPerPersonText}</span>
-              <span class="metric-item time-metric">🕒 ${travelInfo}</span>
-              ${r.trafficLevel && r.trafficLevel !== 'Unknown' ? `<span class="traffic-chip ${trafficColor}">🚦 ${r.trafficLevel} Traffic</span>` : ''}
+              <span class="metric-item cost-metric" style="font-weight: 700; color: var(--primary);">${esc(costPerPersonText)}</span>
+              <span class="metric-item time-metric">🕒 ${esc(travelInfo)}</span>
+              ${r.trafficLevel && r.trafficLevel !== 'Unknown' ? `<span class="traffic-chip ${trafficColor}">🚦 ${esc(r.trafficLevel)} Traffic</span>` : ''}
             </div>
 
             <div class="card-transport-box">
               <span class="transport-label">Estimated Transit:</span>
-              <span class="transport-cost">~৳${r.transport.cheapestEstimatedCostBdt} (${r.transport.cheapestFeasibleMode})</span>
+              <span class="transport-cost">~৳${esc(r.transport.cheapestEstimatedCostBdt)} (${esc(r.transport.cheapestFeasibleMode)})</span>
               <span class="estimate-tag">estimated</span>
             </div>
 
             <div class="card-reason-box">
               <span class="reason-icon">💡</span>
-              <p class="reason-text">${r.reason}</p>
+              <p class="reason-text">${esc(r.reason)}</p>
             </div>
 
             <div class="card-actions">
-              <button class="btn btn-outline btn-menu" data-id="${r.id}">
+              <button class="btn btn-outline btn-menu" data-id="${esc(r.id)}">
                 🍽️ Menu & Prices
               </button>
-              <button class="btn btn-outline btn-compare" data-id="${r.id}">
+              <button class="btn btn-outline btn-compare" data-id="${esc(r.id)}">
                 🔄 Routes
               </button>
-              <button class="btn btn-outline btn-explain" data-id="${r.id}">
+              <button class="btn btn-outline btn-explain" data-id="${esc(r.id)}">
                 📊 Why this pick?
               </button>
-              <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-directions" data-id="${r.id}">
+              <a href="${esc(directionsUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-directions" data-id="${esc(r.id)}">
                 🧭 Directions
               </a>
-              <button class="btn btn-ghost btn-dismiss" data-id="${r.id}" title="Not interested (teaches your taste profile)">
+              <button class="btn btn-ghost btn-dismiss" data-id="${esc(r.id)}" title="Not interested (teaches your taste profile)">
                 ✕
               </button>
             </div>
@@ -326,10 +327,10 @@ export class UIController {
       </div>
       <div class="drawer-body">
         <div class="drawer-restaurant-info">
-          <h4>${restaurant.displayName}</h4>
-          <span class="drawer-score">${restaurant.score}/100 Match Score</span>
+          <h4>${esc(restaurant.displayName)}</h4>
+          <span class="drawer-score">${esc(restaurant.score)}/100 Match Score</span>
         </div>
-        <p class="drawer-summary">${restaurant.reason}</p>
+        <p class="drawer-summary">${esc(restaurant.reason)}</p>
         
         <div class="breakdown-list">
           ${this.renderBreakdownBar('Taste Affinity', b.taste)}
@@ -356,7 +357,7 @@ export class UIController {
     return `
       <div class="breakdown-item">
         <div class="breakdown-labels">
-          <span>${label}</span>
+          <span>${esc(label)}</span>
           <span class="breakdown-pct">${value}%</span>
         </div>
         <div class="breakdown-track">
@@ -372,14 +373,18 @@ export class UIController {
     this.compareModal.innerHTML = `
       <div class="modal-box modal-lg">
         <div class="modal-header">
-          <h3>Compare Routes & Transport to ${restaurant.displayName}</h3>
-          <button class="close-modal-btn" onclick="document.getElementById('compareModal').classList.remove('open')">✕</button>
+          <h3>Compare Routes & Transport to ${esc(restaurant.displayName)}</h3>
+          <button class="close-modal-btn" aria-label="Close">✕</button>
         </div>
         <div class="modal-body">
           <div class="loading-spinner">Calculating traffic-aware routes and Dhaka transport fares...</div>
         </div>
       </div>
     `;
+    // Inline onclick handlers are blocked by the CSP (script-src-attr 'none')
+    this.compareModal.querySelector('.close-modal-btn').addEventListener('click', () => {
+      this.compareModal.classList.remove('open');
+    });
 
     try {
       const data = await compareRoutes(userLocation, {
@@ -390,7 +395,7 @@ export class UIController {
       const modalBody = this.compareModal.querySelector('.modal-body');
       modalBody.innerHTML = `
         <div class="route-reason-highlight">
-          <strong>Recommended Path:</strong> ${data.recommendationReason}
+          <strong>Recommended Path:</strong> ${esc(data.recommendationReason)}
         </div>
 
         <h4>Alternative Driving Routes</h4>
@@ -400,13 +405,13 @@ export class UIController {
               <div class="route-option-badge">
                 ${idx === data.recommendedRouteIndex ? '★ Recommended' : `Option ${idx + 1}`}
               </div>
-              <h5>${rt.name}</h5>
+              <h5>${esc(rt.name)}</h5>
               <div class="route-meta">
                 <span>⏱️ ${Math.round(rt.durationSeconds / 60)} min</span>
                 <span>🛣️ ${(rt.distanceMeters / 1000).toFixed(1)} km</span>
-                <span class="traffic-tag ${rt.trafficLevel.toLowerCase()}">Traffic: ${rt.trafficLevel}</span>
+                <span class="traffic-tag ${rt.trafficLevel.toLowerCase()}">Traffic: ${esc(rt.trafficLevel)}</span>
               </div>
-              <p class="route-summary">${rt.summary || 'Real-time computed road path'}</p>
+              <p class="route-summary">${esc(rt.summary || 'Real-time computed road path')}</p>
             </div>
           `).join('')}
         </div>
@@ -426,10 +431,10 @@ export class UIController {
             <tbody>
               ${data.transportModes.map(m => `
                 <tr>
-                  <td><strong>${m.modeName}</strong></td>
-                  <td class="cost-cell">৳${m.estimatedCostBdt} <small class="estimate-tag">estimated</small></td>
+                  <td><strong>${esc(m.modeName)}</strong></td>
+                  <td class="cost-cell">৳${esc(m.estimatedCostBdt)} <small class="estimate-tag">estimated</small></td>
                   <td>${m.feasible ? '✅ Feasible' : '⚠️ Long distance'}</td>
-                  <td class="calc-cell">${m.breakdown.calculation}</td>
+                  <td class="calc-cell">${esc(m.breakdown.calculation)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -438,7 +443,7 @@ export class UIController {
       `;
     } catch (e) {
       const modalBody = this.compareModal.querySelector('.modal-body');
-      modalBody.innerHTML = `<div class="error-msg">Error calculating routes: ${e.message}</div>`;
+      modalBody.innerHTML = `<div class="error-msg">Error calculating routes: ${esc(e.message)}</div>`;
     }
   }
 
@@ -460,10 +465,10 @@ export class UIController {
         <div class="menu-cost-box" style="background: var(--surface-alt); padding: 14px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border);">
           <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <strong style="font-size: 1.1rem; color: var(--primary);">~৳${costPerPerson} per person</strong>
-            ${costRange ? `<span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">Range: ${costRange}</span>` : ''}
+            ${costRange ? `<span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">Range: ${esc(costRange)}</span>` : ''}
           </div>
           <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
-            <strong>How derived:</strong> ${costDerivation}
+            <strong>How derived:</strong> ${esc(costDerivation)}
           </p>
         </div>
       `;
@@ -486,13 +491,13 @@ export class UIController {
               <div class="menu-item-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;">
                 <div style="flex: 1; margin-right: 12px;">
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <strong style="font-size: 0.95rem;">${item.name}</strong>
-                    <span class="status-chip ${badgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${item.status || 'Verified'}</span>
+                    <strong style="font-size: 0.95rem;">${esc(item.name)}</strong>
+                    <span class="status-chip ${badgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${esc(item.status || 'Verified')}</span>
                   </div>
-                  ${item.description ? `<p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${item.description}</p>` : ''}
+                  ${item.description ? `<p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${esc(item.description)}</p>` : ''}
                 </div>
                 <div style="text-align: right; min-width: 80px;">
-                  <strong style="font-size: 1rem; color: var(--primary);">${priceLabel}</strong>
+                  <strong style="font-size: 1rem; color: var(--primary);">${esc(priceLabel)}</strong>
                 </div>
               </div>
             `;
@@ -510,12 +515,12 @@ export class UIController {
 
     const sourceHtml = menu && menu.sourceUrl ? `
       <div class="menu-source-card" style="padding: 12px; background: var(--surface-alt); border-radius: 10px; font-size: 0.85rem; border: 1px solid var(--border);">
-        <p><strong>Traceable Source:</strong> ${menu.sourceName || 'Official Listing'}</p>
+        <p><strong>Traceable Source:</strong> ${esc(menu.sourceName || 'Official Listing')}</p>
         <p style="margin-top: 4px; word-break: break-all;">
-          <strong>Link:</strong> <a href="${menu.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">${menu.sourceUrl}</a>
+          <strong>Link:</strong> <a href="${safeUrl(menu.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">${esc(menu.sourceUrl)}</a>
         </p>
         <p style="margin-top: 4px; color: var(--text-muted); font-size: 0.8rem;">
-          <strong>Last checked:</strong> ${menu.lastChecked || 'Recently'}
+          <strong>Last checked:</strong> ${esc(menu.lastChecked || 'Recently')}
         </p>
       </div>
     ` : `
@@ -526,7 +531,7 @@ export class UIController {
 
     const websiteBtnHtml = (menu?.sourceUrl || r.websiteUri) ? `
       <div style="margin-top: 14px; text-align: right;">
-        <a href="${menu?.sourceUrl || r.websiteUri}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+        <a href="${safeUrl(menu?.sourceUrl || r.websiteUri)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
           🌐 View Official Menu / Website
         </a>
       </div>
@@ -577,7 +582,7 @@ export class UIController {
           <select class="form-input compare-select" data-slot="${slotIdx}" style="width: 100%; padding: 6px 10px; font-size: 0.85rem;">
             <option value="">-- None --</option>
             ${restaurants.map(r => `
-              <option value="${r.id}" ${selectedIds[slotIdx] === r.id ? 'selected' : ''}>${r.displayName} (${r.cuisine})</option>
+              <option value="${esc(r.id)}" ${selectedIds[slotIdx] === r.id ? 'selected' : ''}>${esc(r.displayName)} (${esc(r.cuisine)})</option>
             `).join('')}
           </select>
         </div>
@@ -610,8 +615,8 @@ export class UIController {
               <th style="text-align: left; padding: 10px; width: 22%;">Feature</th>
               ${comparedPlaces.map(r => `
                 <th style="text-align: left; padding: 10px; width: ${Math.floor(78 / comparedPlaces.length)}%;">
-                  <div style="font-weight: 800; font-size: 1rem; color: var(--text);">${r.displayName}</div>
-                  <div style="font-size: 0.8rem; color: var(--primary);">${r.cuisine}</div>
+                  <div style="font-weight: 800; font-size: 1rem; color: var(--text);">${esc(r.displayName)}</div>
+                  <div style="font-size: 0.8rem; color: var(--primary);">${esc(r.cuisine)}</div>
                 </th>
               `).join('')}
             </tr>
@@ -652,14 +657,14 @@ export class UIController {
                   <td style="padding: 10px;">
                     <span style="font-weight: 800; color: ${withinBudget ? 'var(--primary)' : 'var(--danger)'};">~৳${cost}</span>
                     ${!withinBudget ? '<span style="font-size: 0.75rem; color: var(--danger); display: block;">Over budget</span>' : ''}
-                    <small style="font-size: 0.75rem; color: var(--text-muted); display: block;">${r.costDerivation || ''}</small>
+                    <small style="font-size: 0.75rem; color: var(--text-muted); display: block;">${esc(r.costDerivation || '')}</small>
                   </td>
                 `;
               }).join('')}
             </tr>
             <tr style="border-bottom: 1px solid var(--border);">
               <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Cuisines</td>
-              ${comparedPlaces.map(r => `<td style="padding: 10px;">${r.cuisine || 'Not available'}</td>`).join('')}
+              ${comparedPlaces.map(r => `<td style="padding: 10px;">${esc(r.cuisine || 'Not available')}</td>`).join('')}
             </tr>
             <tr style="border-bottom: 1px solid var(--border);">
               <td style="padding: 10px; font-weight: 700; color: var(--text-muted);">Dietary Info</td>
@@ -678,10 +683,10 @@ export class UIController {
                 if (r.menu?.sourceUrl) {
                   return `
                     <td style="padding: 10px; font-size: 0.8rem;">
-                      <a href="${r.menu.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">
-                        ${r.menu.sourceName || 'Source Link'}
+                      <a href="${safeUrl(r.menu.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">
+                        ${esc(r.menu.sourceName || 'Source Link')}
                       </a>
-                      <small style="display: block; color: var(--text-muted);">Checked: ${r.menu.lastChecked || 'Recent'}</small>
+                      <small style="display: block; color: var(--text-muted);">Checked: ${esc(r.menu.lastChecked || 'Recent')}</small>
                     </td>
                   `;
                 }
@@ -694,7 +699,7 @@ export class UIController {
                 const dirUrl = mapController.getGoogleMapsDirectionsUrl(userLocation, r);
                 return `
                   <td style="padding: 10px;">
-                    <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-block;">
+                    <a href="${esc(dirUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-block;">
                       🧭 Directions
                     </a>
                   </td>
@@ -781,7 +786,7 @@ export class UIController {
       }
       dislikedContainer.innerHTML = dislikedFoods.map((item, idx) => `
         <span class="chip" style="background: var(--surface-alt); border: 1px solid var(--border); padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px;">
-          ${item}
+          ${esc(item)}
           <button type="button" class="remove-disliked-btn" data-idx="${idx}" style="background: none; border: none; cursor: pointer; color: var(--danger); font-weight: 800;">✕</button>
         </span>
       `).join('');
@@ -875,7 +880,7 @@ export class UIController {
       banner.className = 'visit-prompt-banner';
       banner.innerHTML = `
         <div class="visit-prompt-text">
-          <span>🍽️ Did you visit <strong>${pending.name}</strong>? Rate your experience:</span>
+          <span>🍽️ Did you visit <strong>${esc(pending.name)}</strong>? Rate your experience:</span>
         </div>
         <div class="visit-rating-stars">
           ${[1, 2, 3, 4, 5].map(star => `

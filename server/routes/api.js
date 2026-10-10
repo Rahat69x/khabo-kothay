@@ -1,6 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
+import pkg from '../../package.json' with { type: 'json' };
 import { searchRestaurants, getPlaceDetails } from '../services/places.js';
 import { computeTravelTimes, compareRoutes } from '../services/routes.js';
 import { rankRestaurants } from '../services/recommend.js';
@@ -9,7 +11,6 @@ import { getWeatherContext } from '../services/weather.js';
 import { applyMoodCriteria, getMoodConfig } from '../services/mood.js';
 import { PRESET_LOCATIONS } from '../services/mock.js';
 import quotaManager from '../services/quota.js';
-import globalCache from '../services/cache.js';
 import logger from '../services/logger.js';
 import { getDeparturePredictions } from '../services/predictions.js';
 import { getBanditProfile, updateBanditWeights, resetBanditProfile, setBanditEnabled } from '../services/bandit.js';
@@ -17,38 +18,109 @@ import { logEvalEvent } from '../services/eval-logger.js';
 import preferencesConfig from '../config/preferences.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
 import { searchMealTime } from '../services/mealtime.js';
+import { dataFile } from '../config/paths.js';
 
 const router = express.Router();
 
+const PROBE_PATHS = new Set(['/health', '/ready']);
+
 // Middleware to record endpoint hits and response time metrics
 router.use((req, res, next) => {
+  if (PROBE_PATHS.has(req.path)) return next(); // platform health checks shouldn't burn the monthly budget
   const start = Date.now();
   res.on('finish', () => {
     const durationMs = Date.now() - start;
-    quotaManager.recordEndpointHit(req.baseUrl + req.path, res.statusCode, durationMs);
+    // Route pattern (e.g. /places/:placeId/details), not the raw path: raw paths are client-chosen
+    // and would grow the counters map without bound.
+    const endpoint = req.route ? req.baseUrl + req.route.path : `${req.baseUrl}/(unmatched)`;
+    quotaManager.recordEndpointHit(endpoint, res.statusCode, durationMs);
   });
   next();
 });
 
+// ---------- Request helpers ----------
+
+/** Quota identity. Uses the connection IP: the x-device-id header is client-chosen and trivially rotated. */
+function clientIp(req) {
+  return req.ip || 'anonymous';
+}
+
+/** Personalization identity (bandit weights). Device id when the client sends one, else IP. */
+function deviceKey(req) {
+  const id = req.headers['x-device-id'];
+  return typeof id === 'string' && id.length > 0 && id.length <= 128 ? id : clientIp(req);
+}
+
+/** Eval logs must not contain raw IPs or device ids. */
+function anonSessionId(req) {
+  const provided = req.headers['x-session-id'];
+  if (typeof provided === 'string' && /^[\w-]{1,64}$/.test(provided)) return provided;
+  return 'sess_' + crypto.createHash('sha256').update(deviceKey(req)).digest('hex').slice(0, 16);
+}
+
+/** Returns { lat, lng } when both are finite and in range, else null. */
+export function parseCoords(lat, lng) {
+  if (lat === undefined || lat === null || lat === '' || lng === undefined || lng === null || lng === '') return null;
+  const la = Number(lat);
+  const ln = Number(lng);
+  if (!Number.isFinite(la) || !Number.isFinite(ln) || Math.abs(la) > 90 || Math.abs(ln) > 180) return null;
+  return { lat: la, lng: ln };
+}
+
+function enforceDeviceQuota(req, res) {
+  const limitCheck = quotaManager.checkAndRecordDeviceSearch(clientIp(req));
+  if (!limitCheck.allowed) {
+    res.status(429).json({
+      error: limitCheck.message,
+      limit: limitCheck.limit,
+      resetAt: limitCheck.resetAt
+    });
+    return false;
+  }
+  return true;
+}
+
+function isLoopback(req) {
+  // Socket address, not req.ip: with trust proxy enabled req.ip comes from X-Forwarded-For.
+  const addr = req.socket?.remoteAddress;
+  return addr === '127.0.0.1' || addr === '::1' || addr === '::ffff:127.0.0.1';
+}
+
+function tokensMatch(a, b) {
+  const ab = Buffer.from(String(a));
+  const bb = Buffer.from(String(b));
+  return ab.length === bb.length && crypto.timingSafeEqual(ab, bb);
+}
+
 /**
- * GET /api/health (or /api/v1/health) - Liveness Probe
+ * Admin gate: X-Admin-Token must match ADMIN_TOKEN. Outside production, loopback
+ * requests are also allowed so local tooling works without a token.
  */
-router.get('/health', (req, res) => {
+export function requireAdmin(req, res, next) {
+  const configured = process.env.ADMIN_TOKEN;
+  const isProd = process.env.NODE_ENV === 'production';
+  const usable = configured && !(isProd && configured === 'secret_admin_token');
+  const provided = req.headers['x-admin-token'];
+  if (usable && provided && tokensMatch(provided, configured)) return next();
+  if (!isProd && isLoopback(req)) return next();
+  return res.status(403).json({ error: 'Admin access denied' });
+}
+
+// ---------- Probes ----------
+
+export function healthHandler(req, res) {
   res.json({
     ok: true,
     status: 'ok',
     app: 'Khabo Kothay?',
-    version: '1.1.0',
-    commit: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || '6e196bf',
+    version: pkg.version,
+    commit: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || 'unknown',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
-});
+}
 
-/**
- * GET /api/ready (or /api/v1/ready) - Readiness Probe
- */
-router.get('/ready', (req, res) => {
+export function readyHandler(req, res) {
   const memory = process.memoryUsage();
   const isHealthy = memory.heapUsed < 1.5 * 1024 * 1024 * 1024;
   const budget = quotaManager.checkGlobalMonthlyBudget();
@@ -58,7 +130,7 @@ router.get('/ready', (req, res) => {
     status: ready ? 'ready' : 'degraded',
     ok: ready,
     app: 'Khabo Kothay?',
-    version: '1.1.0',
+    version: pkg.version,
     checks: {
       cache: 'ok',
       engine: 'ok',
@@ -66,19 +138,26 @@ router.get('/ready', (req, res) => {
     },
     uptime: process.uptime()
   });
-});
+}
 
 /**
- * GET /api/admin/usage - Internal Endpoint Usage Counter
+ * GET /api/health, /api/ready (and /api/v1/*) - Liveness & Readiness Probes
  */
-router.get('/admin/usage', (req, res) => {
+router.get('/health', healthHandler);
+router.get('/ready', readyHandler);
+
+/**
+ * GET /api/admin/usage
+ * Administrative metrics on usage, endpoints, and daily Google API quota
+ */
+router.get('/admin/usage', requireAdmin, (req, res) => {
   res.json(quotaManager.getUsageReport());
 });
 
 /**
  * POST /api/admin/killswitch - Kill-switch toggle
  */
-router.post('/admin/killswitch', (req, res) => {
+router.post('/admin/killswitch', requireAdmin, (req, res) => {
   const { active } = req.body || {};
   const currentState = quotaManager.setKillSwitch(active);
   res.json({
@@ -108,9 +187,8 @@ router.get('/config', (req, res) => {
  */
 router.get('/context/weather', async (req, res, next) => {
   try {
-    const lat = req.query.lat ? parseFloat(req.query.lat) : 23.7925;
-    const lng = req.query.lng ? parseFloat(req.query.lng) : 90.4150;
-    const weather = await getWeatherContext(lat, lng);
+    const coords = parseCoords(req.query.lat, req.query.lng) || { lat: 23.7925, lng: 90.4150 };
+    const weather = await getWeatherContext(coords.lat, coords.lng);
     res.json(weather);
   } catch (err) {
     next(err);
@@ -123,26 +201,22 @@ router.get('/context/weather', async (req, res, next) => {
  */
 router.post('/restaurants/search', async (req, res, next) => {
   try {
-    const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
-    const limitCheck = quotaManager.checkAndRecordDeviceSearch(deviceId);
-    if (!limitCheck.allowed) {
-      return res.status(429).json({
-        error: limitCheck.message,
-        limit: limitCheck.limit,
-        resetAt: limitCheck.resetAt
-      });
-    }
-
     const { lat, lng, cuisine = 'All', radiusMeters = 3000, budget } = req.body;
-    if (lat === undefined || lng === undefined) {
+    const coords = parseCoords(lat, lng);
+    if (!coords) {
       return res.status(400).json({ error: 'lat and lng are required coordinates' });
     }
+    if (typeof cuisine !== 'string') {
+      return res.status(400).json({ error: 'cuisine must be a string' });
+    }
+    if (!enforceDeviceQuota(req, res)) return;
 
+    const radius = Number(radiusMeters);
     const candidates = await searchRestaurants({
-      lat: Number(lat),
-      lng: Number(lng),
+      lat: coords.lat,
+      lng: coords.lng,
       cuisine,
-      radiusMeters: Number(radiusMeters),
+      radiusMeters: Number.isFinite(radius) ? Math.min(Math.max(radius, 100), 10000) : 3000,
       budget
     });
 
@@ -159,16 +233,6 @@ router.post('/restaurants/search', async (req, res, next) => {
  */
 router.post('/recommend', async (req, res, next) => {
   try {
-    const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
-    const limitCheck = quotaManager.checkAndRecordDeviceSearch(deviceId);
-    if (!limitCheck.allowed) {
-      return res.status(429).json({
-        error: limitCheck.message,
-        limit: limitCheck.limit,
-        resetAt: limitCheck.resetAt
-      });
-    }
-
     const budgetStatus = quotaManager.checkGlobalMonthlyBudget();
 
     const {
@@ -191,13 +255,18 @@ router.post('/recommend', async (req, res, next) => {
       filters = null
     } = req.body;
 
-    if (lat === undefined || lng === undefined) {
+    const coords = parseCoords(lat, lng);
+    if (!coords) {
       return res.status(400).json({ error: 'Coordinates lat and lng are required' });
     }
+    if (typeof cuisine !== 'string' || typeof priority !== 'string') {
+      return res.status(400).json({ error: 'cuisine and priority must be strings' });
+    }
+    if (!enforceDeviceQuota(req, res)) return;
 
-    const userLat = Number(lat);
-    const userLng = Number(lng);
-    const banditProfile = getBanditProfile(deviceId);
+    const userLat = coords.lat;
+    const userLng = coords.lng;
+    const banditProfile = getBanditProfile(deviceKey(req));
 
     // 1. Fetch Candidates (Multi-cuisine if mood dictates)
     let candidates = [];
@@ -288,8 +357,9 @@ router.post('/recommend', async (req, res, next) => {
     // 6. Assemble "For you right now" Top 3 picks
     let bestMatch = rankedResults[0] || null;
 
-    let fastestOrNearest = [...rankedResults]
-      .filter(r => r.id !== (bestMatch ? bestMatch.id : null))
+    // Places with unknown travel time (straight-line fallback) can't be "fastest".
+    let fastestOrNearest = rankedResults
+      .filter(r => r.id !== (bestMatch ? bestMatch.id : null) && Number.isFinite(r.durationSeconds))
       .sort((a, b) => a.durationSeconds - b.durationSeconds)[0] || null;
 
     let trySomethingNew = rankedResults.find(r => r.isTrySomethingNew && r.id !== (bestMatch ? bestMatch.id : null)) || null;
@@ -316,7 +386,7 @@ router.post('/recommend', async (req, res, next) => {
 
     // Log anonymized evaluation impression
     logEvalEvent({
-      sessionId: req.headers['x-session-id'] || `sess_${deviceId}`,
+      sessionId: anonSessionId(req),
       eventType: 'impression',
       priority,
       chosenCandidateId: null,
@@ -357,14 +427,13 @@ router.post('/recommend', async (req, res, next) => {
 router.post('/routes/compare', async (req, res, next) => {
   try {
     const { origin, destination } = req.body;
-    if (!origin || !destination || origin.lat === undefined || destination.lat === undefined) {
+    const from = parseCoords(origin?.lat, origin?.lng);
+    const to = parseCoords(destination?.lat, destination?.lng);
+    if (!from || !to) {
       return res.status(400).json({ error: 'Origin and destination coordinates are required' });
     }
 
-    const comparison = await compareRoutes({
-      origin: { lat: Number(origin.lat), lng: Number(origin.lng) },
-      destination: { lat: Number(destination.lat), lng: Number(destination.lng) }
-    });
+    const comparison = await compareRoutes({ origin: from, destination: to });
 
     res.json(comparison);
   } catch (err) {
@@ -379,6 +448,10 @@ router.post('/routes/compare', async (req, res, next) => {
 router.get('/places/:placeId/details', async (req, res, next) => {
   try {
     const { placeId } = req.params;
+    // Interpolated into the Google URL: reject anything that isn't a plain id (no '/', '..', '?').
+    if (!/^[A-Za-z0-9_-]{1,256}$/.test(placeId)) {
+      return res.status(400).json({ error: 'Invalid place id' });
+    }
     const details = await getPlaceDetails(placeId);
     res.json(details);
   } catch (err) {
@@ -386,58 +459,76 @@ router.get('/places/:placeId/details', async (req, res, next) => {
   }
 });
 
+function sendPlaceholderPhoto(res, seed) {
+  // Clean, appetizing SVG illustration for mock / fallback
+  const hash = String(seed || 'photo').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const bgColors = ['#1E293B', '#0F172A', '#134E4A', '#312E81', '#701A75', '#7C2D12'];
+  const bg = bgColors[hash % bgColors.length];
+  const emojis = ['🍜', '🍣', '🍛', '☕', '🍔', '🍢', '🍰', '🍱'];
+  const emoji = emojis[hash % emojis.length];
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:${bg};stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#020617;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="600" height="400" fill="url(#grad)" rx="16"/>
+      <circle cx="300" cy="180" r="80" fill="rgba(255,255,255,0.08)"/>
+      <text x="300" y="210" font-size="72" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
+      <text x="300" y="320" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-weight="600" fill="#94A3B8" text-anchor="middle">Gulshan Dining Experience</text>
+    </svg>
+  `;
+
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  return res.send(svg);
+}
+
+// Google photo resource names look like places/{placeId}/photos/{photoRef}
+const GOOGLE_PHOTO_NAME = /^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/;
+
 /**
  * GET /api/places/photo
  * Photo proxy endpoint - Streams Google photo without exposing GOOGLE_SERVER_KEY
  */
-router.get('/places/photo', async (req, res, next) => {
+router.get('/places/photo', async (req, res) => {
+  const name = typeof req.query.name === 'string' ? req.query.name : '';
+  const width = Math.min(Math.max(parseInt(req.query.maxWidth, 10) || 600, 50), 1600);
+
+  // Anything that isn't a real Google photo name never reaches Google, so the server
+  // key can't be attached to a client-shaped URL.
+  if (
+    !process.env.GOOGLE_SERVER_KEY ||
+    process.env.USE_MOCK_DATA === 'true' ||
+    !GOOGLE_PHOTO_NAME.test(name) ||
+    name.startsWith('places/mock_') ||
+    name.startsWith('places/trio_')
+  ) {
+    return sendPlaceholderPhoto(res, name);
+  }
+
   try {
-    const { name, maxWidth = 600 } = req.query;
-
-    if (!name || name.startsWith('places/mock_') || name.startsWith('places/trio_') || !process.env.GOOGLE_SERVER_KEY) {
-      // Return a clean, appetizing SVG illustration for mock / fallback
-      const hash = (name || 'photo').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-      const bgColors = ['#1E293B', '#0F172A', '#134E4A', '#312E81', '#701A75', '#7C2D12'];
-      const bg = bgColors[hash % bgColors.length];
-      const emojis = ['🍜', '🍣', '🍛', '☕', '🍔', '🍢', '🍰', '🍱'];
-      const emoji = emojis[hash % emojis.length];
-
-      const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
-          <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:${bg};stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#020617;stop-opacity:1" />
-            </linearGradient>
-          </defs>
-          <rect width="600" height="400" fill="url(#grad)" rx="16"/>
-          <circle cx="300" cy="180" r="80" fill="rgba(255,255,255,0.08)"/>
-          <text x="300" y="210" font-size="72" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
-          <text x="300" y="320" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-weight="600" fill="#94A3B8" text-anchor="middle">Gulshan Dining Experience</text>
-        </svg>
-      `;
-
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.setHeader('Cache-Control', 'public, max-age=86400');
-      return res.send(svg);
+    quotaManager.checkAndRecordGoogleApiCall('photos');
+    const googlePhotoUrl = `https://places.googleapis.com/v1/${name}/media?maxWidthPx=${width}`;
+    const googleRes = await fetch(googlePhotoUrl, {
+      headers: { 'X-Goog-Api-Key': process.env.GOOGLE_SERVER_KEY },
+      signal: AbortSignal.timeout(8000)
+    });
+    const contentType = googleRes.headers.get('content-type') || '';
+    if (!googleRes.ok || !contentType.startsWith('image/')) {
+      return sendPlaceholderPhoto(res, name);
     }
 
-    const apiKey = process.env.GOOGLE_SERVER_KEY;
-    const googlePhotoUrl = `https://places.googleapis.com/v1/${name}/media?maxWidthPx=${maxWidth}&key=${apiKey}`;
-
-    const googleRes = await fetch(googlePhotoUrl);
-    if (!googleRes.ok) {
-      return res.redirect('/api/places/photo?name=mock_fallback');
-    }
-
-    const contentType = googleRes.headers.get('content-type') || 'image/jpeg';
     res.setHeader('Content-Type', contentType);
     res.setHeader('Cache-Control', 'public, max-age=86400');
-
     const buffer = await googleRes.arrayBuffer();
     res.send(Buffer.from(buffer));
   } catch (err) {
-    next(err);
+    logger.warn({ err: err.message }, 'Photo proxy failed, serving placeholder');
+    sendPlaceholderPhoto(res, name);
   }
 });
 
@@ -453,21 +544,22 @@ router.get('/taste/default', (req, res) => {
  * Stateless calculation of updated profile after an interaction signal
  */
 router.post('/taste/event', (req, res) => {
-  const { currentProfile, event, candidatePool } = req.body;
+  const { currentProfile, event } = req.body;
+  // The pool feeds min/max over every item; cap it so a huge array can't pin the CPU.
+  const candidatePool = Array.isArray(req.body.candidatePool) ? req.body.candidatePool.slice(0, 50) : [];
   const updated = recordEvent(currentProfile, event);
 
   // Link to bandit personal weights if event contains chosen restaurant
-  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
-  if (event && (event.restaurant || event.chosenCandidate)) {
-    const chosen = event.restaurant || event.chosenCandidate;
-    updateBanditWeights(deviceId, chosen, candidatePool || []);
+  const chosen = event && (event.restaurant || event.chosenCandidate);
+  if (chosen && typeof chosen === 'object') {
+    updateBanditWeights(deviceKey(req), chosen, candidatePool);
 
     logEvalEvent({
-      sessionId: req.headers['x-session-id'] || `sess_${deviceId}`,
+      sessionId: anonSessionId(req),
       eventType: event.type || 'open',
       priority: event.priority || 'Best Overall',
       chosenCandidateId: chosen.id,
-      topRankedIds: candidatePool ? candidatePool.map(c => c.id) : [chosen.id]
+      topRankedIds: candidatePool.length > 0 ? candidatePool.map(c => c?.id) : [chosen.id]
     });
   }
 
@@ -479,9 +571,7 @@ router.post('/taste/event', (req, res) => {
  * Get current learned personal weights, guardrail bounds, and plain language explanation
  */
 router.get('/bandit/weights', (req, res) => {
-  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
-  const profile = getBanditProfile(deviceId);
-  res.json(profile);
+  res.json(getBanditProfile(deviceKey(req)));
 });
 
 /**
@@ -489,13 +579,13 @@ router.get('/bandit/weights', (req, res) => {
  * Directly update bandit weights with a chosen candidate
  */
 router.post('/bandit/update', (req, res) => {
-  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
   const { chosenRestaurant, candidatePool } = req.body;
-  if (!chosenRestaurant) {
+  if (!chosenRestaurant || typeof chosenRestaurant !== 'object') {
     return res.status(400).json({ error: 'chosenRestaurant is required' });
   }
 
-  const updatedProfile = updateBanditWeights(deviceId, chosenRestaurant, candidatePool || []);
+  const pool = Array.isArray(candidatePool) ? candidatePool.slice(0, 50) : [];
+  const updatedProfile = updateBanditWeights(deviceKey(req), chosenRestaurant, pool);
   res.json(updatedProfile);
 });
 
@@ -504,8 +594,7 @@ router.post('/bandit/update', (req, res) => {
  * Reset bandit weights to default baseline
  */
 router.post('/bandit/reset', (req, res) => {
-  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
-  const resetProfile = resetBanditProfile(deviceId);
+  const resetProfile = resetBanditProfile(deviceKey(req));
   res.json({
     success: true,
     message: 'Bandit personal weights reset to baseline.',
@@ -518,31 +607,13 @@ router.post('/bandit/reset', (req, res) => {
  * Toggle personal weights on or off
  */
 router.post('/bandit/toggle', (req, res) => {
-  const deviceId = req.headers['x-device-id'] || req.ip || 'anonymous';
   const { enabled } = req.body;
-  const profile = setBanditEnabled(deviceId, enabled);
+  const profile = setBanditEnabled(deviceKey(req), enabled);
   res.json({
     success: true,
     enabled: profile.enabled,
     profile
   });
-});
-
-/**
- * GET /api/admin/usage
- * Administrative metrics on usage, endpoints, and daily Google API quota
- */
-router.get('/admin/usage', (req, res) => {
-  const isLocal = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
-  const adminToken = req.headers['x-admin-token'] || req.query.admin_token;
-  const configuredToken = process.env.ADMIN_TOKEN;
-
-  if (!isLocal && (!configuredToken || adminToken !== configuredToken)) {
-    return res.status(403).json({ error: 'Access denied to /api/admin/usage' });
-  }
-
-  const report = quotaManager.getUsageReport();
-  res.json(report);
 });
 
 /**
@@ -559,17 +630,15 @@ router.post('/feedback', (req, res) => {
 
     const record = {
       timestamp: new Date().toISOString(),
-      areaName: areaName || 'Gulshan / Banani',
-      cuisine: cuisine || 'All',
-      priority: priority || 'Best Overall',
-      topPickId: topPickId || null,
+      areaName: typeof areaName === 'string' ? areaName.slice(0, 80) : 'Gulshan / Banani',
+      cuisine: typeof cuisine === 'string' ? cuisine.slice(0, 40) : 'All',
+      priority: typeof priority === 'string' ? priority.slice(0, 40) : 'Best Overall',
+      topPickId: typeof topPickId === 'string' ? topPickId.slice(0, 256) : null,
       answer,
       reason: typeof reason === 'string' ? reason.slice(0, 300) : ''
     };
 
-    const feedbackFile = path.resolve('server', 'data', 'feedback.jsonl');
-    fs.mkdirSync(path.dirname(feedbackFile), { recursive: true });
-    fs.appendFileSync(feedbackFile, JSON.stringify(record) + '\n', 'utf8');
+    appendJsonl('feedback.jsonl', record);
 
     res.json({ success: true, message: 'Thank you for your feedback!' });
   } catch (err) {
@@ -614,7 +683,7 @@ router.post('/meal-time/search', async (req, res) => {
 
     // Input validations
     const validModes = ['breakfast', 'lunch', 'snacks', 'dinner'];
-    if (mode && !validModes.includes(mode.toLowerCase())) {
+    if (typeof mode !== 'string' || !validModes.includes(mode.toLowerCase())) {
       return res.status(400).json({ error: `Invalid mode. Must be one of: ${validModes.join(', ')}` });
     }
 
@@ -628,14 +697,27 @@ router.post('/meal-time/search', async (req, res) => {
       return res.status(400).json({ error: `bufferPreference must be one of: ${validBuffers.join(', ')}` });
     }
 
+    if (leaveAt !== null && leaveAt !== undefined && Number.isNaN(new Date(leaveAt).getTime())) {
+      return res.status(400).json({ error: 'leaveAt must be a valid ISO date-time' });
+    }
+
     // Resolve origin
     let originCoords = { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1' };
     if (origin) {
-      if (typeof origin === 'object' && origin.lat && origin.lng) {
-        originCoords = { lat: Number(origin.lat), lng: Number(origin.lng), name: origin.name || 'Custom Origin' };
+      if (typeof origin === 'object') {
+        const c = parseCoords(origin.lat, origin.lng);
+        if (!c) return res.status(400).json({ error: 'origin must have valid lat and lng' });
+        originCoords = { ...c, name: typeof origin.name === 'string' ? origin.name : 'Custom Origin' };
       } else if (typeof origin === 'string' && PRESET_LOCATIONS[origin]) {
         originCoords = PRESET_LOCATIONS[origin];
       }
+    }
+
+    let destinationResolved = destination;
+    if (destination && typeof destination === 'object') {
+      const c = parseCoords(destination.lat, destination.lng);
+      if (!c) return res.status(400).json({ error: 'destination must have valid lat and lng' });
+      destinationResolved = { ...c, name: typeof destination.name === 'string' ? destination.name : 'Destination' };
     }
 
     const searchResult = await searchMealTime({
@@ -643,7 +725,7 @@ router.post('/meal-time/search', async (req, res) => {
       availableMinutes: availNum,
       leaveAt,
       origin: originCoords,
-      destination,
+      destination: destinationResolved,
       transport,
       diningStyle,
       bufferPreference,
@@ -654,7 +736,7 @@ router.post('/meal-time/search', async (req, res) => {
     res.json(searchResult);
   } catch (err) {
     logger.error({ err }, 'Error in /meal-time/search');
-    res.status(500).json({ error: err.message || 'Internal error in meal-time recommendation engine' });
+    res.status(500).json({ error: 'Internal error in meal-time recommendation engine' });
   }
 });
 
@@ -666,28 +748,32 @@ router.post('/meal-time/feedback', (req, res) => {
   try {
     const { mode, venueType, plannedMinutes, actualMinutes, wasLate, rating } = req.body;
 
-    if (!mode || typeof actualMinutes !== 'number') {
+    if (typeof mode !== 'string' || typeof actualMinutes !== 'number' || !Number.isFinite(actualMinutes)) {
       return res.status(400).json({ error: 'mode and actualMinutes are required' });
     }
 
     const record = {
       timestamp: new Date().toISOString(),
-      mode,
-      venueType: venueType || 'quick-service',
+      mode: mode.slice(0, 20),
+      venueType: typeof venueType === 'string' ? venueType.slice(0, 40) : 'quick-service',
       plannedMinutes: Number(plannedMinutes) || null,
       actualMinutes: Number(actualMinutes),
       wasLate: Boolean(wasLate),
       rating: Number(rating) || null
     };
 
-    const feedbackFile = path.resolve('server', 'data', 'mealtime-feedback.jsonl');
-    fs.mkdirSync(path.dirname(feedbackFile), { recursive: true });
-    fs.appendFileSync(feedbackFile, JSON.stringify(record) + '\n', 'utf8');
+    appendJsonl('mealtime-feedback.jsonl', record);
 
     res.json({ success: true, message: 'Meal-time feedback recorded successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to record meal-time feedback' });
   }
 });
+
+function appendJsonl(fileName, record) {
+  const file = dataFile(fileName);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.appendFileSync(file, JSON.stringify(record) + '\n', 'utf8');
+}
 
 export default router;

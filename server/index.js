@@ -1,17 +1,16 @@
+// Must be the first import: ES imports are hoisted, so a later dotenv.config()
+// would run after modules that read process.env at load time (feature flags, logger, env config).
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import apiRouter from './routes/api.js';
+import apiRouter, { healthHandler, readyHandler } from './routes/api.js';
 import { httpLogger, logger } from './services/logger.js';
 import { initSentry } from './services/sentry.js';
-import quotaManager from './services/quota.js';
 import envConfig from './config/env.js';
-
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +18,14 @@ const publicDir = path.join(__dirname, '..', 'public');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Behind a reverse proxy (Render, Fly, nginx) req.ip is the proxy's address unless this is set,
+// which would make every user share one rate-limit and quota bucket. Set TRUST_PROXY to the
+// number of proxy hops (Render: 1). Left off by default so X-Forwarded-For can't be spoofed locally.
+if (process.env.TRUST_PROXY) {
+  const hops = Number(process.env.TRUST_PROXY);
+  app.set('trust proxy', Number.isInteger(hops) ? hops : process.env.TRUST_PROXY);
+}
 
 // Security Middleware: Helmet with configured CSP for Google Maps and fonts
 app.use(
@@ -71,7 +78,7 @@ app.use(cors());
 
 // Body Parsers
 app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
 // Sentry Request Handler (if enabled via feature flag & DSN)
 const sentry = initSentry(app);
@@ -90,8 +97,8 @@ const limiter = rateLimit({
     error: 'Too many requests from this IP, please try again after 15 minutes.'
   }
 });
+// '/api' also matches '/api/v1/*'; mounting twice would count each v1 request twice.
 app.use('/api', limiter);
-app.use('/api/v1', limiter);
 
 // Mobile client deterrent authentication token check middleware
 const authCheckMiddleware = (req, res, next) => {
@@ -111,7 +118,6 @@ const authCheckMiddleware = (req, res, next) => {
     const isMobileClient =
       req.headers['user-agent']?.includes('Expo') ||
       req.headers['x-requested-with'] === 'com.khabokothay.app' ||
-      req.headers['x-requested-with'] === 'com.example.cafefinder' ||
       req.headers['x-client-platform'] === 'mobile';
 
     if (isMobileClient && clientToken !== appToken) {
@@ -125,40 +131,10 @@ const authCheckMiddleware = (req, res, next) => {
 };
 
 app.use('/api', authCheckMiddleware);
-app.use('/api/v1', authCheckMiddleware);
 
 // Root Liveness & Readiness Probes (for orchestrators, load balancers, and monitoring)
-app.get('/health', (req, res) => {
-  res.json({
-    ok: true,
-    status: 'ok',
-    app: 'Khabo Kothay?',
-    version: '1.1.0',
-    commit: process.env.RENDER_GIT_COMMIT || process.env.GIT_COMMIT || '6e196bf',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
-});
-
-app.get('/ready', (req, res) => {
-  const memory = process.memoryUsage();
-  const isHealthy = memory.heapUsed < 1.5 * 1024 * 1024 * 1024;
-  const budget = quotaManager.checkGlobalMonthlyBudget();
-  const ready = isHealthy && !budget.killSwitchActive;
-
-  res.status(ready ? 200 : 503).json({
-    status: ready ? 'ready' : 'degraded',
-    ok: ready,
-    app: 'Khabo Kothay?',
-    version: '1.1.0',
-    checks: {
-      cache: 'ok',
-      engine: 'ok',
-      budget: budget.isExceeded ? 'budget_exceeded' : 'ok'
-    },
-    uptime: process.uptime()
-  });
-});
+app.get('/health', healthHandler);
+app.get('/ready', readyHandler);
 
 // Serve frontend static assets
 app.use(express.static(publicDir));
@@ -180,10 +156,11 @@ app.use(sentry.errorHandler());
 
 // Centralized error handling middleware
 app.use((err, req, res, next) => {
+  const status = err.status || err.statusCode || 500;
   logger.error({ err, reqId: req.id }, 'Unhandled server error');
-  const status = err.status || 500;
   res.status(status).json({
-    error: err.message || 'Internal Server Error',
+    // Client errors (e.g. malformed JSON) are safe to echo; internal error details are not.
+    error: status < 500 ? err.message : 'Internal Server Error',
     status,
     requestId: req.id
   });
@@ -196,6 +173,9 @@ if (process.env.NODE_ENV !== 'test') {
   server = app.listen(PORT, () => {
     logger.info(`Khabo Kothay? running on http://localhost:${PORT}`);
     logger.info(`Environment: ${envConfig.env} | Mock mode: ${process.env.USE_MOCK_DATA === 'true' ? 'ENABLED' : 'DISABLED'}`);
+    if (envConfig.env === 'production' && (!process.env.ADMIN_TOKEN || process.env.ADMIN_TOKEN === 'secret_admin_token')) {
+      logger.warn('ADMIN_TOKEN is unset or still the example value; admin endpoints are effectively locked.');
+    }
   });
 
   // Graceful shutdown handling

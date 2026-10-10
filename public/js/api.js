@@ -135,7 +135,7 @@ export async function compareRoutes(origin, destination) {
 }
 
 export async function fetchPlaceDetails(placeId) {
-  const res = await fetch(`/api/places/${placeId}/details`);
+  const res = await fetch(`/api/places/${encodeURIComponent(placeId)}/details`);
   if (!res.ok) {
     throw new Error('Failed to load restaurant details');
   }

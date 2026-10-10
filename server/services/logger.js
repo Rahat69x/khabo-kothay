@@ -3,50 +3,46 @@ import pinoHttp from 'pino-http';
 import crypto from 'crypto';
 import envConfig from '../config/env.js';
 
+const serializers = {
+  req(req) {
+    // Privacy: bodies carry precise GPS (origin/destination/lat/lng), taste profiles and
+    // saved places, so only their keys are logged. Query lat/lng are coarsened to ~1 km.
+    const query = { ...(req.query || {}) };
+    for (const k of ['lat', 'lng']) {
+      if (query[k] !== undefined && Number.isFinite(Number(query[k]))) {
+        query[k] = Number(Number(query[k]).toFixed(2));
+      }
+    }
+    const body = req.raw?.body;
+    return {
+      id: req.id,
+      method: req.method,
+      url: (req.url || '').split('?')[0],
+      query,
+      params: req.params,
+      bodyKeys: body && typeof body === 'object' ? Object.keys(body).slice(0, 30) : undefined
+    };
+  },
+  res(res) {
+    return {
+      statusCode: res.statusCode
+    };
+  }
+};
+
 export const logger = pino({
   level: process.env.LOG_LEVEL || envConfig.logLevel || 'info',
+  // Headers aren't serialized, but redact credentials in case any log call passes them.
   redact: {
     paths: [
       'req.headers.authorization',
-      'req.headers["x-app-token"]',
       'req.headers.cookie',
-      'req.body.password',
-      'req.body.token',
-      'req.body.email',
-      'req.body.phone',
-      'req.body.nationalPhoneNumber',
-      'req.body.internationalPhoneNumber'
+      'req.headers["x-app-token"]',
+      'req.headers["x-admin-token"]'
     ],
     censor: '[REDACTED]'
   },
-  serializers: {
-    req(req) {
-      // Coarse GPS privacy protection: truncate lat/lng to 2 decimals if logged
-      let coarseBody = undefined;
-      if (req.raw?.body) {
-        coarseBody = { ...req.raw.body };
-        if (typeof coarseBody.lat === 'number') {
-          coarseBody.lat = Number(coarseBody.lat.toFixed(2));
-        }
-        if (typeof coarseBody.lng === 'number') {
-          coarseBody.lng = Number(coarseBody.lng.toFixed(2));
-        }
-      }
-      return {
-        id: req.id,
-        method: req.method,
-        url: req.url,
-        query: req.query,
-        params: req.params,
-        coarseBody
-      };
-    },
-    res(res) {
-      return {
-        statusCode: res.statusCode
-      };
-    }
-  }
+  serializers
 });
 
 /**
@@ -54,9 +50,12 @@ export const logger = pino({
  */
 export const httpLogger = pinoHttp({
   logger,
+  // pino-http applies its own default serializers (which include headers and client IP)
+  // unless they're passed here explicitly.
+  serializers,
   genReqId(req, res) {
     const existingId = req.headers['x-request-id'];
-    const id = existingId || crypto.randomUUID();
+    const id = typeof existingId === 'string' && /^[\w-]{1,64}$/.test(existingId) ? existingId : crypto.randomUUID();
     res.setHeader('X-Request-Id', id);
     return id;
   },

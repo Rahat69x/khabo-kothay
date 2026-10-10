@@ -1,3 +1,4 @@
+import { esc } from './escape.js';
 import { state } from './state.js';
 import { appStorage } from './storage.js';
 import { fetchConfig, fetchWeather, fetchRecommendations, pingWarmUp } from './api.js';
@@ -62,6 +63,7 @@ async function initApp() {
       resultsHeadingId: 'resultsHeading',
       resultsCountTagId: 'resultsCountTag',
       originGetter: () => state.currentLocation,
+      presetsGetter: () => config.presetLocations || {},
       onCandidateSelected: (candidate) => {
         mapController.highlightMarker(candidate.placeId);
       }
@@ -81,7 +83,7 @@ function updateWeatherPill(weather) {
   const icon = weather.isRaining ? '🌧️' : (weather.tempC > 32 ? '☀️' : '🌤️');
   pill.innerHTML = `
     <span class="weather-icon">${icon}</span>
-    <span class="weather-text">${weather.tempC}°C • ${weather.condition}</span>
+    <span class="weather-text">${esc(weather.tempC)}°C • ${esc(weather.condition)}</span>
   `;
   if (weather.isRaining) {
     pill.classList.add('weather-rain');
@@ -235,8 +237,8 @@ function initModals() {
         : items.map(item => `
           <div class="history-item">
             <div>
-              <strong>${item.displayName}</strong>
-              <div class="item-sub">${item.cuisine} • ⭐ ${item.rating} • ${'৳'.repeat(item.priceLevel || 2)}</div>
+              <strong>${esc(item.displayName)}</strong>
+              <div class="item-sub">${esc(item.cuisine)} • ⭐ ${esc(item.rating)} • ${'৳'.repeat(item.priceLevel || 2)}</div>
             </div>
           </div>
         `).join('');
@@ -279,10 +281,10 @@ function initModals() {
       histList.innerHTML = history.length === 0
         ? '<div class="empty-msg">No search history yet. Your recent queries will appear here.</div>'
         : history.map(item => `
-          <div class="history-item clickable" data-cuisine="${item.cuisine}" data-priority="${item.priority}">
+          <div class="history-item clickable" data-cuisine="${esc(item.cuisine)}" data-priority="${esc(item.priority)}">
             <div>
-              <strong>${item.cuisine || 'All'} (${item.priority})</strong>
-              <div class="item-sub">Around ${item.locationName} • ${new Date(item.timestamp).toLocaleTimeString()}</div>
+              <strong>${esc(item.cuisine || 'All')} (${esc(item.priority)})</strong>
+              <div class="item-sub">Around ${esc(item.locationName)} • ${new Date(item.timestamp).toLocaleTimeString()}</div>
             </div>
             <button class="btn btn-outline btn-sm">Re-run</button>
           </div>

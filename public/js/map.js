@@ -1,3 +1,4 @@
+import { esc } from './escape.js';
 /**
  * Interactive Map Controller
  * Supports Leaflet (OpenStreetMap & CartoDB tiles) and Google Maps JavaScript API
@@ -210,7 +211,7 @@ class MapController {
       const userIcon = L.divIcon({
         className: 'leaflet-user-marker-wrap',
         html: `
-          <div class="leaflet-user-marker" title="Your Location: ${userLocation.name || 'Current'}">
+          <div class="leaflet-user-marker" title="Your Location: ${esc(userLocation.name || 'Current')}">
             <div class="pulse-ring"></div>
             <div class="user-dot"></div>
           </div>
@@ -220,7 +221,7 @@ class MapController {
       });
 
       this.userMarker = L.marker(uLatLng, { icon: userIcon, zIndexOffset: 500 }).addTo(this.mapInstance);
-      this.userMarker.bindTooltip(`📍 You are here (${userLocation.name || 'Starting Point'})`, {
+      this.userMarker.bindTooltip(`📍 You are here (${esc(userLocation.name || 'Starting Point')})`, {
         direction: 'top',
         offset: [0, -10]
       });
@@ -249,16 +250,19 @@ class MapController {
       const directionsUrl = this.getGoogleMapsDirectionsUrl(userLocation, r);
       const costAmount = r.estimatedCostPerPersonBdt || r.menu?.estimatedCostPerPerson?.amount;
       const costStr = costAmount ? `৳${costAmount}/person` : '৳'.repeat(r.priceLevel || 2);
-      const durationMins = r.durationSeconds ? Math.round(r.durationSeconds / 60) : 10;
-      const distKm = r.distanceMeters ? (r.distanceMeters / 1000).toFixed(1) : '1.0';
+      const distKm = r.distanceMeters ? (r.distanceMeters / 1000).toFixed(1) : '?';
+      // Don't invent a travel time when routing failed (straight-line fallback has none)
+      const travelStr = r.durationSeconds
+        ? `🚗 ${Math.max(1, Math.round(r.durationSeconds / 60))} min (${distKm} km)`
+        : `${distKm} km (straight-line)`;
 
       const popupHtml = `
         <div class="map-popup-card">
-          <h4 class="map-popup-title">${idx + 1}. ${r.displayName}</h4>
-          <div class="map-popup-meta">${r.cuisine} • ⭐ ${r.rating || 4.2} (${r.userRatingCount || 100}+ reviews)</div>
-          <div class="map-popup-cost">${costStr} • 🚗 ${durationMins} min (${distKm} km)</div>
+          <h4 class="map-popup-title">${idx + 1}. ${esc(r.displayName)}</h4>
+          <div class="map-popup-meta">${esc(r.cuisine)} • ⭐ ${r.rating || 4.2} (${r.userRatingCount || 100}+ reviews)</div>
+          <div class="map-popup-cost">${esc(costStr)} • ${esc(travelStr)}</div>
           <div class="map-popup-actions">
-            <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer" class="map-popup-btn primary">
+            <a href="${esc(directionsUrl)}" target="_blank" rel="noopener noreferrer" class="map-popup-btn primary">
               🧭 Directions
             </a>
           </div>

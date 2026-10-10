@@ -10,6 +10,7 @@ const costControl = thresholdsConfig.costControl || {
 class QuotaAndUsageManager {
   constructor() {
     this.deviceDailyUsage = new Map(); // key: `${deviceId}_${dateStr}` -> count
+    this.deviceUsageDate = this.getCurrentDateKey();
     this.monthlyUsage = {
       monthKey: this.getCurrentMonthKey(),
       count: 0,
@@ -73,6 +74,11 @@ class QuotaAndUsageManager {
     }
 
     const today = this.getCurrentDateKey();
+    if (this.deviceUsageDate !== today) {
+      // Counters are per-day; drop yesterday's keys instead of keeping them forever.
+      this.deviceDailyUsage.clear();
+      this.deviceUsageDate = today;
+    }
     const key = `${deviceId}_${today}`;
     const current = this.deviceDailyUsage.get(key) || 0;
     const limit = costControl.dailySearchLimitPerDevice || 50;
