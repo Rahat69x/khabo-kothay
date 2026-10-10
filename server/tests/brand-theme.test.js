@@ -30,19 +30,19 @@ describe('Brand Theme Quality Checks (Automated)', () => {
     expect(tokens.dark).toBeDefined();
 
     // Check light tokens
-    expect(tokens.light.primary).toBe('#F97316');
-    expect(tokens.light.accent).toBe('#EA580C');
-    expect(tokens.light.accentStrong).toBe('#C2410C');
-    expect(tokens.light.bg).toBe('#FFFBF7');
+    expect(tokens.light.primary).toBe('#FF5722');
+    expect(tokens.light.accent).toBe('#E94A1B');
+    expect(tokens.light.accentStrong).toBe('#BF360C');
+    expect(tokens.light.bg).toBe('#F8F7F4');
     expect(tokens.light.surface).toBe('#FFFFFF');
-    expect(tokens.light.ink).toBe('#1C1917');
+    expect(tokens.light.ink).toBe('#171717');
 
     // Check dark tokens
-    expect(tokens.dark.primary).toBe('#F97316');
-    expect(tokens.dark.accent).toBe('#FB923C');
-    expect(tokens.dark.bg).toBe('#121212');
-    expect(tokens.dark.surface).toBe('#1E1815');
-    expect(tokens.dark.ink).toBe('#FAFAF9');
+    expect(tokens.dark.primary).toBe('#FF6E40');
+    expect(tokens.dark.accent).toBe('#FF6E40');
+    expect(tokens.dark.bg).toBe('#141312');
+    expect(tokens.dark.surface).toBe('#1C1A18');
+    expect(tokens.dark.ink).toBe('#F8F7F4');
   });
 
   it('validates /brand/map-style-dark.json exists and is valid GeoJSON/Google Maps style', () => {
@@ -62,7 +62,7 @@ describe('Brand Theme Quality Checks (Automated)', () => {
     expect(fs.existsSync(mobileThemePath)).toBe(true);
 
     const cssContent = fs.readFileSync(cssPath, 'utf8');
-    expect(cssContent).toContain('--color-primary: #F97316;');
+    expect(cssContent).toContain('--color-primary: #FF5722;');
     expect(cssContent).toContain('[data-theme="dark"]');
     expect(cssContent).toContain('@media (prefers-color-scheme: dark)');
 

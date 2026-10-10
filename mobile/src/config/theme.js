@@ -5,16 +5,16 @@ export const lightColors = lightTheme.colors;
 export const darkColors = darkTheme.colors;
 
 /**
- * Core light and dark color tokens:
- * - primary: #F97316 (warm orange)
- * - pressed: #EA580C
- * - tint: #FFEDD5 (light) / #431407 (dark)
- * - background: #FFFBF7 (light) / #121212 (dark)
- * - surface: #FFFFFF (light) / #1E1815 (dark)
- * - text: #1C1917 (light) / #FAFAF9 (dark)
- * - mutedText: #78716C (light) / #A8A29E (dark)
- * - border: #E7E5E4 (light) / rgba(250, 250, 249, 0.12) (dark)
- * - onPrimary: #FFFFFF (high contrast on orange)
+ * Core light and dark color tokens (STOA Editorial Palette):
+ * - primary: #FF5722 (vibrant brand orange)
+ * - pressed: #D83D10
+ * - tint: #FBEAE4 (light) / #3E1A0F (dark)
+ * - background: #F8F7F4 (light) / #141312 (dark)
+ * - surface: #FFFFFF (light) / #1C1A18 (dark)
+ * - text: #171717 (light) / #F8F7F4 (dark)
+ * - mutedText: #706C66 (light) / #A39E96 (dark)
+ * - border: #DEDAD4 (light) / rgba(222, 218, 212, 0.14) (dark)
+ * - onPrimary: #171717 (high contrast on orange)
  */
 export const colorTokens = {
   light: {

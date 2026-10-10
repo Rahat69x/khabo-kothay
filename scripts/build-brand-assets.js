@@ -21,8 +21,9 @@ const docsPlayStoreDir = path.join(rootDir, 'docs', 'play-store-assets');
 });
 
 const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
-const BRAND_ORANGE = '#FF8C00';
-const BRAND_BLACK = '#111111';
+const BRAND_ORANGE = tokens.light?.primary || '#FF5722';
+const BRAND_BLACK = tokens.light?.ink || '#171717';
+const BRAND_LIGHT_BG = tokens.light?.bg || '#F8F7F4';
 const BRAND_WHITE = '#FFFFFF';
 
 // 1. Generate outlined vector paths using Plus Jakarta Sans Bold
@@ -249,7 +250,7 @@ function createPureWordmarkSvg(textColor, questionColor) {
 function createSplashSvg(isDark = false) {
   const width = 1242;
   const height = 2688;
-  const bgColor = isDark ? BRAND_BLACK : '#FFFBF7';
+  const bgColor = isDark ? BRAND_BLACK : BRAND_LIGHT_BG;
   const textColor = isDark ? BRAND_WHITE : BRAND_BLACK;
   const badgeBg = BRAND_BLACK;
 

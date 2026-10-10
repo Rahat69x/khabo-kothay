@@ -37,12 +37,21 @@
         <img id="brandLogoImg" src="/img/icon.svg" alt="Khabo Kothay? Logo" class="brand-logo" width="38" height="38">
         <div class="brand-text">
           <h1>Khabo Kothay? <span class="bn-title">খাবো কোথায়?</span></h1>
-          <span class="brand-tagline">Real-time traffic & personalized picks • Dhaka</span>
+          <span class="brand-tagline">Dhaka Dining Intelligence</span>
         </div>
       </div>
 
+      <!-- Center Minimal Navigation (STOA Editorial Inspired) -->
+      <nav class="header-nav" aria-label="Quick Section Navigation">
+        <a href="#heroSection" class="nav-item">Overview</a>
+        <a href="#controlPanelSection" class="nav-item">Search</a>
+        <a href="#topPicksContainer" class="nav-item">Top Picks</a>
+        <a href="#filterOptionsSidebar" class="nav-item">Filters</a>
+        <a href="#mapContainer" class="nav-item">Live Map</a>
+      </nav>
+
       <div class="header-actions">
-        <div id="weatherPill" class="weather-pill" title="Current weather in Gulshan">
+        <div id="weatherPill" class="weather-pill" title="Current weather in Dhaka">
           <span class="weather-icon">🌤️</span>
           <span class="weather-text">28°C Dhaka</span>
         </div>
@@ -79,10 +88,59 @@
     </div>
   </aside>
 
+  <!-- Editorial Hero Section (STOA visual design reference) -->
+  <section class="hero-editorial" id="heroSection">
+    <div class="container hero-container">
+      <div class="hero-grid">
+        <!-- Left: Oversized Editorial Typography & Copy -->
+        <div class="hero-content">
+          <div class="hero-category-tag">
+            <span class="hero-tag-square" aria-hidden="true"></span>
+            <span>Restaurant Intelligence &amp; Discovery</span>
+          </div>
+
+          <h2 class="hero-editorial-title">
+            Decide where<br>
+            to eat in Dhaka.<br>
+            <span class="hero-brand-accent">Khabo Kothay?</span>
+          </h2>
+
+          <p class="hero-editorial-desc">
+            Real-time traffic-aware dining recommendations, live travel times, accurate Rickshaw &amp; CNG fares, and actual menu budget filters across Gulshan, Banani, and Dhaka.
+          </p>
+
+          <div class="hero-actions-row">
+            <a href="#controlPanelSection" class="hero-discover-link" id="heroDiscoverBtn">
+              <span>Explore recommendations</span>
+              <span class="hero-arrow" aria-hidden="true">↓</span>
+            </a>
+            <div class="hero-badges-row">
+              <span class="hero-pill">Gulshan • Banani • Baridhara</span>
+              <span class="hero-pill hero-pill-live">● Live Traffic &amp; Fares</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: 3D Architectural Geometric Hero Sculpture -->
+        <div class="hero-sculpture-col">
+          <div class="hero-sculpture-wrap">
+            <img src="/img/hero-sculpture.jpg" alt="Khabo Kothay 3D Architectural Hero Sculpture" class="hero-sculpture-img" width="560" height="420" loading="eager">
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Editorial Meta & Micro-pagination -->
+      <div class="hero-meta-row">
+        <span class="hero-meta-left">Dhaka dining intelligence.</span>
+        <span class="hero-meta-counter">01 — 04</span>
+      </div>
+    </div>
+  </section>
+
   <!-- Main Content -->
   <main class="container main-layout">
     <!-- Search & Control Panel -->
-    <section class="control-panel card-glass" aria-label="Restaurant search options">
+    <section class="control-panel card-glass" id="controlPanelSection" aria-label="Restaurant search options">
       <!-- App Mode Switcher Tabs -->
       <div class="mode-tab-bar" role="tablist">
         <button type="button" id="tabStandardMode" class="mode-tab active" role="tab" aria-selected="true">

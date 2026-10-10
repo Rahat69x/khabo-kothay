@@ -12,19 +12,19 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
   describe('Light Theme Component Colors', () => {
     it('renders primary button with correct warm orange brand colors', () => {
       const btn = getButtonStyle('primary', lightTheme);
-      expect(btn.container.backgroundColor).toBe('#F97316'); // primary orange
-      expect(btn.text.color).toBe(lightTheme.colors.onPrimary); // onPrimary
+      expect(btn.container.backgroundColor).toBe(lightTheme.colors.primary);
+      expect(btn.text.color).toBe(lightTheme.colors.onPrimary);
     });
 
     it('renders chip active and inactive states correctly', () => {
       const activeChip = getChipStyle(true, lightTheme);
-      expect(activeChip.container.backgroundColor).toBe('#F97316');
+      expect(activeChip.container.backgroundColor).toBe(lightTheme.colors.primary);
       expect(activeChip.text.color).toBe(lightTheme.colors.onPrimary);
 
       const inactiveChip = getChipStyle(false, lightTheme);
-      expect(inactiveChip.container.backgroundColor).toBe('#FFFFFF'); // surface
-      expect(inactiveChip.text.color).toBe('#1C1917'); // text / ink
-      expect(inactiveChip.container.borderColor).toBe('#E7E5E4'); // line
+      expect(inactiveChip.container.backgroundColor).toBe(lightTheme.colors.surface);
+      expect(inactiveChip.text.color).toBe(lightTheme.colors.ink);
+      expect(inactiveChip.container.borderColor).toBe(lightTheme.colors.line);
     });
 
     it('renders Best overall badge with badgeBest color and text', () => {
@@ -35,12 +35,12 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
 
     it('renders Fastest to reach and Best for price badges in primaryTint with primary text', () => {
       const fastBadge = getBadgeStyle('Fastest to reach', lightTheme);
-      expect(fastBadge.bg).toBe('#FFEDD5'); // primaryTint
-      expect(fastBadge.text).toBe('#F97316'); // primary
+      expect(fastBadge.bg).toBe(lightTheme.colors.primaryTint);
+      expect(fastBadge.text).toBe(lightTheme.colors.primary);
 
       const priceBadge = getBadgeStyle('Best for price', lightTheme);
-      expect(priceBadge.bg).toBe('#FFEDD5'); // primaryTint
-      expect(priceBadge.text).toBe('#F97316'); // primary
+      expect(priceBadge.bg).toBe(lightTheme.colors.primaryTint);
+      expect(priceBadge.text).toBe(lightTheme.colors.primary);
     });
 
     it('renders Try something new badge with outline and accentStrong text', () => {
@@ -52,8 +52,8 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
 
     it('renders Community-verified badge with successTint and success text', () => {
       const verifiedBadge = getBadgeStyle('Community-verified', lightTheme);
-      expect(verifiedBadge.bg).toBe('#DCFCE7'); // successTint
-      expect(verifiedBadge.text).toBe('#15803D'); // success
+      expect(verifiedBadge.bg).toBe(lightTheme.colors.successTint);
+      expect(verifiedBadge.text).toBe(lightTheme.colors.success);
     });
 
     it('renders Traffic chips with correct status colors, icons, and text labels', () => {
@@ -78,31 +78,31 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
 
     it('renders Result card surface, border, and ink colors', () => {
       const card = getResultCardStyle(lightTheme);
-      expect(card.container.backgroundColor).toBe('#FFFFFF');
-      expect(card.container.borderColor).toBe('#E7E5E4');
-      expect(card.title.color).toBe('#1C1917');
-      expect(card.rank.color).toBe('#F97316');
-      expect(card.scoreBadge.backgroundColor).toBe('#FFEDD5');
-      expect(card.scoreText.color).toBe('#F97316');
+      expect(card.container.backgroundColor).toBe(lightTheme.colors.surface);
+      expect(card.container.borderColor).toBe(lightTheme.colors.line);
+      expect(card.title.color).toBe(lightTheme.colors.ink);
+      expect(card.rank.color).toBe(lightTheme.colors.primary);
+      expect(card.scoreBadge.backgroundColor).toBe(lightTheme.colors.primaryTint);
+      expect(card.scoreText.color).toBe(lightTheme.colors.primary);
     });
   });
 
   describe('Dark Theme Component Colors', () => {
     it('renders primary button with correct warm orange brand colors in dark mode', () => {
       const btn = getButtonStyle('primary', darkTheme);
-      expect(btn.container.backgroundColor).toBe('#F97316'); // primary orange
-      expect(btn.text.color).toBe(darkTheme.colors.onPrimary); // onPrimary dark
+      expect(btn.container.backgroundColor).toBe(darkTheme.colors.primary);
+      expect(btn.text.color).toBe(darkTheme.colors.onPrimary);
     });
 
     it('renders chip active and inactive states correctly in dark mode', () => {
       const activeChip = getChipStyle(true, darkTheme);
-      expect(activeChip.container.backgroundColor).toBe('#F97316');
+      expect(activeChip.container.backgroundColor).toBe(darkTheme.colors.primary);
       expect(activeChip.text.color).toBe(darkTheme.colors.onPrimary);
 
       const inactiveChip = getChipStyle(false, darkTheme);
-      expect(inactiveChip.container.backgroundColor).toBe('#1E1815'); // surface dark
-      expect(inactiveChip.text.color).toBe('#FAFAF9'); // ink dark
-      expect(inactiveChip.container.borderColor).toBe('rgba(250, 250, 249, 0.12)'); // line dark
+      expect(inactiveChip.container.backgroundColor).toBe(darkTheme.colors.surface);
+      expect(inactiveChip.text.color).toBe(darkTheme.colors.ink);
+      expect(inactiveChip.container.borderColor).toBe(darkTheme.colors.line);
     });
 
     it('renders Best overall badge with dark badgeBest and text', () => {
@@ -113,12 +113,12 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
 
     it('renders Fastest to reach and Best for price badges in dark primaryTint with primary text', () => {
       const fastBadge = getBadgeStyle('Fastest to reach', darkTheme);
-      expect(fastBadge.bg).toBe('#431407'); // primaryTint dark
-      expect(fastBadge.text).toBe('#F97316'); // primary
+      expect(fastBadge.bg).toBe(darkTheme.colors.primaryTint);
+      expect(fastBadge.text).toBe(darkTheme.colors.primary);
 
       const priceBadge = getBadgeStyle('Best for price', darkTheme);
-      expect(priceBadge.bg).toBe('#431407');
-      expect(priceBadge.text).toBe('#F97316');
+      expect(priceBadge.bg).toBe(darkTheme.colors.primaryTint);
+      expect(priceBadge.text).toBe(darkTheme.colors.primary);
     });
 
     it('renders Try something new badge with outline and accentStrong in dark mode', () => {
@@ -156,12 +156,12 @@ describe('Mobile Brand Theme Components & Style Rules', () => {
 
     it('renders Result card surface, border, and ink colors in dark mode', () => {
       const card = getResultCardStyle(darkTheme);
-      expect(card.container.backgroundColor).toBe('#1E1815'); // surface dark
-      expect(card.container.borderColor).toBe('rgba(250, 250, 249, 0.12)');
-      expect(card.title.color).toBe('#FAFAF9'); // ink dark
-      expect(card.rank.color).toBe('#F97316');
-      expect(card.scoreBadge.backgroundColor).toBe('#431407');
-      expect(card.scoreText.color).toBe('#F97316');
+      expect(card.container.backgroundColor).toBe(darkTheme.colors.surface);
+      expect(card.container.borderColor).toBe(darkTheme.colors.line);
+      expect(card.title.color).toBe(darkTheme.colors.ink);
+      expect(card.rank.color).toBe(darkTheme.colors.primary);
+      expect(card.scoreBadge.backgroundColor).toBe(darkTheme.colors.primaryTint);
+      expect(card.scoreText.color).toBe(darkTheme.colors.primary);
     });
   });
 });

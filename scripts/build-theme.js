@@ -57,9 +57,16 @@ function buildTheme() {
   --bg-surface: var(--color-surface);
   --text-main: var(--color-ink);
   --text-muted: var(--color-muted);
-  --text-subtle: var(--color-muted);
   --line-color: var(--color-line);
   --border-color: var(--color-line);
+  --border: var(--color-line);
+  --surface: var(--color-surface);
+  --muted: var(--color-muted);
+  --ink: var(--color-ink);
+  --bg: var(--color-bg);
+  --danger: var(--color-danger);
+  --success: var(--color-success);
+  --warning: var(--color-warning);
 
   --primary: var(--color-primary);
   --primary-hover: var(--color-primary-hover);

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <rect width="128" height="128" rx="28.16" fill="#111111"/>
+  <rect width="128" height="128" rx="28.16" fill="#171717"/>
   <g transform="scale(0.25)">
     <path d="M 163 198
     C 134 165 122 147 122 128
@@ -8,7 +8,7 @@
     C 204 147 192 165 163 198 Z
     M 163 114
     A 14 14 0 1 0 163 142
-    A 14 14 0 1 0 163 114 Z" fill="#FF8C00" fill-rule="evenodd"/>
+    A 14 14 0 1 0 163 114 Z" fill="#FF5722" fill-rule="evenodd"/>
     <path d="M 135 204
     L 191 204
     L 191 246
