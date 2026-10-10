@@ -1,4 +1,4 @@
-# Release Information: Khabo Kothay? (খাবো কোথায়?)
+﻿# Release Information: Khabo Kothay? (খাবো কোথায়?)
 
 ## Summary
 - **App Name**: Khabo Kothay? (খাবো কোথায়?)
@@ -49,11 +49,11 @@
 
 - **Status**: **BUILT & VERIFIED** (Expo EAS Cloud Preview Build)
 - **EAS Account**: `rahat69x`
-- **Build ID**: `6faf38e5-49b1-4bb2-99b3-fc2ce71ea517`
-- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/6faf38e5-49b1-4bb2-99b3-fc2ce71ea517
-- **Direct Download URL**: https://expo.dev/artifacts/eas/QtvV9D_Ro_CCMd0PLeRKGi89ZzLbL-5q_UeXspdiNLo.apk
+- **Build ID**: `091a2cdf-69dd-4d26-ba02-c92959f1d82e`
+- **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/091a2cdf-69dd-4d26-ba02-c92959f1d82e
+- **Direct Download URL**: https://expo.dev/artifacts/eas/DHzaB51RVCEYMJKU62vs-3_0vGxv21tl1m1NyQs1qTo.apk
 - **Expiration Date**: 2026-10-24T16:18:29.000Z
-- **Updates Channel**: `preview` (Update ID: `01a12165-9837-762e-b67d-62e969d4fef9`)
+- **Updates Channel**: `preview` (Update ID: `01a12717-1059-70d9-b3a5-f42698503503`)
 
 ---
 
