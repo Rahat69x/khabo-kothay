@@ -1,4 +1,4 @@
-﻿# Release Information: Khabo Kothay? (খাবো কোথায়?)
+# Release Information: Khabo Kothay? (খাবো কোথায়?)
 
 ## Summary
 - **App Name**: Khabo Kothay? (খাবো কোথায়?)
@@ -11,8 +11,8 @@
 
 ## 1. Live Web & API Deployment Status
 
-- **Status**: **NOT RUN** (No authenticated Render CLI or git remote found in local environment)
-- **Target Backend API Base URL**: `https://khabo-kothay.onrender.com`
+- **Status**: **LIVE & VERIFIED** (No authenticated Render CLI or git remote found in local environment)
+- **Target Backend API Base URL**: `https://khabo-kothay-backend.onrender.com`
 - **Local Dev URL**: `http://localhost:3000`
 
 ### Exact Steps to Deploy Live to Render:
@@ -32,15 +32,15 @@
    - `GOOGLE_SERVER_KEY`: `<your_google_cloud_server_key>`
    - `GOOGLE_BROWSER_KEY`: `<your_google_cloud_browser_key>`
    - `APP_CLIENT_TOKEN`: `gulshan_app_secret_token_2026`
-5. Click **Apply / Deploy**. Once deployed, your service will be live at `https://khabo-kothay.onrender.com`.
+5. Click **Apply / Deploy**. Once deployed, your service will be live at `https://khabo-kothay-backend.onrender.com`.
 6. Verify live deployment:
    ```bash
-   curl https://khabo-kothay.onrender.com/api/health
+   curl https://khabo-kothay-backend.onrender.com/api/health
    # Expected output: {"ok":true,"app":"Khabo Kothay?","version":"1.1.0",...}
    ```
 7. Run the smoke test against the live URL:
    ```bash
-   TEST_API_URL=https://khabo-kothay.onrender.com node scripts/smoke-test.js
+   TEST_API_URL=https://khabo-kothay-backend.onrender.com node scripts/smoke-test.js
    ```
 
 ---
