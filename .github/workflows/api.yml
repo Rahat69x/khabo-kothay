@@ -7,17 +7,22 @@ on:
       - 'api/**'
       - 'docs/openapi.json'
       - '.github/workflows/api.yml'
+      - 'pytest.ini'
   pull_request:
     branches: [main]
     paths:
       - 'api/**'
       - 'docs/openapi.json'
       - '.github/workflows/api.yml'
+      - 'pytest.ini'
 
 jobs:
   test-api:
     name: FastAPI Quality Gate & Tests (Python 3.11)
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: api
+      MYPYPATH: api
 
     steps:
       - name: Checkout repository
@@ -43,9 +48,7 @@ jobs:
         run: ruff format --check api
 
       - name: Run Mypy Type Check
-        run: |
-          export MYPYPATH=api
-          mypy -p app
+        run: mypy -p app
 
       - name: Run Pytest with Coverage
         run: python -m pytest --cov=app api/tests
@@ -54,7 +57,7 @@ jobs:
         run: |
           python -c "
           import json, sys
-          from api.app.main import app
+          from app.main import app
           schema = app.openapi()
           with open('docs/openapi.json', 'r', encoding='utf-8') as f:
               saved = json.load(f)
