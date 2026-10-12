@@ -1,0 +1,22 @@
+# EditorConfig configuration for Khabo Kothay?
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{py,pyi}]
+indent_size = 4
+
+[*.java]
+indent_size = 4
+
+[*.{bat,cmd,ps1}]
+end_of_line = crlf
+
+[*.csv]
+charset = utf-8-bom

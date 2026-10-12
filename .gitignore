@@ -1,23 +1,72 @@
-node_modules/
+# ==============================================================================
+# Khabo Kothay? Repository Git Ignore Rules
+# ==============================================================================
+
+# Secrets and environment files
 .env
-.DS_Store
-*.log
+.env.*
+*.env
+!.env.example
+*.pem
+*.p12
+*.jks
+*.keystore
+keystore.properties
+local.properties
+google-services.json
+!google-services.json.example
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Build outputs and compilation artifacts
 dist/
 build/
+app/build/
+android/app/build/
+android/build/
+.gradle/
+android/.gradle/
+bin/
+target/
+*.class
+*.o
+*.exe
+*.pyc
+__pycache__/
+
+# Python cache & test coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+coverage/
+.coverage
+*.coverage*
+
+# Android / Native IDE artifacts
+.idea/
+*.iml
+captures/
+.cxx/
+.externalNativeBuild/
 .expo/
 .expo-shared/
-coverage/
-scripts/output/
-*.apk
-release/
-*.exe
-*.o
-*.class
-target/
-__pycache__/
-*.pyc
-bin/
 
+# Packaging binaries
+*.apk
+*.aab
+/release/
+
+# Temporary and log files
+*.log
+scripts/output/
+scripts/cache/
+Thumbs.db
+.DS_Store
+
+# Agent & IDE metadata
 .agent/
 .agents/
 .gemini/

@@ -1,0 +1,38 @@
+#!/bin/sh
+# Khabo Kothay? Pre-commit hook
+echo "Running pre-commit security and file guard checks..."
+
+# 1. Run secret scan on staged files
+python scripts/secret_scan.py --staged
+if [ $? -ne 0 ]; then
+  echo "PRE-COMMIT ERROR: Secret scan failed on staged files!"
+  exit 1
+fi
+
+# 2. Check for forbidden file patterns and file size > 5MB on Added/Copied/Modified files
+git diff --cached --name-only --diff-filter=ACM | while read file; do
+  case "$file" in
+    *.example|*.example.*) ;;
+    *)
+      if echo "$file" | grep -Eq '(\.env($|\..*)|local\.properties$|keystore\.properties$|\.jks$|\.keystore$|\.pem$|\.p12$|google-services\.json$|\.apk$|\.aab$)'; then
+        echo "PRE-COMMIT ERROR: Attempting to commit forbidden file: $file"
+        exit 1
+      fi
+      ;;
+  esac
+
+  if [ -f "$file" ]; then
+    size=$(wc -c < "$file")
+    if [ "$size" -gt 5242880 ]; then
+      echo "PRE-COMMIT ERROR: Staged file exceeds 5MB limit: $file ($size bytes)"
+      exit 1
+    fi
+  fi
+done
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+echo "Pre-commit checks passed successfully."
+exit 0

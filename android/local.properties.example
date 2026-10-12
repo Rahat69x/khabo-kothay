@@ -1,0 +1,4 @@
+## Local Android SDK & Maps Properties (Template)
+## Copy this file to android/local.properties and set your local SDK path and Maps API key.
+# sdk.dir=C:\\Users\\<Username>\\AppData\\Local\\Android\\Sdk
+MAPS_API_KEY=
