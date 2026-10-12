@@ -1,6 +1,9 @@
 """Usage Guard and Request Counter for Khabo Kothay? API."""
+
 from threading import Lock
+
 from .config import settings
+
 
 class UsageGuard:
     def __init__(self):
@@ -28,12 +31,13 @@ class UsageGuard:
             return {
                 "daily_google_calls": self._daily_google_calls,
                 "cap": settings.daily_google_request_cap,
-                "tracked_devices": len(self._device_counts)
+                "tracked_devices": len(self._device_counts),
             }
 
     def reset(self) -> None:
         with self._lock:
             self._daily_google_calls = 0
             self._device_counts.clear()
+
 
 usage_guard = UsageGuard()

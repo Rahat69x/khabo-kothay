@@ -1,15 +1,18 @@
 """Khabo Kothay? FastAPI Server Main Entrypoint."""
+
 import uuid
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+
 from .core.config import settings
-from .core.errors import AppError, app_error_handler, generic_http_error_handler
+from .core.errors import AppError, app_error_handler
 from .routers import health
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.version,
-    description="Python FastAPI backend for Khabo Kothay? Dhaka Restaurant Finder"
+    description="Python FastAPI backend for Khabo Kothay? Dhaka Restaurant Finder",
 )
 
 # CORS Middleware
@@ -21,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Request ID Middleware
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
@@ -29,6 +33,7 @@ async def request_id_middleware(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Request-Id"] = req_id
     return response
+
 
 # Register Custom Error Handlers
 app.add_exception_handler(AppError, app_error_handler)

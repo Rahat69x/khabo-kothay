@@ -1,10 +1,13 @@
 """Health Check Router for Khabo Kothay? API."""
+
 from fastapi import APIRouter
 from pydantic import BaseModel
+
 from ..core.clock import get_clock
 from ..core.config import settings
 
 router = APIRouter(tags=["Health"])
+
 
 class HealthResponse(BaseModel):
     ok: bool
@@ -13,6 +16,7 @@ class HealthResponse(BaseModel):
     version: str
     timestamp: str
     timezone: str
+
 
 @router.get("/health", response_model=HealthResponse)
 async def get_health():
@@ -23,5 +27,5 @@ async def get_health():
         app=settings.app_name,
         version=settings.version,
         timestamp=clock.now().isoformat(),
-        timezone=settings.timezone
+        timezone=settings.timezone,
     )

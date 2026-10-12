@@ -1,12 +1,14 @@
 """Tests for Phase F Shared Foundation (FastAPI)."""
+
 from datetime import datetime
-from zoneinfo import ZoneInfo
+
 import pytest
-from httpx import AsyncClient, ASGITransport
-from app.main import app
-from app.core.clock import FakeClock, set_clock, get_clock, DHAKA_TZ
+from app.core.clock import DHAKA_TZ, FakeClock, get_clock, set_clock
 from app.core.config import settings
 from app.core.guard import usage_guard
+from app.main import app
+from httpx import ASGITransport, AsyncClient
+
 
 @pytest.mark.asyncio
 async def test_health_endpoint():
@@ -20,18 +22,20 @@ async def test_health_endpoint():
         assert data["timezone"] == "Asia/Dhaka"
         assert "X-Request-Id" in resp.headers
 
+
 @pytest.mark.asyncio
 async def test_fake_clock_isolation():
     fixed = datetime(2026, 10, 11, 15, 30, 0, tzinfo=DHAKA_TZ)
     fake = FakeClock(fixed)
     set_clock(fake)
     assert get_clock().now() == fixed
-    
+
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         resp = await client.get("/api/v1/health")
         assert resp.status_code == 200
         assert "2026-10-11T15:30:00" in resp.json()["timestamp"]
+
 
 def test_usage_guard_limits():
     usage_guard.reset()
@@ -41,6 +45,7 @@ def test_usage_guard_limits():
     stats = usage_guard.get_stats()
     assert stats["daily_google_calls"] == 1
     assert stats["tracked_devices"] == 1
+
 
 def test_feature_flags_exist():
     assert hasattr(settings, "flag_outing_cost")

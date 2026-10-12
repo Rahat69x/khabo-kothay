@@ -1,7 +1,8 @@
 """Application Configuration and Feature Flags for Khabo Kothay? API."""
-import os
-from pydantic_settings import BaseSettings
+
 from pydantic import Field
+from pydantic_settings import BaseSettings
+
 
 class Settings(BaseSettings):
     app_name: str = "Khabo Kothay? API"
@@ -21,7 +22,9 @@ class Settings(BaseSettings):
     flag_seasonal_guides: bool = Field(default=True, alias="FLAG_SEASONAL_GUIDES")
     flag_dish_search: bool = Field(default=True, alias="FLAG_DISH_SEARCH")
     flag_want_to_try: bool = Field(default=True, alias="FLAG_WANT_TO_TRY")
-    flag_geofence_reminders: bool = Field(default=False, alias="FLAG_GEOFENCE_REMINDERS")
+    flag_geofence_reminders: bool = Field(
+        default=False, alias="FLAG_GEOFENCE_REMINDERS"
+    )
 
     # Financial / Tax Defaults (Placeholders for Bangladesh)
     default_vat_pct: float = 15.0
@@ -32,9 +35,7 @@ class Settings(BaseSettings):
     daily_google_request_cap: int = 1000
     device_daily_search_limit: int = 50
 
-    model_config = {
-        "env_file": ".env",
-        "extra": "ignore"
-    }
+    model_config = {"env_file": ".env", "extra": "ignore"}
+
 
 settings = Settings()

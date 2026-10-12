@@ -1,19 +1,22 @@
 """Timezone-aware clock abstraction for Khabo Kothay? API."""
+
 from abc import ABC, abstractmethod
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 DHAKA_TZ = ZoneInfo("Asia/Dhaka")
 
+
 class Clock(ABC):
     @abstractmethod
     def now(self) -> datetime:
         """Return the current time in Asia/Dhaka."""
-        pass
+
 
 class SystemClock(Clock):
     def now(self) -> datetime:
         return datetime.now(DHAKA_TZ)
+
 
 class FakeClock(Clock):
     def __init__(self, fixed_time: datetime | None = None):
@@ -27,10 +30,13 @@ class FakeClock(Clock):
     def now(self) -> datetime:
         return self._current
 
+
 global_clock: Clock = SystemClock()
+
 
 def get_clock() -> Clock:
     return global_clock
+
 
 def set_clock(clock: Clock) -> None:
     global global_clock
