@@ -56,6 +56,165 @@ A restaurant is feasible **only if** $\text{Spare Time} \ge 0$ **AND** the venue
 
 ---
 
+
+---
+
+## 🏛️ System Architecture
+
+Khabo Kothay? is structured across specialized modules:
+- **Native Android App (`/android`)**:
+  - Written in Java adhering strictly to MVVM (ViewModel, LiveData, Repository pattern).
+  - Persistence via Room SQLite database with exported JSON schemas.
+  - Network layer via Retrofit 2 and OkHttp with structured error interceptors.
+  - UI styled with Material Design 3, bilingual English/Bangla strings with 100% key parity, and full TalkBack accessibility compliance.
+- **Python FastAPI Backend (`/api`)**:
+  - Serves high-performance JSON endpoints under `/api/v1`.
+  - Locked to `Asia/Dhaka` timezone with injectable `Clock` / `FakeClock` for deterministic testing.
+  - Strictly typed with Pydantic v2 and PEP 561 marker (`py.typed`).
+  - OpenAPI 3.1 contract stored in `docs/openapi.json`.
+  - In-memory `UsageGuard` to protect daily Google Cloud API limits and prevent unexpected billing.
+- **Legacy Node.js Server (`/server`)**:
+  - Backwards-compatible Express server providing fallback mock routing, meal-time logic, and scoring models (159 Vitest test assertions).
+- **Legacy Expo Mobile Client (`/mobile`)**:
+  - React Native (SDK 52) prototype.
+
+---
+
+## 💻 Windows Setup & Local Development
+
+This project is maintained on Windows with PowerShell (`pwsh`).
+
+### Prerequisites
+- **Java Development Kit**: Eclipse Temurin or OpenJDK 17 LTS (Java 17+).
+- **Python**: Python 3.11 or newer (Python 3.13 supported).
+- **Node.js**: Node.js v20 LTS or v22 LTS (v24 supported).
+- **Android Studio / Command Line Tools**: Android SDK with API 34+ build-tools.
+
+### Setting Up the Python FastAPI Server
+```powershell
+# Create and activate virtual environment (optional)
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# Install requirements
+pip install -r api/requirements.txt
+pip install ruff mypy pytest pytest-cov pip-audit
+
+# Run the FastAPI development server
+uvicorn app.main:app --app-dir api --port 8000 --reload
+```
+API Documentation will be live at `http://localhost:8000/docs`.
+
+### Setting Up the Android App
+1. Copy `android/local.properties.example` to `android/local.properties`:
+   ```powershell
+   Copy-Item android/local.properties.example android/local.properties
+   ```
+2. Configure your Android SDK path and Maps API key in `android/local.properties`:
+   ```properties
+   sdk.dir=C:\Users\<Username>\AppData\Local\Android\Sdk
+   MAPS_API_KEY=
+   ```
+3. Open the `android` folder in Android Studio and build the project.
+
+### Building a Debug APK
+To build a local debug APK using the Gradle wrapper:
+```powershell
+cd android
+.\gradlew.bat assembleDebug
+```
+The resulting binary will be located at:
+`android/app/build/outputs/apk/debug/app-debug.apk`
+
+---
+
+## 🧪 Comprehensive Verification & Test Commands
+
+Every pull request and release gate runs automated verification across all layers:
+
+### 1. Python API Test Suite
+```powershell
+# Linting & Formatting Check
+ruff check api
+ruff format --check api
+
+# Static Type Verification
+$env:MYPYPATH="api"; mypy -p app
+
+# Automated Pytest Suite with Coverage
+python -m pytest --cov=app api/tests
+
+# Dependency Security Audit
+pip-audit -r api/requirements.txt
+```
+
+### 2. Android Unit Tests
+```powershell
+cd android
+.\gradlew.bat testDebugUnitTest
+```
+*(Or compile core Java test classes directly against JUnit 4).*
+
+### 3. Legacy Node.js Test Suite
+```powershell
+npm test
+```
+
+### 4. Repository Security & Hygiene
+```powershell
+# Scan working tree and git history for credentials
+python scripts/secret_scan.py
+
+# Placeholder & stub detection
+python scripts/find_placeholders.py
+```
+
+---
+
+## 🔐 Environment Variables Reference
+
+All credentials and dynamic configurations are managed via `.env` (server) and `local.properties` (Android).
+Templates with names only (no sensitive values) are tracked in the repository:
+- `.env.example`
+- `android/local.properties.example`
+- `android/keystore.properties.example`
+
+| Variable Name | Component | Description |
+| :--- | :--- | :--- |
+| `PORT` | API / Node | Network listening port (default `8000` / `3000`) |
+| `USE_MOCK_DATA` | API / Node | Flag to serve realistic Dhaka dining mock data without live APIs |
+| `GOOGLE_SERVER_KEY` | API / Node | Google Cloud Maps API key for server-side Places & Routes queries |
+| `GOOGLE_BROWSER_KEY` | Node Web | Google Maps JavaScript API key for web map display |
+| `MAX_GOOGLE_REQUESTS_PER_DAY` | API / Node | Safety cap to prevent unexpected Google Cloud billing |
+| `ADMIN_TOKEN` | API / Node | Shared secret for protected administrative endpoints |
+| `DATABASE_URL` | API | Optional relational database connection string |
+| `REDIS_URL` | API | Optional Redis cache instance URL |
+| `ANTHROPIC_API_KEY` | Server | Optional LLM integration key |
+| `APP_CLIENT_TOKEN` | Client / API | Header validation token for trusted mobile requests |
+| `MAPS_API_KEY` | Android | Google Maps Platform API key injected at Android build time |
+
+---
+
+## 🛡️ Pre-Commit Hook & Repository Hygiene
+
+To prevent accidental secret leaks and keep the repository clean:
+1. Activate the local repository git hooks:
+   ```powershell
+   git config core.hooksPath .githooks
+   ```
+2. The hook automatically executes before every commit:
+   - Scans all staged files using `scripts/secret_scan.py --staged`.
+   - Blocks committing forbidden files (`.env`, `local.properties`, `keystore.properties`, `*.jks`, `*.keystore`, `*.apk`, `*.aab`, `google-services.json`).
+   - Blocks any staged file larger than 5 MB.
+
+---
+
+## 🎯 Honesty Rules & Transparency
+
+- **Estimates are Always Labeled**: Transit times, kitchen preparation wait times, return trip traffic predictions, and budget approximations are always labeled in the UI as *estimated* or *predicted*.
+- **No Fabricated Data**: We never invent restaurants, addresses, menu prices, ratings, or live traffic conditions. When offline or in mock mode, the app explicitly communicates its mock status to the user.
+- **Privacy First**: Sensitive user preferences (Home/Office coordinates, budget constraints, spend tracking) remain strictly stored on the device.
+
 ## 🛠️ Technology Stack
 
 - **Backend**: Node.js 18+, Express, ES modules, dotenv, helmet, cors, express-rate-limit.

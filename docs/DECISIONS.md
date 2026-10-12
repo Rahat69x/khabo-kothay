@@ -168,3 +168,23 @@
 
 ### 18. Room Versioned Migrations & Exported Schemas
 - **Decision**: Room database set to \`exportSchema = true\` with versioned migration pipeline for the 6 new tables: \`favorite_alert\`, \`budget_settings\`, \`spend_entries\`, \`want_to_try\`, \`saved_guide\`, \`guide_reminder\`.
+
+## Phase Fix 1 Decisions: Navigation Clarity, Bottom Bar & Accessible Actions
+
+### 12. Material 3 Bottom Navigation Bar with Mandatory Labeled Mode
+- **Decision**: Configure `BottomNavigationView` / `NavigationBarView` with `labelVisibilityMode="labeled"` strictly capped at 5 destinations: Home, Meal-Time, Search, Saved, Me.
+- **Rationale**: On mobile devices without hover cursors, small icon-only buttons lead to guesswork and mis-taps. Visible text labels alongside icons ensure unambiguous affordances for all daily dining workflows.
+
+### 13. Top-Level Drawer vs. Detail Back Arrow Hierarchy
+- **Decision**: Top-level screens feature an accessible hamburger button opening a navigation drawer for secondary utilities (Seasonal Guides, Add Spot, Bill Splitter, Notifications & Alerts, Settings, Help & Diagnostics, About). Detail screens strictly replace the hamburger icon with an accessible back arrow (`<-`) per standard Android navigation conventions.
+- **Rationale**: Keeps primary everyday actions one tap away without burying core dining discovery, while maintaining clear hierarchical depth.
+
+### 14. Universal Content & State Descriptions
+- **Decision**: Every icon-only element receives bilingual `contentDescription` attributes in `values/strings.xml` and `values-bn/strings.xml`. All toggle controls (Favorite, Want to Try, Closing Alert Bell) dynamically set state descriptions via `ViewCompat.setStateDescription` (e.g., "Saved" vs "Not saved").
+- **Rationale**: Full compliance with Android TalkBack accessibility, large font scaling (200%), and WCAG 48dp minimum touch targets.
+
+## Release-Gate Decisions
+
+### 19. Licensing & Repository Copyright
+- **Decision**: No license file is committed (`LICENSE` kept absent from repository index).
+- **Rationale**: Per project release gate specification, no open-source license has been chosen yet. Without an explicit license file, default copyright applies and all rights are reserved by the repository owner until explicitly designated.
