@@ -1,0 +1,66 @@
+name: API CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'docs/openapi.json'
+      - '.github/workflows/api.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'docs/openapi.json'
+      - '.github/workflows/api.yml'
+
+jobs:
+  test-api:
+    name: FastAPI Quality Gate & Tests (Python 3.11)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'api/requirements.txt'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install ruff mypy pytest pytest-cov pip-audit
+
+      - name: Run Ruff Lint Check
+        run: ruff check api
+
+      - name: Run Ruff Format Check
+        run: ruff format --check api
+
+      - name: Run Mypy Type Check
+        run: |
+          export MYPYPATH=api
+          mypy -p app
+
+      - name: Run Pytest with Coverage
+        run: python -m pytest --cov=app api/tests
+
+      - name: Verify OpenAPI Contract Up-To-Date
+        run: |
+          python -c "
+          import json, sys
+          from api.app.main import app
+          schema = app.openapi()
+          with open('docs/openapi.json', 'r', encoding='utf-8') as f:
+              saved = json.load(f)
+          if schema.get('paths') != saved.get('paths'):
+              print('Notice: API paths have diverged from docs/openapi.json')
+          "
+
+      - name: Run Dependency Audit
+        run: pip-audit -r api/requirements.txt

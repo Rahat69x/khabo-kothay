@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Python dependencies for FastAPI backend
+  - package-ecosystem: "pip"
+    directory: "/api"
+    schedule:
+      interval: "weekly"
+
+  # Gradle dependencies for Android native app
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "weekly"
+
+  # Root & legacy Node.js dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Mobile client dependencies
+  - package-ecosystem: "npm"
+    directory: "/mobile"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions workflow updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
