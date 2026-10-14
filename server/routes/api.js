@@ -1,3 +1,4 @@
+import { estimateFareRange, compareFareQuote, addFareReport, loadFareReports } from '../services/fare-check.js';
 import { parseNaturalQuery } from '../services/ask-parser.js';
 import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOverview } from '../services/diagnostics.js';
 import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
@@ -1131,6 +1132,48 @@ router.post('/search/confirm', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+
+// ==========================================
+// F2: Fare Check & Estimation Service
+// ==========================================
+
+router.post('/fare-estimates', (req, res) => {
+  try {
+    const { origin, destination, transportType, distanceKm, quoteBdt } = req.body || {};
+    const estimate = estimateFareRange({ origin, destination, transportType, distanceKm });
+
+    let comparison = null;
+    if (quoteBdt !== undefined && quoteBdt !== null) {
+      comparison = compareFareQuote({ quoteBdt, estimate });
+    }
+
+    res.json({
+      estimate,
+      comparison
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/fare-reports', (req, res) => {
+  try {
+    const report = addFareReport(req.body, { ip: req.ip, requestId: req.id });
+    res.status(201).json({
+      success: true,
+      report,
+      message: 'Fare report received and queued for community moderation'
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/fare-reports', requireAdmin, (req, res) => {
+  const reports = loadFareReports();
+  res.json({ reports });
 });
 
 export default router;
