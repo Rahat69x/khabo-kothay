@@ -1,3 +1,4 @@
+import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOverview } from '../services/diagnostics.js';
 import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
 import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
 import { getAuditLogs } from '../services/audit.js';
@@ -1002,6 +1003,72 @@ router.get('/admin/audit-logs', requireAdmin, (req, res) => {
     target: req.query.target || null
   });
   res.json({ logs });
+});
+
+
+// ==========================================
+// F15: Opt-In Diagnostics & Problem Reports
+// ==========================================
+
+router.post('/diagnostics/consent', (req, res) => {
+  try {
+    const installId = req.headers['x-install-id'] || req.body.installId || 'anonymous';
+    const result = recordConsent({
+      installId,
+      consentType: req.body.consentType || 'crash_reporting',
+      granted: req.body.granted,
+      textVersion: req.body.textVersion || '1.0',
+      timestamp: req.body.timestamp,
+      ip: req.ip
+    });
+    res.json({ success: true, consent: result });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/diagnostics/crash-reports', (req, res) => {
+  try {
+    const report = recordCrashReport({
+      errorCategory: req.body.errorCategory,
+      message: req.body.message,
+      stackTrace: req.body.stackTrace,
+      appVersion: req.headers['x-app-version-name'] || req.body.appVersion || '4.0.0',
+      versionCode: req.headers['x-app-version-code'] || req.body.versionCode || 3,
+      deviceMeta: req.body.deviceMeta || {},
+      requestId: req.headers['x-request-id'] || req.body.requestId || null
+    });
+    res.status(201).json({ success: true, reportId: report.id, fingerprint: report.fingerprint });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/diagnostics/problem-reports', (req, res) => {
+  try {
+    if (!req.body.description || req.body.description.trim().length === 0) {
+      return res.status(400).json({ error: 'Problem description is required' });
+    }
+    const report = recordProblemReport({
+      category: req.body.category || 'GENERAL',
+      description: req.body.description,
+      appVersion: req.headers['x-app-version-name'] || req.body.appVersion || '4.0.0',
+      versionCode: req.headers['x-app-version-code'] || req.body.versionCode || 3,
+      requestId: req.headers['x-request-id'] || req.body.requestId || null,
+      screenshotBase64: req.body.screenshotBase64 || null
+    });
+    res.status(201).json({
+      success: true,
+      referenceNumber: report.referenceNumber,
+      message: 'Problem report recorded successfully'
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/admin/diagnostics', requireAdmin, (req, res) => {
+  res.json(getDiagnosticsOverview());
 });
 
 export default router;
