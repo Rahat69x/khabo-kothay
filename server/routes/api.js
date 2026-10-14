@@ -1,3 +1,5 @@
+import { createGroupSession, joinGroupSession, computeFairRanking, castVote, closeGroupSession, getGroupSession } from '../services/group-mode.js';
+import { addDishPriceReport, getDishPrices } from '../services/dish-prices.js';
 import { estimateFareRange, compareFareQuote, addFareReport, loadFareReports } from '../services/fare-check.js';
 import { parseNaturalQuery } from '../services/ask-parser.js';
 import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOverview } from '../services/diagnostics.js';
@@ -1174,6 +1176,69 @@ router.post('/fare-reports', (req, res) => {
 router.get('/fare-reports', requireAdmin, (req, res) => {
   const reports = loadFareReports();
   res.json({ reports });
+});
+
+
+// ==========================================
+// F4 & F6: Group Mode & Community Dish Prices
+// ==========================================
+
+router.post('/groups', (req, res) => {
+  try {
+    const session = createGroupSession(req.body);
+    res.status(201).json({ success: true, session });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/groups/:token', (req, res) => {
+  const session = getGroupSession(req.params.token);
+  if (!session) {
+    return res.status(404).json({ error: 'Group session not found or expired' });
+  }
+  res.json({ session });
+});
+
+router.post('/groups/:token/join', (req, res) => {
+  try {
+    const result = joinGroupSession(req.params.token, req.body);
+    res.status(201).json({ success: true, ...result });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/groups/:token/votes', (req, res) => {
+  try {
+    const result = castVote(req.params.token, req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/groups/:token/close', (req, res) => {
+  try {
+    const result = closeGroupSession(req.params.token, req.body);
+    res.json({ success: true, session: result });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/dish-price-reports', (req, res) => {
+  try {
+    const report = addDishPriceReport(req.body);
+    res.status(201).json({ success: true, report });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/dish-prices', (req, res) => {
+  const result = getDishPrices(req.query);
+  res.json(result);
 });
 
 export default router;
