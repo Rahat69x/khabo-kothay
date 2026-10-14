@@ -31,6 +31,6 @@ Tracking the execution and verification of Five Quality Fixes:
   - Python (Pytest): 4/4 tests passed (86% coverage, Duration: 3.39s)
   - Android: Java 17 Temurin detected, unit tests mapped
 - **Verification Result**: Verified live Render backend (`https://khabo-kothay-backend.onrender.com`), inspected all existing engines and data stores, created `docs/UPGRADE_AUDIT.md`.
-- **Commit Hash**: (Pending commit)
+- **Commit Hash**: 2cb61bb
 - **Tag**: `phase-0-audit`
-- **Undo Command**: `git revert <hash>`
+- **Undo Command**: `git revert 2cb61bb`
