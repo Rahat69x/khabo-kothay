@@ -40,3 +40,25 @@ This document maps all user data and feature attributes across **Khabo Kothay?**
 ## Compliance & Privacy Verification
 - **Google Play Data Safety**: Conforms to self-declared zero-collection of sensitive location history, zero sharing with third parties, and full offline autonomy for financial/budget tracking.
 - **Data Export & Deletion**: Settings $ightarrow$ Diagnostics provides complete local data wipe (`AppDatabase.clearAllTables()`) and local JSON/CSV export.
+
+---
+
+## 15 Features (F1–F15) Privacy & Data Transmission Matrix
+
+| Feature ID | Feature Name | Storage Location | Server Logged? | Sent to Network? | Privacy Guarantees |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| **F1** | **Update Checker & What's New** | Device (cache) & Server | Anonymous request metrics | YES (`versionCode`, `channel`) | External browser download intent only. NO `REQUEST_INSTALL_PACKAGES` permission. |
+| **F2** | **Fare Check** | Server (crowdsourced reports) | Moderation log | YES (`origin`, `destination`, `mode`, `fareBdt`) | No personal or driver details ever collected. Labeled "estimated reference range". |
+| **F3** | **Ask In Your Own Words** | Device & Server (parser) | Anonymous query only | YES (`query` string) | Voice recognized locally via OS; transcript editable by user before network query. |
+| **F4** | **Group Mode** | Server (3h session) | Temporary session cache | YES (`areaName`, `dietaryTags`, `budget`) | Unguessable 128-bit token. Exact coordinates never shared; areas only. Auto-expires in 3h. |
+| **F5** | **Swipe Mode** | **Device Only** (SharedPreferences) | **NO** | **NO** | Taste affinities computed locally. Feeds ranking as soft signal only. |
+| **F6** | **Dish Prices** | Server (community reports) | UGC Moderation log | YES (`restaurantId`, `dishName`, `priceBdt`) | Integer minor units (BDT). No receipt/bill photos containing user names or payment details. |
+| **F7** | **Rain-Aware Mode** | Device & Server (Open-Meteo cache) | **NO** | YES (coarse lat/lng) | Ephemeral weather check (15m TTL). No location history. |
+| **F8** | **Dietary Preferences** | **Device Only** (SharedPreferences) | **NO** | YES (optional search filter) | Personal dietary tags stay on device. Zero server profiling or logging. |
+| **F9** | **Lunch-Break Reminder** | **Device Only** (WorkManager / Room) | **NO** | **NO** (local worker) | Evaluated locally using saved office location. NO runtime background GPS. |
+| **F10** | **Share My Trip** | Device (native share intent) | **NO** | **NO** (client-side intent) | Public Google Maps directions URL built for destination only. Zero sender location leaks. |
+| **F11** | **Pay-Me Line in Bill Split** | **Device Only** (Encrypted Storage) | **NO** | **NEVER** (0% network transfer) | Stored exclusively on device in private SharedPreferences. Formatted locally for user review. |
+| **F12** | **Simple Mode** | **Device Only** (SharedPreferences) | **NO** | **NO** | Local accessibility UI preference for contrast and typography scaling. |
+| **F13** | **Food Story** | **Device Only** (Room DB) | **NO** | **NO** (native share preview) | 100% computed on device. Strips private home/work places before user previews share card. |
+| **F14** | **Remote Feature Flags** | Device (cache) & Server | Anonymous request metrics | YES (`installId`, `versionCode`, `channel`) | Install ID is a random UUID reset on reinstall; used only for stable 0-99 hash assignment. |
+| **F15** | **Opt-In Crash Reports & Report a Problem** | Device (cache) & Server | Redacted diagnostic queue | YES (only upon explicit opt-in) | Redacts all API keys (`AIza...`), auth tokens, phone numbers, emails, and coordinates. |
