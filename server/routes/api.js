@@ -1,3 +1,4 @@
+import { parseNaturalQuery } from '../services/ask-parser.js';
 import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOverview } from '../services/diagnostics.js';
 import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
 import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
@@ -1069,6 +1070,67 @@ router.post('/diagnostics/problem-reports', (req, res) => {
 
 router.get('/admin/diagnostics', requireAdmin, (req, res) => {
   res.json(getDiagnosticsOverview());
+});
+
+
+// ==========================================
+// F3: Ask In Your Own Words (Natural Search)
+// ==========================================
+
+/**
+ * POST /api/search/interpret
+ * Parses natural language query into structured, editable criteria
+ */
+router.post('/search/interpret', (req, res) => {
+  const { query } = req.body || {};
+  if (!query || typeof query !== 'string' || query.trim().length === 0) {
+    return res.status(400).json({ error: 'Search query is required' });
+  }
+
+  const result = parseNaturalQuery(query);
+  res.json(result);
+});
+
+/**
+ * POST /api/search/confirm
+ * Executes search using user-reviewed/edited criteria via existing ranking engine
+ */
+router.post('/search/confirm', async (req, res, next) => {
+  try {
+    const { criteria, lat, lng } = req.body || {};
+    if (!criteria) {
+      return res.status(400).json({ error: 'Confirmed criteria is required' });
+    }
+
+    // Default to Dhaka center coordinates if user has not shared GPS
+    // (Gulshan-2: 23.7925, 90.4078)
+    const searchLat = Number(lat) || 23.7925;
+    const searchLng = Number(lng) || 90.4078;
+
+    // Map extracted criteria into existing rankRestaurants schema
+    const options = {
+      cuisine: criteria.cuisine || undefined,
+      maxPrice: criteria.budget?.amount || undefined,
+      partySize: criteria.partySize || 1,
+      mealTime: criteria.mealTime || undefined
+    };
+
+    const results = await rankRestaurants({
+      lat: searchLat,
+      lng: searchLng,
+      options
+    });
+
+    res.json({
+      success: true,
+      appliedCriteria: criteria,
+      resultsCount: results?.candidates?.length || 0,
+      candidates: results?.candidates || [],
+      topPicks: results?.topPicks || []
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

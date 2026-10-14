@@ -1,0 +1,655 @@
+[
+  {
+    "id": 1,
+    "query": "ajke dupur e banani te sasta kabab, 4 jon",
+    "language": "banglish",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "kabab",
+      "mealTime": "lunch",
+      "partySize": 4,
+      "isBudget": true
+    }
+  },
+  {
+    "id": 2,
+    "query": "Find a budget-friendly biryani place near Notun Bazar for three people tonight.",
+    "language": "english",
+    "expected": {
+      "location": "Notun Bazar",
+      "cuisine": "biryani",
+      "mealTime": "dinner",
+      "partySize": 3,
+      "isBudget": true
+    }
+  },
+  {
+    "id": 3,
+    "query": "Gulshan e 500 takar moddhe 2 jon er jonno bhalo cafe chai.",
+    "language": "banglish",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "cafe",
+      "budgetAmount": 500,
+      "partySize": 2,
+      "minRating": 4.0
+    }
+  },
+  {
+    "id": 4,
+    "query": "banani te bhalo kacchi biryani khabo 2 jon",
+    "language": "banglish",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "biryani",
+      "partySize": 2
+    }
+  },
+  {
+    "id": 5,
+    "query": "gulshan 2 e coffee shop chai adda dibo",
+    "language": "banglish",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "cafe",
+      "mealTime": "afternoon"
+    }
+  },
+  {
+    "id": 6,
+    "query": "notun bazar e 300 takay burger pawa jabe?",
+    "language": "banglish",
+    "expected": {
+      "location": "Notun Bazar",
+      "cuisine": "burger",
+      "budgetAmount": 300
+    }
+  },
+  {
+    "id": 7,
+    "query": "baridhara te ratre chinese khabo 5 jon",
+    "language": "banglish",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "chinese",
+      "mealTime": "dinner",
+      "partySize": 5
+    }
+  },
+  {
+    "id": 8,
+    "query": "mohakhali te sasta tehari khabo dupure",
+    "language": "banglish",
+    "expected": {
+      "location": "Mohakhali",
+      "cuisine": "biryani",
+      "mealTime": "lunch",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 9,
+    "query": "dhanmondi te best pizza kothay ache 4 jon er jonno",
+    "language": "banglish",
+    "expected": {
+      "location": "Dhanmondi",
+      "cuisine": "pizza",
+      "partySize": 4
+    }
+  },
+  {
+    "id": 10,
+    "query": "uttara te shokale deshi breakfast khabo",
+    "language": "banglish",
+    "expected": {
+      "location": "Uttara",
+      "cuisine": "bangladeshi",
+      "mealTime": "breakfast"
+    }
+  },
+  {
+    "id": 11,
+    "query": "mirpur e kabab chai 1000 takar moddhe",
+    "language": "banglish",
+    "expected": {
+      "location": "Mirpur",
+      "cuisine": "kabab",
+      "budgetAmount": 1000
+    }
+  },
+  {
+    "id": 12,
+    "query": "badda te bhalo cafe chai 2 jon er jonno",
+    "language": "banglish",
+    "expected": {
+      "location": "Badda",
+      "cuisine": "cafe",
+      "partySize": 2
+    }
+  },
+  {
+    "id": 13,
+    "query": "bashundhara te fast food khabo dupur bela",
+    "language": "banglish",
+    "expected": {
+      "location": "Bashundhara",
+      "cuisine": "fast food",
+      "mealTime": "lunch"
+    }
+  },
+  {
+    "id": 14,
+    "query": "banani 11 te seafood restaurant bhalo kothay",
+    "language": "banglish",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "seafood"
+    }
+  },
+  {
+    "id": 15,
+    "query": "gulshan 1 e 400 takar moddhe cha and snack",
+    "language": "banglish",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "tea",
+      "budgetAmount": 400
+    }
+  },
+  {
+    "id": 16,
+    "query": "baridhara dohs e bhalo bakery bakery cake chai",
+    "language": "banglish",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "bakery"
+    }
+  },
+  {
+    "id": 17,
+    "query": "ratre notun bazar e kabab khabo tin jon",
+    "language": "banglish",
+    "expected": {
+      "location": "Notun Bazar",
+      "cuisine": "kabab",
+      "mealTime": "dinner",
+      "partySize": 3
+    }
+  },
+  {
+    "id": 18,
+    "query": "banani te 800 takay 2 jon dinner korbo",
+    "language": "banglish",
+    "expected": {
+      "location": "Banani",
+      "budgetAmount": 800,
+      "partySize": 2,
+      "mealTime": "dinner"
+    }
+  },
+  {
+    "id": 19,
+    "query": "gulshan e sasta thai soup pawa jabe?",
+    "language": "banglish",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "thai",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 20,
+    "query": "mohakhali te dupure bhat vorta khabo",
+    "language": "banglish",
+    "expected": {
+      "location": "Mohakhali",
+      "cuisine": "bangladeshi",
+      "mealTime": "lunch"
+    }
+  },
+  {
+    "id": 21,
+    "query": "Good coffee place in Banani for two people",
+    "language": "english",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "cafe",
+      "partySize": 2
+    }
+  },
+  {
+    "id": 22,
+    "query": "Best kabab in Gulshan under 1500 taka",
+    "language": "english",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "kabab",
+      "budgetAmount": 1500
+    }
+  },
+  {
+    "id": 23,
+    "query": "Cheap biryani spot near Notun Bazar for lunch",
+    "language": "english",
+    "expected": {
+      "location": "Notun Bazar",
+      "cuisine": "biryani",
+      "mealTime": "lunch",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 24,
+    "query": "Dinner for 4 people in Baridhara with chinese food",
+    "language": "english",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "chinese",
+      "partySize": 4,
+      "mealTime": "dinner"
+    }
+  },
+  {
+    "id": 25,
+    "query": "Looking for delicious pizza in Dhanmondi for 3 people",
+    "language": "english",
+    "expected": {
+      "location": "Dhanmondi",
+      "cuisine": "pizza",
+      "partySize": 3
+    }
+  },
+  {
+    "id": 26,
+    "query": "Top rated burger joint in Uttara under 600 taka",
+    "language": "english",
+    "expected": {
+      "location": "Uttara",
+      "cuisine": "burger",
+      "budgetAmount": 600
+    }
+  },
+  {
+    "id": 27,
+    "query": "Breakfast cafe in Gulshan 2 for one person",
+    "language": "english",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "cafe",
+      "mealTime": "breakfast",
+      "partySize": 1
+    }
+  },
+  {
+    "id": 28,
+    "query": "Afternoon tea and dessert place in Banani",
+    "language": "english",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "tea",
+      "mealTime": "afternoon"
+    }
+  },
+  {
+    "id": 29,
+    "query": "Seafood dinner in Mohakhali for 6 people",
+    "language": "english",
+    "expected": {
+      "location": "Mohakhali",
+      "cuisine": "seafood",
+      "partySize": 6,
+      "mealTime": "dinner"
+    }
+  },
+  {
+    "id": 30,
+    "query": "Budget friendly fast food near Badda",
+    "language": "english",
+    "expected": {
+      "location": "Badda",
+      "cuisine": "fast food",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 31,
+    "query": "বনানীতে ভালো কাচ্চি বিরিয়ানি খাবো ২ জন",
+    "language": "bangla",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "biryani",
+      "partySize": 2
+    }
+  },
+  {
+    "id": 32,
+    "query": "গুলশানে ৫০০ টাকার মধ্যে ভালো ক্যাফে চাই",
+    "language": "bangla",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "cafe",
+      "budgetAmount": 500
+    }
+  },
+  {
+    "id": 33,
+    "query": "নতুন বাজারে কম দামে বার্গার পাবো কোথায় ৪ জন",
+    "language": "bangla",
+    "expected": {
+      "location": "Notun Bazar",
+      "cuisine": "burger",
+      "partySize": 4,
+      "isBudget": true
+    }
+  },
+  {
+    "id": 34,
+    "query": "বারিধারায় রাতে চাইনিজ খাবার খাবো ৩ জন",
+    "language": "bangla",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "chinese",
+      "mealTime": "dinner",
+      "partySize": 3
+    }
+  },
+  {
+    "id": 35,
+    "query": "মহাখালীতে দুপুরে সস্তা ভাত ভর্তা খাবো",
+    "language": "bangla",
+    "expected": {
+      "location": "Mohakhali",
+      "cuisine": "bangladeshi",
+      "mealTime": "lunch",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 36,
+    "query": "ধানমন্ডিতে সেরা পিজা রেস্তোরাঁ",
+    "language": "bangla",
+    "expected": {
+      "location": "Dhanmondi",
+      "cuisine": "pizza"
+    }
+  },
+  {
+    "id": 37,
+    "query": "উত্তরায় সকালে নাস্তা খাবো",
+    "language": "bangla",
+    "expected": {
+      "location": "Uttara",
+      "cuisine": "bangladeshi",
+      "mealTime": "breakfast"
+    }
+  },
+  {
+    "id": 38,
+    "query": "মিরপুরে ১০০০ টাকার মধ্যে কাবাব ৫ জন",
+    "language": "bangla",
+    "expected": {
+      "location": "Mirpur",
+      "cuisine": "kabab",
+      "budgetAmount": 1000,
+      "partySize": 5
+    }
+  },
+  {
+    "id": 39,
+    "query": "বাড্ডায় চা খাওয়ার ভালো জায়গা",
+    "language": "bangla",
+    "expected": {
+      "location": "Badda",
+      "cuisine": "tea"
+    }
+  },
+  {
+    "id": 40,
+    "query": "বসুন্ধরায় ফাস্ট ফুড খাবো বিকেলে",
+    "language": "bangla",
+    "expected": {
+      "location": "Bashundhara",
+      "cuisine": "fast food",
+      "mealTime": "afternoon"
+    }
+  },
+  {
+    "id": 41,
+    "query": "Banani te lunch time e kacchi biryani chai 4 people",
+    "language": "mixed",
+    "expected": {
+      "location": "Banani",
+      "cuisine": "biryani",
+      "mealTime": "lunch",
+      "partySize": 4
+    }
+  },
+  {
+    "id": 42,
+    "query": "Gulshan e 800 tk er moddhe best burger place",
+    "language": "mixed",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "burger",
+      "budgetAmount": 800
+    }
+  },
+  {
+    "id": 43,
+    "query": "Notun Bazar e cheap food for dinner",
+    "language": "mixed",
+    "expected": {
+      "location": "Notun Bazar",
+      "mealTime": "dinner",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 44,
+    "query": "Baridhara te coffee shop with dessert",
+    "language": "mixed",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "cafe"
+    }
+  },
+  {
+    "id": 45,
+    "query": "Dhanmondi te 3 jon er jonno thai food",
+    "language": "mixed",
+    "expected": {
+      "location": "Dhanmondi",
+      "cuisine": "thai",
+      "partySize": 3
+    }
+  },
+  {
+    "id": 46,
+    "query": "Uttara te 500 taka budget breakfast",
+    "language": "mixed",
+    "expected": {
+      "location": "Uttara",
+      "budgetAmount": 500,
+      "mealTime": "breakfast"
+    }
+  },
+  {
+    "id": 47,
+    "query": "Mohakhali te parcel takeaway biryani",
+    "language": "mixed",
+    "expected": {
+      "location": "Mohakhali",
+      "cuisine": "biryani",
+      "dineMode": "takeaway"
+    }
+  },
+  {
+    "id": 48,
+    "query": "Mirpur e home delivery kabab for 2 people",
+    "language": "mixed",
+    "expected": {
+      "location": "Mirpur",
+      "cuisine": "kabab",
+      "partySize": 2,
+      "dineMode": "delivery"
+    }
+  },
+  {
+    "id": 49,
+    "query": "Bashundhara te adda dite chai with tea and bakery",
+    "language": "mixed",
+    "expected": {
+      "location": "Bashundhara",
+      "cuisine": "tea",
+      "mealTime": "afternoon"
+    }
+  },
+  {
+    "id": 50,
+    "query": "Badda te 200 tk er fast food",
+    "language": "mixed",
+    "expected": {
+      "location": "Badda",
+      "cuisine": "fast food",
+      "budgetAmount": 200
+    }
+  },
+  {
+    "id": 51,
+    "query": "Gulshan 1 e evening e coffee",
+    "language": "mixed",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "cafe",
+      "mealTime": "afternoon"
+    }
+  },
+  {
+    "id": 52,
+    "query": "Banani te 1200 takar moddhe dinner 2 jon",
+    "language": "mixed",
+    "expected": {
+      "location": "Banani",
+      "budgetAmount": 1200,
+      "mealTime": "dinner",
+      "partySize": 2
+    }
+  },
+  {
+    "id": 53,
+    "query": "Notun Bazar e bhalo cha dokan",
+    "language": "mixed",
+    "expected": {
+      "location": "Notun Bazar",
+      "cuisine": "tea"
+    }
+  },
+  {
+    "id": 54,
+    "query": "Baridhara te best steak or burger",
+    "language": "mixed",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "burger"
+    }
+  },
+  {
+    "id": 55,
+    "query": "Mohakhali te sasta lunch 1 jon",
+    "language": "mixed",
+    "expected": {
+      "location": "Mohakhali",
+      "mealTime": "lunch",
+      "partySize": 1,
+      "isBudget": true
+    }
+  },
+  {
+    "id": 56,
+    "query": "Dhanmondi te 4 jon er bhalo chinese restaurant",
+    "language": "mixed",
+    "expected": {
+      "location": "Dhanmondi",
+      "cuisine": "chinese",
+      "partySize": 4
+    }
+  },
+  {
+    "id": 57,
+    "query": "Mirpur 10 e kacchi biryani khabo",
+    "language": "mixed",
+    "expected": {
+      "location": "Mirpur",
+      "cuisine": "biryani"
+    }
+  },
+  {
+    "id": 58,
+    "query": "Uttara sector 3 te pizza for 3 jon",
+    "language": "mixed",
+    "expected": {
+      "location": "Uttara",
+      "cuisine": "pizza",
+      "partySize": 3
+    }
+  },
+  {
+    "id": 59,
+    "query": "Badda te takeaway burger",
+    "language": "mixed",
+    "expected": {
+      "location": "Badda",
+      "cuisine": "burger",
+      "dineMode": "takeaway"
+    }
+  },
+  {
+    "id": 60,
+    "query": "Bashundhara R/A te coffee and sweets",
+    "language": "mixed",
+    "expected": {
+      "location": "Bashundhara",
+      "cuisine": "cafe"
+    }
+  },
+  {
+    "id": 61,
+    "query": "kal dupur e banani te biryani khabo",
+    "language": "banglish",
+    "isAmbiguous": true
+  },
+  {
+    "id": 62,
+    "query": "কাল রাতে গুলশানে কাবাব",
+    "language": "bangla",
+    "isAmbiguous": true
+  },
+  {
+    "id": 63,
+    "query": "biryani place near Gulshan",
+    "language": "english",
+    "expected": {
+      "location": "Gulshan",
+      "cuisine": "biryani"
+    }
+  },
+  {
+    "id": 64,
+    "query": "sasta khabar banani te",
+    "language": "banglish",
+    "expected": {
+      "location": "Banani",
+      "isBudget": true
+    }
+  },
+  {
+    "id": 65,
+    "query": "cafe in baridhara for 2 people",
+    "language": "english",
+    "expected": {
+      "location": "Baridhara",
+      "cuisine": "cafe",
+      "partySize": 2
+    }
+  }
+]
