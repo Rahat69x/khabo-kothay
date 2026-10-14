@@ -188,3 +188,21 @@
 ### 19. Licensing & Repository Copyright
 - **Decision**: No license file is committed (`LICENSE` kept absent from repository index).
 - **Rationale**: Per project release gate specification, no open-source license has been chosen yet. Without an explicit license file, default copyright applies and all rights are reserved by the repository owner until explicitly designated.
+
+## 15-Features Upgrade Decisions (Phase 0: Master Audit Baseline)
+
+### 20. Preservation of Existing Architecture & Live Production Deployment
+- **Decision**: Retain the Node.js Express backend (`server/`) as the active production server deployed on Render (`https://khabo-kothay-backend.onrender.com`), while preserving the Python FastAPI foundation (`api/`) under `/api/v1`.
+- **Rationale**: Full compliance with Section 1.1 and 1.2 (Technology Policy). Extending the existing tested, live-deployed backend eliminates deployment disruption and preserves all existing 159 Vitest tests, ranking weights, and Meal-Time scheduling algorithms.
+
+### 21. Android Native Java MVVM Architecture Preservation
+- **Decision**: Keep the Android application in Native Java with MVVM, Room SQLite, Material 3, Retrofit 2.10, and WorkManager (`com.khabokothay.app`), preserving package identity and certificate signature continuity.
+- **Rationale**: Section 1.5 strictly prohibits changing package name or signing keys to ensure seamless update installation over existing builds (`versionCode` strictly monotonic). Java code style will be consistently maintained across all new Android features.
+
+### 22. Phase-by-Phase Delivery & Reversible Commits
+- **Decision**: Strictly execute the 8 delivery phases (Phase 0 through Phase 8) following the Section 0 protocol. Each phase executes on `feat/<phase>-<short-name>`, runs full baseline and regression test suites, documents mobile verification steps, commits with isolated tags, and logs `git revert <hash>` undo commands in `docs/FIXLOG.md`.
+- **Rationale**: Guarantees zero regression, immediate reversibility, and total visibility for every incremental capability.
+
+### 23. Safety-First Build Order (Safety Net Preceding Features)
+- **Decision**: Build F14 (Remote Feature Flags & Audit Trail), F1 (Update Checker & Server Enforcement), and F15 (Consent & Crash Capture) in Phase 1 before building F2–F13.
+- **Rationale**: Ensures every subsequent feature can be immediately toggled, staged, or disabled via remote killswitch without requiring emergency APK rebuilds or user lockout.

@@ -188,3 +188,18 @@
 
 ### 4. Regression Status
 - **Legacy Node Test Suite**: 🟢 **159 / 159 PASS** (100% parity preserved).
+
+---
+
+## 15 Features Upgrade Tracker (Phased Delivery)
+
+### Phase 0: Master Audit & Baseline Verification ✅
+- **Status**: Completed & Verified
+- **Branch**: `feat/phase-0-audit`
+- **Audit Artifact**: [docs/UPGRADE_AUDIT.md](file:///docs/UPGRADE_AUDIT.md)
+- **Baseline Test Verification**:
+  - Node.js Express Backend (`server/`): 🟢 **159 / 159 tests passed** across 25 Vitest files (9.37s).
+  - Python FastAPI Backend (`api/`): 🟢 **4 / 4 tests passed** in pytest (86% coverage, 3.39s).
+  - Android Java App (`android/`): Package `com.khabokothay.app`, `versionCode 3`, `versionName "4.0.0"`, Room DB 2.6.1, Material 3, WorkManager.
+- **Production Status**: Node.js backend actively healthy on Render at `https://khabo-kothay-backend.onrender.com`.
+- **Next Phase**: **Phase 1A: Safety Net (Shared Foundations, F14 Feature Flags, F1 Update Checker & What's New, Admin Release Controls)**.
