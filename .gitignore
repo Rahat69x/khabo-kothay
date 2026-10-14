@@ -71,3 +71,9 @@ Thumbs.db
 .agents/
 .gemini/
 .gsd/
+
+# Runtime operational and diagnostic logs
+server/data/*.jsonl
+server/data/*.json
+!server/data/dhaka-locations.json
+!server/data/ask-corpus.json
