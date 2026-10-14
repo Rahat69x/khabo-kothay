@@ -1,3 +1,6 @@
+import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
+import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
+import { getAuditLogs } from '../services/audit.js';
 ﻿import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -22,6 +25,50 @@ import { searchMealTime } from '../services/mealtime.js';
 import { dataFile } from '../config/paths.js';
 
 const router = express.Router();
+// Configurable endpoints exempt from HTTP 426 version enforcement (Section 4.3)
+const EXEMPT_VERSION_ENDPOINTS = new Set([
+  '/health',
+  '/ready',
+  '/app/version',
+  '/app/releases',
+  '/app/feature-flags',
+  '/download-info',
+  '/apk/meta',
+  '/qr',
+  '/config'
+]);
+
+// Server-side version enforcement middleware (HTTP 426 Upgrade Required)
+router.use((req, res, next) => {
+  if (EXEMPT_VERSION_ENDPOINTS.has(req.path)) {
+    return next();
+  }
+
+  const rawVersionCode = req.headers['x-app-version-code'];
+  if (rawVersionCode !== undefined) {
+    const clientCode = parseInt(rawVersionCode, 10);
+    if (!Number.isNaN(clientCode) && clientCode > 0) {
+      const channel = req.headers['x-app-channel'] || 'stable';
+      const latest = getLatestRelease(channel);
+      if (latest && clientCode < latest.minimumSupportedVersionCode) {
+        return res.status(426).json({
+          error: {
+            code: 'UPGRADE_REQUIRED',
+            message: 'This version of the app is no longer supported. Please update to continue.',
+            hint: 'Please download the latest version from the verified release link.',
+            installedVersionCode: clientCode,
+            minimumSupportedVersionCode: latest.minimumSupportedVersionCode,
+            latestVersionCode: latest.latestVersionCode,
+            latestVersionName: latest.latestVersionName,
+            downloadUrl: latest.downloadUrl
+          }
+        });
+      }
+    }
+  }
+  next();
+});
+
 
 const PROBE_PATHS = new Set(['/health', '/ready']);
 
@@ -849,5 +896,112 @@ function appendJsonl(fileName, record) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.appendFileSync(file, JSON.stringify(record) + '\n', 'utf8');
 }
+
+
+// ==========================================
+// F1 & F14: App Version, Releases & Feature Flags
+// ==========================================
+
+router.get('/app/version', (req, res) => {
+  const channel = req.headers['x-app-channel'] || req.query.channel || 'stable';
+  const latest = getLatestRelease(channel);
+  if (!latest) {
+    return res.status(404).json({ error: { code: 'NO_RELEASE_FOUND', message: 'No published release found for this channel' } });
+  }
+  res.json(latest);
+});
+
+router.get('/app/releases', (req, res) => {
+  const channel = req.headers['x-app-channel'] || req.query.channel || 'stable';
+  const releases = getPublishedReleases(channel);
+  res.json({ releases });
+});
+
+router.get('/app/feature-flags', (req, res) => {
+  const installId = req.headers['x-install-id'] || req.query.installId || 'anonymous';
+  const versionCode = req.headers['x-app-version-code'] || req.query.versionCode || 0;
+  const channel = req.headers['x-app-channel'] || req.query.channel || 'stable';
+
+  const result = evaluateFlags({ installId, versionCode, channel });
+
+  const clientEtag = req.headers['if-none-match'];
+  if (clientEtag && clientEtag === result.etag) {
+    return res.status(304).end();
+  }
+
+  res.setHeader('ETag', result.etag);
+  res.setHeader('Cache-Control', 'public, max-age=21600');
+  res.json(result);
+});
+
+router.get('/admin/feature-flags', requireAdmin, (req, res) => {
+  res.json(getAllFlags());
+});
+
+router.patch('/admin/feature-flags/:key', requireAdmin, (req, res) => {
+  try {
+    const updated = updateFlag(req.params.key, req.body, {
+      who: req.headers['x-admin-who'] || 'admin',
+      ip: req.ip,
+      requestId: req.id
+    });
+    res.json({ success: true, flag: updated });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/admin/releases', requireAdmin, (req, res) => {
+  res.json(getAllReleases());
+});
+
+router.post('/admin/releases', requireAdmin, (req, res) => {
+  try {
+    const draft = createReleaseDraft(req.body, {
+      who: req.headers['x-admin-who'] || 'admin',
+      ip: req.ip,
+      requestId: req.id
+    });
+    res.status(201).json({ success: true, release: draft });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/admin/releases/:id/publish', requireAdmin, (req, res) => {
+  try {
+    const published = publishRelease(req.params.id, {
+      who: req.headers['x-admin-who'] || 'admin',
+      ip: req.ip,
+      requestId: req.id
+    });
+    res.json({ success: true, release: published });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/admin/releases/:id/withdraw', requireAdmin, (req, res) => {
+  try {
+    const withdrawn = withdrawRelease(req.params.id, {
+      who: req.headers['x-admin-who'] || 'admin',
+      ip: req.ip,
+      requestId: req.id
+    });
+    res.json({ success: true, release: withdrawn });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/admin/audit-logs', requireAdmin, (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 50;
+  const logs = getAuditLogs({
+    limit,
+    action: req.query.action || null,
+    target: req.query.target || null
+  });
+  res.json({ logs });
+});
 
 export default router;
