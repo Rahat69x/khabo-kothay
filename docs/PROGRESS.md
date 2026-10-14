@@ -203,3 +203,38 @@
   - Android Java App (`android/`): Package `com.khabokothay.app`, `versionCode 3`, `versionName "4.0.0"`, Room DB 2.6.1, Material 3, WorkManager.
 - **Production Status**: Node.js backend actively healthy on Render at `https://khabo-kothay-backend.onrender.com`.
 - **Next Phase**: **Phase 1A: Safety Net (Shared Foundations, F14 Feature Flags, F1 Update Checker & What's New, Admin Release Controls)**.
+
+### Phase 1A: Safety Net (Shared Foundations, F14 Remote Flags, F1 Update Checker) ✅
+- **Status**: Completed & Tagged (`phase-1a-safety-net`)
+- **Deliverables**: Remote feature flags evaluation service with stable hash assignment, What's New release metadata API, server HTTP 426 upgrade enforcement, external browser update launcher.
+
+### Phase 1B: Diagnostics (F15 Opt-In Crash Reports & Problem Reports) ✅
+- **Status**: Completed & Tagged (`phase-1b-diagnostics`)
+- **Deliverables**: Explicit opt-in consent tracking, secret & PII sanitization regex, stack trace fingerprinting, problem report reference numbers (`REF-YYYYMMDD-XXXX`), admin diagnostics overview.
+
+### Phase 2: Search (F3 Ask In Your Own Words) ✅
+- **Status**: Completed & Tagged (`phase-2-search`)
+- **Deliverables**: Hybrid Banglish/Bangla natural language search parser, 65-item test corpus (90.8% accuracy in `docs/ASK_PARSER.md`), voice input helper, search confirmation API.
+
+### Phase 3: Fare (F2 Fare Check & Estimation Service) ✅
+- **Status**: Completed & Tagged (`phase-3-fare`)
+- **Deliverables**: Distance band classification, age-weighted exponential decay, MAD outlier trimming, neutral quote comparison wording, community reporting with duplicate prevention (`docs/FARE_METHOD.md`).
+
+### Phase 4: Discovery & Group (F4 Group Mode, F5 Swipe, F6 Dish Prices, F8 Diet, F7 Rain) ✅
+- **Status**: Completed & Tagged (`phase-4-discovery`)
+- **Deliverables**: Group dining coordination with 128-bit unguessable tokens, multi-origin fair ranking algorithm (`docs/GROUP_RANKING.md`), swipe taste preference helper, community dish prices with median display, structured dietary preference manager.
+
+### Phase 5: Convenience (F9 Lunch Reminder, F10 Share Trip, F11 Pay-Me, F12 Simple, F13 Food Story) ✅
+- **Status**: Completed & Tagged (`phase-5-convenience`)
+- **Deliverables**: WorkManager lunch-break reminder worker, destination-only Google Maps trip sharing, encrypted on-device bKash/Nagad wallet storage, Simple Mode accessible manager, on-device Food Story recap generator.
+
+### Phase 6: Hardening & Verification ✅
+- **Status**: Completed & Tagged (`phase-6-hardening`)
+- **Deliverables**: 15-feature Privacy Matrix (`docs/PRIVACY_MATRIX.md`), comprehensive test report with 203 passing tests (`docs/TEST_REPORT.md`).
+
+### Phase 7: Roadmap (Future Features Documentation) ✅
+- **Status**: Completed & Tagged (`phase-7-roadmap`)
+- **Deliverables**: Updated `docs/ROADMAP.md` covering architectural prerequisites for Card Offers, Multi-Stop Outing Planner, and Delivery Integration per Section 19.
+
+### Phase 8: GitHub Publication & Production Readiness 🚀
+- **Status**: Ready for Push

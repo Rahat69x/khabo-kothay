@@ -34,3 +34,74 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Commit Hash**: 2cb61bb
 - **Tag**: `phase-0-audit`
 - **Undo Command**: `git revert 2cb61bb`
+
+## Phase 1A: Safety Net (Shared Foundations, F14 Remote Flags, F1 Update Checker)
+- **Status**: Completed & Verified
+- **Branch**: `feat/1a-safety-net`
+- **Baseline Test Result**: 169/169 tests passed across 26 suites
+- **Verification Result**: Tested remote feature flags, stable hash assignment, What's New release metadata, and server HTTP 426 upgrade required enforcement.
+- **Commit Hash**: `ef6306e`
+- **Tag**: `phase-1a-safety-net`
+- **Undo Command**: `git revert ef6306e`
+
+## Phase 1B: Diagnostics (F15 Consented Crash Reports & Problem Reports)
+- **Status**: Completed & Verified
+- **Branch**: `feat/1b-diagnostics`
+- **Baseline Test Result**: 176/176 tests passed across 27 suites
+- **Verification Result**: Verified explicit opt-in consent, secret/PII redaction, stack trace fingerprinting, problem report reference numbers, and admin diagnostics dashboard.
+- **Commit Hash**: `781e1ca`
+- **Tag**: `phase-1b-diagnostics`
+- **Undo Command**: `git revert 781e1ca`
+
+## Phase 2: Search (F3 Ask In Your Own Words)
+- **Status**: Completed & Verified
+- **Branch**: `feat/2-search-ask`
+- **Baseline Test Result**: 183/183 tests passed across 28 suites
+- **Verification Result**: Verified 3 canonical Section 6 examples, 65-item labeled corpus (90.8% accuracy in docs/ASK_PARSER.md), ambiguity detection, voice input helper, and search confirmation API.
+- **Commit Hash**: `2c43a55`
+- **Tag**: `phase-2-search`
+- **Undo Command**: `git revert 2c43a55`
+
+## Phase 3: Fare (F2 Fare Check & Estimation Service)
+- **Status**: Completed & Verified
+- **Branch**: `feat/3-fare-check`
+- **Baseline Test Result**: 192/192 tests passed across 29 suites
+- **Verification Result**: Verified distance bands, reference range calculations, MAD outlier trimming, user quote comparison ("below", "within", "above"), and community reporting with duplicate prevention.
+- **Commit Hash**: `e2cc9e5`
+- **Tag**: `phase-3-fare`
+- **Undo Command**: `git revert e2cc9e5`
+
+## Phase 4: Discovery & Group (F4 Group Mode, F5 Swipe, F6 Dish Prices, F8 Diet, F7 Rain)
+- **Status**: Completed & Verified
+- **Branch**: `feat/4-discovery-group`
+- **Baseline Test Result**: 199/199 tests passed across 30 suites
+- **Verification Result**: Verified 128-bit unguessable tokens, fair multi-origin travel ranking algorithm (docs/GROUP_RANKING.md), voting/closing flow, community dish prices, and dietary disclaimers.
+- **Commit Hash**: `6bb8946`
+- **Tag**: `phase-4-discovery`
+- **Undo Command**: `git revert 6bb8946`
+
+## Phase 5: Convenience (F9 Lunch Reminder, F10 Share Trip, F11 Pay-Me, F12 Simple, F13 Food Story)
+- **Status**: Completed & Verified
+- **Branch**: `feat/5-convenience`
+- **Baseline Test Result**: 199/199 tests passed across 30 suites; Android helpers verified
+- **Verification Result**: Verified WorkManager lunch alerts (zero background GPS), public directions trip sharing, encrypted local-only bKash/Nagad wallet lines, Simple Mode toggle, and on-device Food Story recaps.
+- **Commit Hash**: `1105e9f`
+- **Tag**: `phase-5-convenience`
+- **Undo Command**: `git revert 1105e9f`
+
+## Phase 6: Hardening & Verification
+- **Status**: Completed & Verified
+- **Branch**: `feat/6-hardening`
+- **Baseline Test Result**: 203/203 total passing tests (Vitest 199/199, Pytest 4/4 with 86% coverage)
+- **Verification Result**: Verified comprehensive Privacy Matrix (docs/PRIVACY_MATRIX.md) covering all 15 features and full test report (docs/TEST_REPORT.md).
+- **Commit Hash**: `62195db`
+- **Tag**: `phase-6-hardening`
+- **Undo Command**: `git revert 62195db`
+
+## Phase 7: Roadmap (Future Features Documentation)
+- **Status**: Completed & Verified
+- **Branch**: `feat/7-roadmap`
+- **Verification Result**: Documented architectural prerequisites in docs/ROADMAP.md for Card & Wallet Offers, Multi-Stop Outing Planner, and Delivery Integration per Section 19.
+- **Commit Hash**: `f624306`
+- **Tag**: `phase-7-roadmap`
+- **Undo Command**: `git revert f624306`
